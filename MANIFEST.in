@@ -1,0 +1,2 @@
+include versioneer.py
+include sksurgerybard/_version.py
