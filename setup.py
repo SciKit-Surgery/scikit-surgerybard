@@ -14,12 +14,12 @@ setup(
     name='scikit-surgerybard',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description='scikit-surgerybard is a Python package',
+    description='scikit-surgerybard is a Python package based on SNAPPY for Basic Augmented Reality Demo (BARD)',
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard',
     author='Mian Asbat Ahmad',
-    author_email='YOUR-EMAIL@ucl.ac.uk',
+    author_email='rmapaah@ucl.ac.uk',
     license='BSD-3 license',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -58,6 +58,8 @@ setup(
     entry_points={
         'console_scripts': [
             'sksurgerybard=sksurgerybard.__main__:main',
+            'sksurgerybard-cl=sksurgerybard.ui.bard_camera_calibration_command_line:main',
+            'sksurgerybard-app=sksurgerybard.ui.bard_camera_calibration_command_app:main',
         ],
     },
 )
