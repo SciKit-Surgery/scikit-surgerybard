@@ -80,8 +80,8 @@ def main(args=None):
     #
     # size = args.size
 
-    for i in enumerate(input_files):
-        file_name = input_files[i]
+    for i, item in enumerate(input_files):
+        file_name = item
         view = cv2.imread(file_name)
 
         height, width = view.shape[:2]
