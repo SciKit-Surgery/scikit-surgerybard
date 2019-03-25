@@ -3,6 +3,9 @@
 """Command line processing"""
 
 import argparse
+# import numpy as np
+import cv2
+
 from sksurgerybard import __version__
 # from sksurgerybard.ui.bard_camera_calibration_command_line import run_demo
 
@@ -61,8 +64,14 @@ def main(args=None):
 
     args = parser.parse_args(args)
 
-    # input_file = args.input
-    #
+    # This section will read all the file names from the text file
+    # and store it in a list input_files.
+    with open(args.input, "r") as ins:
+        array = []
+        for line in ins:
+            array.append(line.strip())
+    input_files = array
+
     # output_file = args.output
     #
     # width = args.xcorners
@@ -70,5 +79,16 @@ def main(args=None):
     # height = args.ycorners
     #
     # size = args.size
+
+    for i in enumerate(input_files):
+        file_name = input_files[i]
+        view = cv2.imread(file_name)
+
+        height, width = view.shape[:2]
+
+        if height == 0 and width == 0:
+            print("WARNING: Can not open ", file_name)
+
+        print("Read: ", file_name)
 
     # run_demo(input_file, output_file, width, height, size, args.verbose)
