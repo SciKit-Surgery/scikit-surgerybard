@@ -79,8 +79,7 @@ def main(args=None):
     # height = args.ycorners
     #
     # size = args.size
-
-    for i, item in enumerate(input_files):
+    for item in input_files:
         file_name = item
         view = cv2.imread(file_name)
 
@@ -90,5 +89,6 @@ def main(args=None):
             print("WARNING: Can not open ", file_name)
 
         print("Read: ", file_name)
+
 
     # run_demo(input_file, output_file, width, height, size, args.verbose)
