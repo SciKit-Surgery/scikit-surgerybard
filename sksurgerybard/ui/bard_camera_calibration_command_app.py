@@ -110,7 +110,8 @@ def main(args=None):
         if ret is True:
             obj_points.append(objp)
 
-            corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+            corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1),
+                                        criteria)
             img_points.append(corners2)
 
             # Line is commented because displaying
@@ -122,7 +123,9 @@ def main(args=None):
             # cv2.waitKey(5000)
 
     # Now to do the calibration
-    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, gray.shape[::-1], None, None)
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points,
+                                                       gray.shape[::-1],
+                                                       None, None)
 
 
 

@@ -15,4 +15,5 @@ pyinstaller
 pytest
 opencv-python
 opencv-contrib-python
+glob
 tox
