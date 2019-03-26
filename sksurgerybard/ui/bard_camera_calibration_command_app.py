@@ -3,7 +3,7 @@
 """Command line processing"""
 
 import argparse
-from glob2 import glob
+import glob
 import numpy as np
 import cv2
 
