@@ -3,8 +3,8 @@
 """Command line processing"""
 
 import argparse
+from glob2 import glob
 import numpy as np
-from glob import glob
 import cv2
 
 from sksurgerybard import __version__
