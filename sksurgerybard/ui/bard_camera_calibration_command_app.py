@@ -127,6 +127,7 @@ def main(args=None):
                                                        gray.shape[::-1],
                                                        None, None)
 
+    np.savez('calib.npz', mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
 
     # run_demo(input_file, output_file, width, height, size, args.verbose)
