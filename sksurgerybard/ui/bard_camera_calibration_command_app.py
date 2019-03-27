@@ -1,80 +1,14 @@
 # coding=utf-8
 
-"""Command line processing"""
+"""Basic Augmented Reality Demo BARD Application"""
 
-import argparse
 import glob
 import numpy as np
 import cv2
 
-from sksurgerybard import __version__
-# from sksurgerybard.ui.bard_camera_calibration_command_line import run_demo
 
-
-def main(args=None):
-    """Entry point for scikit-surgerybard application"""
-
-    parser = argparse.ArgumentParser(
-        description='Basic Augmented Reality Demo - '
-                    'Camera Calibration, 0.1')
-
-    # ADD POSITIONAL ARGUMENTS
-
-    parser.add_argument("-i", "--input",
-                        help="Multiple valued argument, "
-                             "of files of images, containing "
-                             "chessboards."
-                        )
-
-    parser.add_argument("-o",
-                        "--output",
-                        help="Output file for intrinsic and "
-                             "distortion params"
-                        )
-
-    parser.add_argument("-x", "--xcorners",
-                        help="Number of internal corners "
-                             "along the width (x)",
-                        type=int
-                        )
-
-    parser.add_argument("-y", "--ycorners",
-                        help="Number of internal corners "
-                             "along the height (y)",
-                        type=int
-                        )
-
-    parser.add_argument("-s", "--size",
-                        help="Square size in millimetres",
-                        type=float
-                        )
-
-    # ADD OPTINAL ARGUMENTS
-
-    parser.add_argument("-v", "--verbose",
-                        action="store_true",
-                        help="Enable verbose output",
-                        )
-
-    version_string = __version__
-    friendly_version_string = version_string if version_string else 'unknown'
-    parser.add_argument(
-        "--version",
-        action='version',
-        version='scikit-surgerybard version ' + friendly_version_string)
-
-    args = parser.parse_args(args)
-
-    # Gets the directory containing images.
-    input_dir = args.input
-
-    # output_file = args.output
-    #
-    # width = args.xcorners
-    #
-    # height = args.ycorners
-    #
-    # size = args.size
+def run_demo(input_dir, output_file):
+    """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
     # https://opencv-python-tutroals.readthedocs.io/en/
@@ -84,7 +18,7 @@ def main(args=None):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-    objp = np.zeros((14*10, 3), np.float32)
+    objp = np.zeros((14 * 10, 3), np.float32)
     objp[:, :2] = np.mgrid[0:14, 0:10].T.reshape(-1, 2)
 
     # Arrays to store object points and image points from all the images.
@@ -127,7 +61,7 @@ def main(args=None):
                                                        gray.shape[::-1],
                                                        None, None)
 
-    np.savez('calib.npz', mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+    np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
     print("RMS =", ret)
 
@@ -136,10 +70,3 @@ def main(args=None):
     print(dist)
 
     cv2.destroyAllWindows()
-
-    # except Exception as error:
-    #     print("error :", logging.exception(error))
-    #     print("Unexpected error:", sys.exc_info()[0])
-    #     raise
-
-    # run_demo(input_file, output_file, width, height, size, args.verbose)
