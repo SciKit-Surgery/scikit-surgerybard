@@ -16,4 +16,5 @@ pytest
 opencv-python
 opencv-contrib-python
 glob2
+logging
 tox

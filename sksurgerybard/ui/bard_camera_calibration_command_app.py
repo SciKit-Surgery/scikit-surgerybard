@@ -7,13 +7,13 @@ import glob
 import numpy as np
 import cv2
 
+
 from sksurgerybard import __version__
 # from sksurgerybard.ui.bard_camera_calibration_command_line import run_demo
 
 
 def main(args=None):
     """Entry point for scikit-surgerybard application"""
-
     parser = argparse.ArgumentParser(
         description='Basic Augmented Reality Demo - '
                     'Camera Calibration, 0.1')
@@ -57,7 +57,8 @@ def main(args=None):
                         )
 
     version_string = __version__
-    friendly_version_string = version_string if version_string else 'unknown'
+    friendly_version_string = version_string if version_string \
+        else 'unknown'
     parser.add_argument(
         "--version",
         action='version',
@@ -81,7 +82,8 @@ def main(args=None):
     # latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 
     # termination criteria
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
+                30, 0.001)
 
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     objp = np.zeros((14*10, 3), np.float32)
@@ -114,20 +116,30 @@ def main(args=None):
                                         criteria)
             img_points.append(corners2)
 
-            # Line is commented because displaying
-            # images are not our requirement here.
-
             # Draw and display the corners
-            # img = cv2.drawChessboardCorners(img, (14,10), corners2,ret)
-            # cv2.imshow('img',img)
-            # cv2.waitKey(5000)
+            img = cv2.drawChessboardCorners(img, (14, 10), corners2, ret)
+            cv2.imshow('img', img)
+            cv2.waitKey(500)
 
     # Now to do the calibration
-    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points,
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points,
+                                                       img_points,
                                                        gray.shape[::-1],
                                                        None, None)
-
+    # Store the results in numpy compressed format.
     np.savez('calib.npz', mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
+    print("RMS =", ret)
+
+    # Output Calib Data
+    print(mtx)
+    print(dist)
+
+    cv2.destroyAllWindows()
+
+    # except Exception as error:
+    #     print("error :", logging.exception(error))
+    #     print("Unexpected error:", sys.exc_info()[0])
+    #     raise
 
     # run_demo(input_file, output_file, width, height, size, args.verbose)
