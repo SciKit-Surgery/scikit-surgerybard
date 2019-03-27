@@ -30,17 +30,17 @@ def main(args=None):
                              "distortion params"
                         )
 
-    # parser.add_argument("-x", "--xcorners",
-    #                     help="Number of internal corners "
-    #                          "along the width (x)",
-    #                     type=int
-    #                     )
-    #
-    # parser.add_argument("-y", "--ycorners",
-    #                     help="Number of internal corners "
-    #                          "along the height (y)",
-    #                     type=int
-    #                     )
+    parser.add_argument("-x", "--xcorners",
+                        help="Number of internal corners "
+                             "along the width (x)",
+                        type=int
+                        )
+
+    parser.add_argument("-y", "--ycorners",
+                        help="Number of internal corners "
+                             "along the height (y)",
+                        type=int
+                        )
     #
     # parser.add_argument("-s", "--size",
     #                     help="Square size in millimetres",
@@ -66,8 +66,8 @@ def main(args=None):
     # Gets the directory containing images.
     input_dir = args.input
     output_file = args.output
-    # width = args.xcorners
-    # height = args.ycorners
+    width = args.xcorners
+    height = args.ycorners
     # size = args.size
 
-    run_demo(input_dir, output_file)
+    run_demo(input_dir, output_file, width, height)

@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 
-def run_demo(input_dir, output_file):
+def run_demo(input_dir, output_file, width, height):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
@@ -18,8 +18,8 @@ def run_demo(input_dir, output_file):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-    objp = np.zeros((14 * 10, 3), np.float32)
-    objp[:, :2] = np.mgrid[0:14, 0:10].T.reshape(-1, 2)
+    objp = np.zeros((width * height, 3), np.float32)
+    objp[:, :2] = np.mgrid[0:width, 0:height].T.reshape(-1, 2)
 
     # Arrays to store object points and image points from all the images.
     obj_points = []  # 3d point in real world space
@@ -38,7 +38,7 @@ def run_demo(input_dir, output_file):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Find the chess board corners
-        ret, corners = cv2.findChessboardCorners(gray, (14, 10), None)
+        ret, corners = cv2.findChessboardCorners(gray, (width, height), None)
 
         # If found, add object points, image points (after refining them)
         if ret is True:
