@@ -3,3 +3,5 @@
 # confused with the software requirements, which are listed in
 # doc/requirements.rst
 numpy
+glob2
+opencv-contrib-python
