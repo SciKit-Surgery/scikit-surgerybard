@@ -23,7 +23,7 @@ def run_demo(input_file, output_file):
     # The except block will exit the program if the data cannot be converted
     # to 4 x 4 matrix
 
-    except:
+    except ImportError:
         print('Error is that: ')
         print('The specified data cannot be converted into [N, 4, 4]')
         print('Please make sure that number of elements are divisible by 16.')
@@ -121,5 +121,11 @@ def run_demo(input_file, output_file):
     print("pivotCalibration=(", x_values[3, 0], ","
           , x_values[4, 0], ",", x_values[5, 0],
           "),residual=", residual_error)
+
+    file = open(output_file, 'w')
+    file.write(str(output_matrix))
+    file.write('pivotCalibration=(', x_values[3, 0], ',' , x_values[4, 0],
+               ",", x_values[5, 0], '),residual=', residual_error)
+    file.close()
 
     # return residual_error, x_values[0, 0], x_values[1, 0], x_values[2, 0]
