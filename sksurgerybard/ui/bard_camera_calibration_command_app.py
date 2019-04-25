@@ -25,6 +25,9 @@ def run_demo(input_dir, output_file, width, height):
     obj_points = []  # 3d point in real world space
     img_points = []  # 2d points in image plane.
 
+    # *.png is appended to the supplied path to read all the png files in it.
+    input_dir = input_dir + '*.png'
+
     images = glob.glob(input_dir)
 
     if len(images) < 3:
