@@ -124,8 +124,8 @@ def run_demo(input_file, output_file):
 
     file = open(output_file, 'w')
     file.write(str(output_matrix))
-    file.write('pivotCalibration=(', x_values[3, 0], ',' , x_values[4, 0],
-               ",", x_values[5, 0], '),residual=', residual_error)
+    file.write('pivotCalibration=(', x_values[3, 0], ',', x_values[4, 0],
+               ',', x_values[5, 0], '),residual=', residual_error)
     file.close()
 
     # return residual_error, x_values[0, 0], x_values[1, 0], x_values[2, 0]
