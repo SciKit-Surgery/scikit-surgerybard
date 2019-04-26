@@ -41,4 +41,3 @@ def main(args=None):
     output_dir = args.output
 
     run_demo(output_dir)
-

@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee03d888-95a9-4871-918d-82ed4864fe70" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/bard_grab_video_images_command_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/bard_grab_video_images_command_line.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../sksurgerybard.py" beforeDir="false" afterPath="$PROJECT_DIR$/../sksurgerybard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../requirements-dev.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../requirements-dev.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/bard_grab_video_images_command_line.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/bard_grab_video_images_command_line.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tox.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../tox.ini" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +17,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ui/bard_grab_video_images_command_line.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="44" selection-start-line="44" selection-end-line="44" />
+            <state relative-caret-position="187">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
             </state>
           </provider>
         </entry>
@@ -154,8 +153,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ui/bard_grab_video_images_command_line.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="44" selection-start-line="44" selection-end-line="44" />
+        <state relative-caret-position="187">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
         </state>
       </provider>
     </entry>
