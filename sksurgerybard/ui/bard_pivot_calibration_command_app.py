@@ -3,8 +3,9 @@
 """Basic Augmented Reality Demo BARD Application"""
 
 import sys
-import numpy as np
 from glob import glob
+import numpy as np
+
 
 
 def run_demo(input_dir, output_file):
