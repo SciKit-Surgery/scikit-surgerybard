@@ -1,4 +1,6 @@
 # coding=utf-8
+# Code taken from https://stackoverflow.com/questions/3115529/
+# how-do-i-capture-images-in-opencv-and-saving-in-pgm-format
 
 """Hello world demo module"""
 
