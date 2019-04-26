@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee03d888-95a9-4871-918d-82ed4864fe70" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/ui/bard_grab_video_images_command_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/bard_grab_video_images_command_app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../tox.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../tox.ini" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
