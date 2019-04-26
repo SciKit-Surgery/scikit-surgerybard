@@ -4,14 +4,19 @@
 
 import sys
 import numpy as np
+from glob import glob
 
 
-def run_demo(input_file, output_file):
+def run_demo(input_dir, output_file):
     """
     Performs Pivot Calibration and returns Residual Error.
     """
 
-    matrices = np.loadtxt(input_file)
+    input_dir = input_dir + '/*'
+    file_names = glob(input_dir)
+    arrays = [np.loadtxt(f) for f in file_names]
+
+    matrices = np.concatenate(arrays)
 
     # To find the how many 4 x 4 matrices we will need.
     number_of_4x4_matrices = int(matrices.size / 16)
@@ -118,14 +123,17 @@ def run_demo(input_file, output_file):
     output_matrix[1, 3] = x_values[1, 0]
     output_matrix[2, 3] = x_values[2, 0]
 
-    print("pivotCalibration=(", x_values[3, 0], ","
-          , x_values[4, 0], ",", x_values[5, 0],
-          "),residual=", residual_error)
+    output = "pivotCalibration=(" + str(x_values[3, 0]) + " , " \
+             + str(x_values[4, 0]) + " , "\
+             + str(x_values[5, 0]) + " ),residual= "\
+             + str(residual_error)
 
+    print(output)
+
+    # To write the results to a file.
+    output_file = 'tests/data/output.txt'
     file = open(output_file, 'w')
-    file.write(str(output_matrix))
-    file.write('pivotCalibration=(', x_values[3, 0], ',', x_values[4, 0],
-               ',', x_values[5, 0], '),residual=', residual_error)
+    file.writelines(str(output_matrix))
+    file.write('\n\n')
+    file.write(output)
     file.close()
-
-    # return residual_error, x_values[0, 0], x_values[1, 0], x_values[2, 0]
