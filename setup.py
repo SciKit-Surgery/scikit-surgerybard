@@ -59,8 +59,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'sksurgerybard=sksurgerybard.ui.bard_camera_calibration_'
-            'command_line:main',
+            'sksurgerybardCameraCalibration=sksurgerybard.ui.bard_camera_'
+            'calibration_command_line:main',
         ],
     },
 )
