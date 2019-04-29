@@ -63,6 +63,8 @@ setup(
             'calibration_command_line:main',
             'sksurgerybardPivotCalibration=sksurgerybard.ui.bard_pivot_'
             'calibration_command_line:main',
+            'sksurgerybardGrabVideoImages=sksurgerybard.ui.bard_grab_'
+            'video_images_command_line:main',
         ],
     },
 )
