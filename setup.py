@@ -57,7 +57,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'sksurgerybard=sksurgerybard.__main__:main',
+            'sksurgerybardPivotCalibration=sksurgerybard.ui.bard_pivot_'
+            'calibration_command_line:main',
         ],
     },
 )
