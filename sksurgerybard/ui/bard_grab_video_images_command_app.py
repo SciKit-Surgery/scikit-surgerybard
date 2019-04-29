@@ -16,7 +16,7 @@ def run_demo(output_dir):
     cap = cv2.VideoCapture(0)
     i = 0  # to save all the clicked images
     while True:
-        ret, frame = cap.read()
+        _, frame = cap.read()
         cv2.imshow("imshow", frame)
         key = cv2.waitKey(30)
         if key == ord('q'):
