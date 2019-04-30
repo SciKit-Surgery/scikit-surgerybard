@@ -3,6 +3,7 @@
 """Hello world demo module"""
 from sksurgerybard.algorithms import addition, multiplication
 
+
 def run_demo(input_x, input_y, multiply, verbose):
     """ Run the application """
 
@@ -11,7 +12,6 @@ def run_demo(input_x, input_y, multiply, verbose):
 
     else:
         result = addition.add_two_numbers(input_x, input_y)
-
 
     if verbose:
         if multiply:
