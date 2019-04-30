@@ -61,6 +61,8 @@ setup(
         'console_scripts': [
             'sksurgerybardCameraCalibration=sksurgerybard.ui.bard_camera_'
             'calibration_command_line:main',
+            'sksurgerybardPivotCalibration=sksurgerybard.ui.bard_pivot_'
+            'calibration_command_line:main',
         ],
     },
 )
