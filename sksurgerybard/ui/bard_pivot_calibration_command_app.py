@@ -33,10 +33,12 @@ def run_demo(input_dir, output_file):
     except ImportError:
         six.print_('Error is that: ')
         six.print_('The specified data cannot be converted into [N, 4, 4]')
-        six.print_('Please make sure that number of elements are divisible by 16.')
-        six.print_('E.g. of valid data[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]')
-        six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11,'
-              '12,13,14,15,16, 17]')
+        six.print_('Please make sure that number of elements are '
+                   'divisible by 16.')
+        six.print_('Example of valid data[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '
+                   '11, 12, 13, 14, 15, 16]')
+        six.print_('Example of invalid data [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '
+                   '11, 12, 13, 14, 15, 16, 17]')
         six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11]')
         sys.exit(1)
 
