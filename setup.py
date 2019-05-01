@@ -59,11 +59,11 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'sksurgerybardCameraCalibration=sksurgerybard.ui.bard_camera_'
+            'bardCameraCalibration=sksurgerybard.ui.bard_camera_'
             'calibration_command_line:main',
-            'sksurgerybardPivotCalibration=sksurgerybard.ui.bard_pivot_'
+            'bardPivotCalibration=sksurgerybard.ui.bard_pivot_'
             'calibration_command_line:main',
-            'sksurgerybardGrabVideoImages=sksurgerybard.ui.bard_grab_'
+            'bardGrabVideoImages=sksurgerybard.ui.bard_grab_'
             'video_images_command_line:main',
         ],
     },
