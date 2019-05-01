@@ -14,8 +14,8 @@ setup(
     name='scikit-surgerybard',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description='scikit-surgerybard is a Python package based on SNAPPY for '
-                'Basic Augmented Reality Demo (BARD)',
+    description='scikit-surgerybard is a Basic Augmented Reality Demo (BARD)'
+                'based on scikit-surgery (SNAPPY)',
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/'
