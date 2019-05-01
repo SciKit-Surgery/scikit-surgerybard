@@ -129,13 +129,13 @@ def run_demo(input_dir, output_file):
 
     output = "pivotCalibration=(" + str(x_values[3, 0]) + " , " \
              + str(x_values[4, 0]) + " , "\
-             + str(x_values[5, 0]) + " ),residual= "\
+             + str(x_values[5, 0]) + " ),residual = "\
              + str(residual_error)
 
     six.print_(output)
 
     # To write the results to a file.
-    output_file = 'tests/data/output.txt'
+    # output_file = 'tests/data/output.txt'
     file = open(output_file, 'w')
     file.writelines(str(output_matrix))
     file.write('\n\n')
