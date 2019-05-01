@@ -14,20 +14,18 @@ def main(args=None):
 
     parser = argparse.ArgumentParser(
         description='Basic Augmented Reality Demo - '
-                    'Camera Calibration, 0.1')
+                    'Pivot Calibration, 0.1')
 
     # ADD POSITIONAL ARGUMENTS
 
     parser.add_argument("-i", "--input",
-                        help="Multiple valued argument, "
-                             "of files of images, containing "
-                             "chessboards."
+                        help="Directory containing text files each"
+                             "containing 4x4 matrices."
                         )
 
     parser.add_argument("-o",
                         "--output",
-                        help="Output file for intrinsic and "
-                             "distortion params"
+                        help="Output file for (4 x 4) matrix."
                         )
 
     # ADD OPTINAL ARGUMENTS

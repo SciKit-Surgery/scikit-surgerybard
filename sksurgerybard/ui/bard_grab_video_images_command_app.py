@@ -18,7 +18,7 @@ def run_demo(output_dir):
     while True:
         _, frame = cap.read()
         cv2.imshow("imshow", frame)
-        key = cv2.waitKey(30)
+        key = cv2.waitKey(10)
         if key == ord('q'):
             break
         if key == ord('c'):

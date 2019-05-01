@@ -12,7 +12,7 @@ def main(args=None):
 
     parser = argparse.ArgumentParser(
         description='Basic Augmented Reality Demo - '
-                    'Camera Calibration, 0.1')
+                    'Grabbing images from the video of computer camera, 0.1')
 
     # ADD POSITIONAL ARGUMENTS
 
