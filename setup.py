@@ -55,6 +55,8 @@ setup(
     install_requires=[
         'six>=1.10',
         'numpy>=1.11',
+        'glob2',
+        'opencv-contrib-python',
     ],
 
     entry_points={
