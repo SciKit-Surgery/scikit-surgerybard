@@ -5,4 +5,5 @@ pytest
 # doc/requirements.rst
 numpy
 glob2
+sksurgerycore
 opencv-contrib-python

@@ -57,6 +57,7 @@ setup(
         'numpy>=1.11',
         'glob2',
         'opencv-contrib-python',
+        'sksurgerycore',
     ],
 
     entry_points={
