@@ -6,7 +6,7 @@ import sys
 from glob import glob
 import numpy as np
 import six
-from sksurgerycore.algorithms import pivot_calibration
+from sksurgerycore.algorithms.pivot import pivot_calibration
 
 
 def run_demo(input_dir, output_file):
@@ -42,8 +42,8 @@ def run_demo(input_dir, output_file):
         six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11]')
         sys.exit(1)
 
-    residual_error, x_value_00, x_value_10, x_value_20 = \
-        pivot_calibration(matrices_4x4)
+    residual_error, x_value_00, x_value_10, x_value_20,\
+    p_value_00, p_value_01, p_value_02 = pivot_calibration(matrices_4x4)
 
     # if not isinstance(matrices_4x4, np.ndarray):
     #     raise TypeError("matrices4x4 is not a numpy array'")
@@ -137,9 +137,18 @@ def run_demo(input_dir, output_file):
     #
     # six.print_(output)
 
-    output = "pivotCalibration=(" + str(x_values[0, 0]) + " , " \
-             + str(x_values[1, 0]) + " , "\
-             + str(x_values[2, 0]) + " ),residual = "\
+    # Output
+    # MakeIdentity matrix
+
+    output_matrix = np.identity(4)
+
+    output_matrix[0, 3] = x_value_00
+    output_matrix[1, 3] = x_value_10
+    output_matrix[2, 3] = x_value_20
+
+    output = "pivotCalibration=(" + str(p_value_00) + " , " \
+             + str(p_value_01) + " , "\
+             + str(p_value_02) + " ),residual = "\
              + str(residual_error)
 
     six.print_(output)
