@@ -5,6 +5,7 @@
 import sys
 from glob import glob
 import numpy as np
+import six
 
 
 
@@ -30,13 +31,13 @@ def run_demo(input_dir, output_file):
     # to 4 x 4 matrix
 
     except ImportError:
-        print('Error is that: ')
-        print('The specified data cannot be converted into [N, 4, 4]')
-        print('Please make sure that number of elements are divisible by 16.')
-        print('E.g. of valid data[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]')
-        print('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11,'
+        six.print_('Error is that: ')
+        six.print_('The specified data cannot be converted into [N, 4, 4]')
+        six.print_('Please make sure that number of elements are divisible by 16.')
+        six.print_('E.g. of valid data[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]')
+        six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11,'
               '12,13,14,15,16, 17]')
-        print('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11]')
+        six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11]')
         sys.exit(1)
 
     if not isinstance(matrices_4x4, np.ndarray):
@@ -129,7 +130,7 @@ def run_demo(input_dir, output_file):
              + str(x_values[5, 0]) + " ),residual= "\
              + str(residual_error)
 
-    print(output)
+    six.print_(output)
 
     # To write the results to a file.
     output_file = 'tests/data/output.txt'

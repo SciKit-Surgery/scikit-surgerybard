@@ -5,6 +5,7 @@
 import glob
 import numpy as np
 import cv2
+import six
 
 
 def run_demo(input_dir, output_file, width, height):
@@ -66,10 +67,10 @@ def run_demo(input_dir, output_file, width, height):
 
     np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
-    print("RMS =", ret)
+    six.print_("RMS =", ret)
 
     # Output Calib Data
-    print(mtx)
-    print(dist)
+    six.print_(mtx)
+    six.print_(dist)
 
     cv2.destroyAllWindows()
