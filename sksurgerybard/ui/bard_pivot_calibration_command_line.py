@@ -19,13 +19,18 @@ def main(args=None):
     # ADD POSITIONAL ARGUMENTS
 
     parser.add_argument("-i", "--input",
+                        required=False,
+                        default='tests/data/PivotCalibration',
                         help="Directory containing text files each"
                              "containing 4x4 matrices."
                         )
 
     parser.add_argument("-o",
                         "--output",
-                        help="Output file for (4 x 4) matrix."
+                        required=False,
+                        default='calibrationDAta',
+                        help="File name that will store pivot calibration "
+                             "and residual."
                         )
 
     # ADD OPTINAL ARGUMENTS

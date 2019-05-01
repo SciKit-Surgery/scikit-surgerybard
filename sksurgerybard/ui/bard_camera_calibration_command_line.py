@@ -30,7 +30,7 @@ def main(args=None):
                         "--output",
                         required=False,
                         default='calibrationData',
-                        help="Output file for intrinsic and "
+                        help="Output text file for intrinsic and "
                              "distortion params"
                         )
 

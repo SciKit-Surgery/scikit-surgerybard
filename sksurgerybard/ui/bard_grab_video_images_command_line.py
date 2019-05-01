@@ -12,13 +12,15 @@ def main(args=None):
 
     parser = argparse.ArgumentParser(
         description='Basic Augmented Reality Demo - '
-                    'Grabbing images from the video of computer camera, 0.1')
+                    'Grabbing images from the video of camera, 0.1')
 
     # ADD POSITIONAL ARGUMENTS
 
     parser.add_argument("-o",
                         "--output",
-                        help="Save captured images to that directory"
+                        required=False,
+                        default='tests/data/images_grab_from_video',
+                        help="Save captured images to given directory"
                         )
 
     # ADD OPTINAL ARGUMENTS
