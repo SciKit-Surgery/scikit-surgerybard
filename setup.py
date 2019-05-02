@@ -14,8 +14,8 @@ setup(
     name='scikit-surgerybard',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description='scikit-surgerybard is a Python package based on SNAPPY for '
-                'Basic Augmented Reality Demo (BARD)',
+    description='scikit-surgerybard is a Basic Augmented Reality Demo (BARD)'
+                'based on scikit-surgery (SNAPPY)',
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/'
@@ -55,15 +55,17 @@ setup(
     install_requires=[
         'six>=1.10',
         'numpy>=1.11',
+        'glob2',
+        'opencv-contrib-python',
     ],
 
     entry_points={
         'console_scripts': [
-            'sksurgerybardCameraCalibration=sksurgerybard.ui.bard_camera_'
+            'bardCameraCalibration=sksurgerybard.ui.bard_camera_'
             'calibration_command_line:main',
-            'sksurgerybardPivotCalibration=sksurgerybard.ui.bard_pivot_'
+            'bardPivotCalibration=sksurgerybard.ui.bard_pivot_'
             'calibration_command_line:main',
-            'sksurgerybardGrabVideoImages=sksurgerybard.ui.bard_grab_'
+            'bardGrabVideoImages=sksurgerybard.ui.bard_grab_'
             'video_images_command_line:main',
         ],
     },

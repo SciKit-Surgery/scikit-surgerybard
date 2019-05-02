@@ -19,6 +19,8 @@ def main(args=None):
     # ADD POSITIONAL ARGUMENTS
 
     parser.add_argument("-i", "--input",
+                        required=False,
+                        default='tests/data/Calibration/',
                         help="Multiple valued argument, "
                              "of files of images, containing "
                              "chessboards."
@@ -26,17 +28,23 @@ def main(args=None):
 
     parser.add_argument("-o",
                         "--output",
-                        help="Output file for intrinsic and "
+                        required=False,
+                        default='calibrationData',
+                        help="Output text file for intrinsic and "
                              "distortion params"
                         )
 
     parser.add_argument("-x", "--xcorners",
+                        required=False,
+                        default=14,
                         help="Number of internal corners "
                              "along the width (x)",
                         type=int
                         )
 
     parser.add_argument("-y", "--ycorners",
+                        required=False,
+                        default=10,
                         help="Number of internal corners "
                              "along the height (y)",
                         type=int

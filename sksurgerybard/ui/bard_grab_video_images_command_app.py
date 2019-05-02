@@ -5,6 +5,7 @@
 """Hello world demo module"""
 
 import cv2
+import six
 
 
 def run_demo(output_dir):
@@ -18,14 +19,14 @@ def run_demo(output_dir):
     while True:
         _, frame = cap.read()
         cv2.imshow("imshow", frame)
-        key = cv2.waitKey(30)
+        key = cv2.waitKey(10)
         if key == ord('q'):
             break
         if key == ord('c'):
             i += 1
             cv2.imshow("imshow2", frame)
             cv2.imwrite(output_dir + '/' + str(i) + '.png', frame)
-            print("Wrote Image")
+            six.print_("Wrote Image")
 
     # release the capture
     cap.release()

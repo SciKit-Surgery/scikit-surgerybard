@@ -31,7 +31,7 @@ def Main():
 
     images = glob.glob('Calibration/*.png')
 
-    print(len(images))
+    # print(len(images))
 
     for fname in images:
         # print(fname)
@@ -43,8 +43,8 @@ def Main():
         # cv2.waitKey(500)
 
         # Find the chess board corners
-        ret, corners = cv2.findChessboardCorners(gray, (14,10),None)
-        print(ret)
+        ret, corners = cv2.findChessboardCorners(gray, (14, 10), None)
+        # print(ret)
 
         # If found, add object points, image points (after refining them)
         if ret is True:
@@ -52,9 +52,6 @@ def Main():
 
             corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
             imgpoints.append(corners2)
-
-
-
 
             # Line is commented because displaying
             # images are not our requirement here.
@@ -65,17 +62,6 @@ def Main():
             # cv2.waitKey(5000)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     Main()
+
