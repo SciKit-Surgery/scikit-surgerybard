@@ -79,6 +79,29 @@ You can pip install directly from the repository as follows:
     pip install git+https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard
 
 
+Usage
+-----
+
+Run the following commands to use the application directly from the repo on Mac OSx
+
+```
+virtualenv -p python3.6 env_py3_1
+source env_py3_1/bin/activate
+pip install scikit-surgerycore
+git clone https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard.git
+cd scikit-surgerybard
+
+# To run camera calibration with default parameters
+python bardCameraCalibration.py
+
+# To run pivot calibration with default parameters
+python bardPivotCalibration.py
+
+# To grab images from the web cam video with default parameters
+python bardGrabVideoImages.py
+
+```
+
 
 Contributing
 ^^^^^^^^^^^^
