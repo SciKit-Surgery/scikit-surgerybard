@@ -28,7 +28,7 @@ def main(args=None):
     parser.add_argument("-o",
                         "--output",
                         required=False,
-                        default='tests/data/calibrationData',
+                        default='tests/data/pivotCalibrationData.txt',
                         help="File name that will store pivot calibration "
                              "and residual."
                         )
