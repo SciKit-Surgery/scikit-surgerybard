@@ -7,5 +7,5 @@ import sksurgerybard.ui.bard_pivot_calibration_command_app as p
 def test_return_value():
 
     input_dir = 'tests/data/PivotCalibration'
-    output_file = 'output.txt'
+    output_file = 'tests/data/pivotCalibrationData.txt'
     p.run_demo(input_dir, output_file)

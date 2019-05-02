@@ -50,7 +50,7 @@ def run_demo(input_dir, output_file):
 
     # To write the results to a file.
     # output_file = 'tests/data/output.txt'
-    print(output_file)
+    # six.print_(output_file)
     file = open(output_file, 'w')
     file.writelines(str(x_values))
     file.write('\n')
