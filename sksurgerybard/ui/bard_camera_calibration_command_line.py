@@ -29,7 +29,7 @@ def main(args=None):
     parser.add_argument("-o",
                         "--output",
                         required=False,
-                        default='calibrationData',
+                        default='tests/data/calibrationData',
                         help="Output text file for intrinsic and "
                              "distortion params"
                         )

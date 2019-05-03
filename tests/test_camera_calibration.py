@@ -7,7 +7,7 @@ import pytest
 def test_return_value():
 
     input_dir = 'tests/data/Calibration/'
-    output_file = 'calibrationData'
+    output_file = 'tests/data/calibrationData'
     width = 14
     height = 10
 
@@ -29,7 +29,7 @@ def test_return_value():
 def test_fewer_images():
 
     input_dir = 'tests/data/Calibration_test_case/'
-    output_file = 'calibrationData'
+    output_file = 'tests/data/calibrationData'
     width = 14
     height = 10
     with pytest.raises(RuntimeError):

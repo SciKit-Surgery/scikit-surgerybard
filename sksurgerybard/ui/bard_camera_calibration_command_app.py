@@ -71,7 +71,6 @@ def run_demo(input_dir, output_file, width, height):
 
     # Output Calib Data
     six.print_(mtx)
-    six.print_('*****')
     six.print_(dist)
 
     cv2.destroyAllWindows()
