@@ -31,7 +31,7 @@ def run_demo(input_dir, output_file):
     # The except block will exit the program if the data cannot be converted
     # to 4 x 4 matrix
 
-    except ImportError:
+    except ValueError:
         six.print_('Error is that: ')
         six.print_('The specified data cannot be converted into [N, 4, 4]')
         six.print_('Please make sure that number of elements are '
@@ -41,7 +41,7 @@ def run_demo(input_dir, output_file):
         six.print_('Example of invalid data [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, '
                    '11, 12, 13, 14, 15, 16, 17]')
         six.print_('E.g. of invalid data [1,2,3,4,5,6,7,8,9,10,11]')
-        sys.exit(1)
+        sys.exit()
 
     x_values, residual_error = p.pivot_calibration(matrices_4x4)
 
@@ -56,3 +56,5 @@ def run_demo(input_dir, output_file):
     file.write('\n')
     file.writelines(str(residual_error))
     file.close()
+
+    return x_values, residual_error
