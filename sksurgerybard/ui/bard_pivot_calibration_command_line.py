@@ -49,8 +49,4 @@ def main(args=None):
 
     args = parser.parse_args(args)
 
-    # Gets the directory containing images.
-    input_file = args.input
-    output_file = args.output
-
-    run_demo(input_file, output_file)
+    run_demo(args.input, args.output)
