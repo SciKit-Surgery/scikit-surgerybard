@@ -1,6 +1,9 @@
 # coding=utf-8
 
 """ Demo app, to show OpenCV video and PySide2 widgets together."""
+
+# pylint: disable=import-error
+
 import sys
 import time
 import six
