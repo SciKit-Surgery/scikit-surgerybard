@@ -6,10 +6,9 @@
 
 import sys
 import time
-import six
 import cv2
 import sksurgerycore.configuration.configuration_manager as config
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 from PySide2.QtCore import Slot
 import sksurgeryutils.utils.image_utils as iu
 
@@ -21,16 +20,7 @@ class DemoGui(QtWidgets.QWidget):
     def __init__(self, camera, width, height, grab, milliseconds):
         super().__init__()
 
-        self.text = QtWidgets.QLabel("Hello World")
-        self.text.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.font = QtGui.QFont()
-        self.font = self.text.font()
-        self.font.setBold(True)
-        self.text.setFont(self.font)
-
         self.layout = QtWidgets.QHBoxLayout()
-        self.layout.addWidget(self.text)
 
         if not isinstance(camera, str) and camera < 0:
             self.cap = None
@@ -66,7 +56,7 @@ class DemoGui(QtWidgets.QWidget):
         self.clock = QtCore.QTimer()
         self.clock.setInterval(milliseconds)
         # pylint: disable=maybe-no-member
-        self.clock.timeout.connect(self.update_clock)
+        # self.clock.timeout.connect(self.update_clock)
 
         self.elapsed = QtCore.QElapsedTimer()
 
@@ -85,36 +75,12 @@ class DemoGui(QtWidgets.QWidget):
         else:
             self.setMinimumSize(400, 400)
 
-    def __del__(self):
-        six.print_("Exiting after " + str(self.elapsed.elapsed()) + " ms.")
-
-        if self.number_frames > 0:
-
-            six.print_("grab="
-                       + str(1000 * self.total_time_to_grab
-                             / self.number_frames)
-                       + " ms, decode="
-                       + str(1000 * self.total_time_to_decode
-                             / self.number_frames)
-                       + " ms, display="
-                       + str(1000 * self.total_time_to_display
-                             / self.number_frames)
-                       + " ms."
-                       )
-
-    @Slot()
-    def update_clock(self):
-        """Updates the millisecond value."""
-        self.font.setPointSize(self.height() // 6)
-        self.text.setFont(self.font)
-        self.text.setText(str(self.elapsed.elapsed()))
-
     @Slot()
     def update_image(self):
         """Updates the image."""
 
         # Force updating the GUI to get the latest possible time.
-        self.text.update()
+        # self.text.update()
 
         start_time = time.time()
 
