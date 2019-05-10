@@ -8,10 +8,10 @@ import sys
 import time
 import six
 import cv2
+import sksurgerycore.configuration.configuration_manager as config
 from PySide2 import QtCore, QtWidgets, QtGui
 from PySide2.QtCore import Slot
 import sksurgeryutils.utils.image_utils as iu
-import sksurgerycore.configuration.configuration_manager as config
 
 
 # pylint: disable=too-many-instance-attributes
