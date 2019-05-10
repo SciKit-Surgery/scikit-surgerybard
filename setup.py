@@ -68,6 +68,7 @@ setup(
             'calibration_command_line:main',
             'bardGrabVideoImages=sksurgerybard.ui.bard_grab_'
             'video_images_command_line:main',
+            'sksurgerybard=sksurgerybard.ui.sksurgerybard_command_line:main',
         ],
     },
 )
