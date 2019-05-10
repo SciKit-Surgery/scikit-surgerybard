@@ -11,6 +11,8 @@ import cv2
 from PySide2 import QtCore, QtWidgets, QtGui
 from PySide2.QtCore import Slot
 import sksurgeryutils.utils.image_utils as iu
+import sksurgerycore.configuration.configuration_manager as config
+
 
 # pylint: disable=too-many-instance-attributes
 
@@ -147,14 +149,24 @@ class DemoGui(QtWidgets.QWidget):
         self.number_frames += 1
 
 
-def run_demo(camera, width, height, grab, clock, fullscreen):
+def run_demo(config_file):
 
     """ Prints command line args, and launches main screen."""
-    six.print_("Camera:" + str(camera))
-    six.print_("  Width:" + str(width))
-    six.print_("  Height:" + str(height))
-    six.print_("Timer interval for grab:" + str(grab))
-    six.print_("Timer interval for clock:" + str(clock))
+
+    # Load all config from file.
+    configuration_manager = config.ConfigurationManager(config_file)
+
+    # Take a copy of all config - make it obvious that we are not using
+    # the ConfigurationManager, and that we are not ever writing back to file.
+
+    configuration_data = configuration_manager.get_copy()
+
+    camera = configuration_data['camera']['source']
+    width = configuration_data['camera']['width']
+    height = configuration_data['camera']['height']
+    grab = configuration_data['camera']['grab']
+    clock = configuration_data['camera']['clock']
+    fullscreen = configuration_data['camera']['fullscreen']
 
     app = QtWidgets.QApplication([])
 

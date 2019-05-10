@@ -1,0 +1,11 @@
+{
+    "camera": {
+        "source": 0,
+        "width": 1280,
+        "height": 720,
+        "grab": 33,
+        "clock": 15,
+        "fullscreen": false
+
+    }
+}
