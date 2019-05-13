@@ -7,18 +7,28 @@
 import sys
 import time
 import cv2
+import six
+import numpy as np
 import sksurgerycore.configuration.configuration_manager as config
 from PySide2 import QtCore, QtWidgets
 from PySide2.QtCore import Slot
 import sksurgeryutils.utils.image_utils as iu
+# import sksurgeryvtk.models.surface_model_loader as sml
 
 
 # pylint: disable=too-many-instance-attributes
 
 class DemoGui(QtWidgets.QWidget):
     """ Demo GUI, with 2 QLabel side by side."""
-    def __init__(self, camera, width, height, grab, milliseconds):
+    def __init__(self, camera, width, height, grab, milliseconds,
+                 calibration_path):
         super().__init__()
+
+        calibration_data = np.load(calibration_path)
+        six.print_(calibration_data['mtx'])
+        six.print_(calibration_data['dist'])
+        six.print_(calibration_data['rvecs'])
+        six.print_(calibration_data['tvecs'])
 
         self.layout = QtWidgets.QHBoxLayout()
 
@@ -115,6 +125,7 @@ class DemoGui(QtWidgets.QWidget):
         self.number_frames += 1
 
 
+
 def run_demo(config_file):
 
     """ Prints command line args, and launches main screen."""
@@ -133,10 +144,11 @@ def run_demo(config_file):
     grab = configuration_data['camera']['grab']
     clock = configuration_data['camera']['clock']
     fullscreen = configuration_data['camera']['fullscreen']
+    calibration_path = configuration_data['calibrationData']['path']
 
     app = QtWidgets.QApplication([])
 
-    widget = DemoGui(camera, width, height, grab, clock)
+    widget = DemoGui(camera, width, height, grab, clock, calibration_path)
     if fullscreen:
         widget.showFullScreen()
     widget.show()
