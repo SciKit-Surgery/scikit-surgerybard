@@ -10,5 +10,8 @@
     },
     "calibrationData": {
         "path": "tests/data/calibrationData.npz"
+    },
+    "models": {
+        "models_dir": "tests/data/models"
     }
 }
