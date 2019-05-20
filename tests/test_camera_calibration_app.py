@@ -7,11 +7,11 @@ import pytest
 def test_return_value():
 
     input_dir = 'tests/data/Calibration/'
-    output_file = 'tests/data/calibrationData'
+    output_dir = 'tests/data/'
     width = 14
     height = 10
 
-    ret, mtx, dist = p.run_demo(input_dir, output_file, width, height)
+    ret, mtx, dist = p.run_demo(input_dir, output_dir, width, height)
     assert 0.406 == round(ret, 3)
     assert 565.410 == round(mtx[0, 0], 3)
     assert 311.402 == round(mtx[0, 2], 3)
@@ -29,8 +29,8 @@ def test_return_value():
 def test_fewer_images():
 
     input_dir = 'tests/data/Calibration_test_case/'
-    output_file = 'tests/data/calibrationData'
+    output_dir = 'tests/data/'
     width = 14
     height = 10
     with pytest.raises(RuntimeError):
-        p.run_demo(input_dir, output_file, width, height)
+        p.run_demo(input_dir, output_dir, width, height)
