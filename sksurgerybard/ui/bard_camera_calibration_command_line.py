@@ -29,7 +29,7 @@ def main(args=None):
     parser.add_argument("-o",
                         "--output",
                         required=False,
-                        default='tests/data/calibrationData',
+                        default='tests/data/',
                         help="Output text file for intrinsic and "
                              "distortion params"
                         )
@@ -73,9 +73,9 @@ def main(args=None):
 
     # Gets the directory containing images.
     input_dir = args.input
-    output_file = args.output
+    output_dir = args.output
     width = args.xcorners
     height = args.ycorners
     # size = args.size
 
-    run_demo(input_dir, output_file, width, height)
+    run_demo(input_dir, output_dir, width, height)

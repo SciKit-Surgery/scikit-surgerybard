@@ -8,7 +8,7 @@ import cv2
 import six
 
 
-def run_demo(input_dir, output_file, width, height):
+def run_demo(input_dir, output_dir, width, height):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
@@ -66,7 +66,14 @@ def run_demo(input_dir, output_file, width, height):
                                                        gray.shape[::-1],
                                                        None, None)
 
+    # --------- Save result
+    output_file = output_dir + 'calibrationData'
     np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+
+    filename = output_dir + "/cameraMatrix.txt"
+    np.savetxt(filename, mtx, delimiter=',')
+    filename = output_dir + "/cameraDistortion.txt"
+    np.savetxt(filename, dist, delimiter=',')
 
     six.print_("RMS =", ret)
 
