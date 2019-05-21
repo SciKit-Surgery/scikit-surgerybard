@@ -5,16 +5,29 @@
 # pylint: disable=import-error
 
 import sys
-from PySide2.QtWidgets import QApplication
 import six
 import numpy as np
+from PySide2.QtWidgets import QApplication
 import sksurgerycore.configuration.configuration_manager as config
-from sksurgeryutils.common_overlay_apps import OverlayOnVideoFeed
+from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+
+
+class OverlayApp(OverlayBaseApp):
+    """Inherits from OverlayBaseApp, and adds a minimal
+    implementation of update. """
+    def update(self):
+        """Update the background renderer with a new frame,
+        and render"""
+        _, image = self.video_source.read()
+        self.vtk_overlay_window.set_video_image(image)
+        self.vtk_overlay_window.Render()
 
 
 def run_demo(config_file):
 
     """ Prints command line args, and launches main screen."""
+
+    app = QApplication([])
 
     # Load all config from file.
     configuration_manager = config.ConfigurationManager(config_file)
@@ -29,16 +42,31 @@ def run_demo(config_file):
     models_path = configuration_data['models']['models_dir']
 
     calibration_data = np.load(calibration_path)
+
     six.print_(calibration_data['mtx'])
     six.print_(calibration_data['dist'])
 
-    app = QApplication([])
+    viewer = OverlayApp(video_source)
 
-    viewer = OverlayOnVideoFeed(video_source)
-
-    viewer.add_vtk_models_from_dir(models_path)
+    # Set a model directory containing the models you wish
+    # to render and optionally a colours.txt defining the
+    # colours to render in.
+    model_dir = models_path
+    viewer.add_vtk_models_from_dir(model_dir)
 
     # start the viewer
     viewer.start()
 
-    return sys.exit(app.exec_())
+    # start the application
+    sys.exit(app.exec_())
+
+    # app = QApplication([])
+
+    # viewer = OverlayOnVideoFeed(video_source)
+    #
+    # viewer.add_vtk_models_from_dir(models_path)
+    #
+    # # start the viewer
+    # viewer.start()
+    #
+    # return sys.exit(app.exec_())
