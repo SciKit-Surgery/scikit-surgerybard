@@ -6,7 +6,7 @@ import sys
 from glob import glob
 import numpy as np
 import six
-import sksurgerycore.algorithms.pivot as p
+from sksurgerycore.algorithms import pivot as p
 
 
 def run_demo(input_dir, output_file):
