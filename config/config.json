@@ -13,5 +13,8 @@
     },
     "models": {
         "models_dir": "tests/data/models"
+    },
+    "referenceData": {
+        "ref_file": "tests/data/referencePoints/ref.txt"
     }
 }

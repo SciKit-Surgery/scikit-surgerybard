@@ -11,14 +11,14 @@ def run_demo(input_file):
     Performs Pivot Calibration and returns Residual Error.
     """
 
-    arrays = np.loadtxt(input_file)
+    ref_arrays = np.loadtxt(input_file)
 
     # matrices = np.concatenate(arrays)
     #
     # # To find the how many 4 x 4 matrices we will need.
     # number_of_4x4_matrices = int(matrices.size / 16)
 
-    six.print_(arrays)
+    six.print_(ref_arrays)
 
     # six.print_(residual_error)
     #
@@ -31,4 +31,4 @@ def run_demo(input_file):
     # file.writelines(str(residual_error))
     # file.close()
 
-    # return x_values, residual_error
+    return ref_arrays

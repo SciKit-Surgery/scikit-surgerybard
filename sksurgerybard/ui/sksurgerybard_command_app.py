@@ -5,10 +5,11 @@
 # pylint: disable=import-error
 
 import sys
+import json
 import numpy
 import six
 import cv2.aruco as aruco
-import sksurgerycore.configuration.configuration_manager as config
+# import sksurgerycore.configuration.configuration_manager as config
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 
@@ -107,22 +108,27 @@ def run_demo(config_file):
 
     app = QApplication([])
 
-    # Load all config from file.
-    configuration_manager = config.ConfigurationManager(config_file)
+    # # Load all config from file.
+    # configuration_manager = config.ConfigurationManager(config_file)
+    #
+    # # Take a copy of all config - make it obvious that we are not using
+    # # the ConfigurationManager, and that we are not ever writing back to file.
+    # configuration_data = configuration_manager.get_copy()
 
-    # Take a copy of all config - make it obvious that we are not using
-    # the ConfigurationManager, and that we are not ever writing back to file.
-
-    configuration_data = configuration_manager.get_copy()
+    with open(config_file) as file:
+        configuration_data = json.load(file)
 
     video_source = configuration_data['camera']['source']
     calibration_path = configuration_data['calibrationData']['path']
     models_path = configuration_data['models']['models_dir']
+    ref_points = configuration_data['referenceData']['ref_file']
 
     calibration_data = numpy.load(calibration_path)
-
     six.print_(calibration_data['mtx'])
     six.print_(calibration_data['dist'])
+
+    reference_data = numpy.loadtxt(ref_points)
+    six.print_(reference_data)
 
     viewer = OverlayApp(video_source)
 
