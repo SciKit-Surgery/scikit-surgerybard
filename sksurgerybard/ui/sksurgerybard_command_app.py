@@ -122,6 +122,7 @@ def run_demo(config_file):
     calibration_path = configuration_data['calibrationData']['path']
     models_path = configuration_data['models']['models_dir']
     ref_points = configuration_data['referenceData']['ref_file']
+    world_points = configuration_data['worldData']['world_file']
 
     calibration_data = numpy.load(calibration_path)
     six.print_(calibration_data['mtx'])
@@ -129,6 +130,9 @@ def run_demo(config_file):
 
     reference_data = numpy.loadtxt(ref_points)
     six.print_(reference_data)
+
+    world_data = numpy.loadtxt(world_points)
+    six.print_(world_data)
 
     viewer = OverlayApp(video_source)
 

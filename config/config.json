@@ -16,5 +16,8 @@
     },
     "referenceData": {
         "ref_file": "tests/data/referencePoints/ref.txt"
+    },
+        "worldData": {
+        "world_file": "tests/data/worldPoints/world.txt"
     }
 }
