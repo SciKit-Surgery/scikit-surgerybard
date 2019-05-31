@@ -123,16 +123,28 @@ def run_demo(config_file):
     models_path = configuration_data['models']['models_dir']
     ref_points = configuration_data['referenceData']['ref_file']
     world_points = configuration_data['worldData']['world_file']
+    pointers_data = configuration_data['pointerData']['pointer_file']
 
     calibration_data = numpy.load(calibration_path)
+    six.print_('\n******* 1. Calibration Data *******')
     six.print_(calibration_data['mtx'])
     six.print_(calibration_data['dist'])
+    six.print_('******* END *******')
 
     reference_data = numpy.loadtxt(ref_points)
+    six.print_('\n******* 2. Reference Data *******')
     six.print_(reference_data)
+    six.print_('******* END *******')
 
+    six.print_('\n******* 3. World Points Data *******')
     world_data = numpy.loadtxt(world_points)
     six.print_(world_data)
+    six.print_('******* END *******')
+
+    six.print_('\n******* 4. Pointers Data *******')
+    pointers = numpy.loadtxt(pointers_data)
+    six.print_(pointers)
+    six.print_('******* END *******')
 
     viewer = OverlayApp(video_source)
 

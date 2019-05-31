@@ -17,7 +17,10 @@
     "referenceData": {
         "ref_file": "tests/data/referencePoints/ref.txt"
     },
-        "worldData": {
+    "worldData": {
         "world_file": "tests/data/worldPoints/world.txt"
+    },
+    "pointerData": {
+        "pointer_file": "tests/data/pointers/pointers.txt"
     }
 }
