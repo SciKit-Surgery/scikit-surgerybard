@@ -9,7 +9,7 @@ import json
 import numpy
 import six
 import cv2.aruco as aruco
-import cv2
+# import cv2
 # import sksurgerycore.configuration.configuration_manager as config
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
@@ -44,6 +44,9 @@ class OverlayApp(OverlayBaseApp):
         else:
             # super doesn't work the same in py2.7
             OverlayBaseApp.__init__(self, image_source)
+
+        self.points3d = []
+        self.points2d = []
 
     def update(self):
         """Update the background render with a new frame and
@@ -101,38 +104,36 @@ class OverlayApp(OverlayBaseApp):
             # uncomment the next line for some interesting results.
             # actor.SetOrientation( rotation)
 
-    def registration(self, tags, model, mtx33d, dist14d, intrinsics):
+    # def registration(self, tags, model, mtx33d, dist14d, intrinsics):
+    def registration(self, tags, model):
         """Internal method for doing registration"""
 
         # models = referenceData
         # tags = calibration_data
 
-        points3D = []
-        points2D = []
+        for i in enumerate(tags):
+            for j in enumerate(model):
+                if tags[i][0] == model[j][0]:
 
-        for item in range(len(tags)):
-            for subitem in range(len(model)):
-                if tags[item][0] == model[subitem][0]:
-
-                    points3D.append(model[subitem][0])
-                    points3D.append(model[subitem][1])
-                    points3D.append(model[subitem][2])
-                    points3D.append(model[subitem][3])
-                    points3D.append(model[subitem][4])
-                    points2D.append(tags[item][0])
-                    points2D.append(tags[item][1])
-                    points2D.append(tags[item][2])
-                    points2D.append(tags[item][3])
-                    points2D.append(tags[item][4])
+                    self.points3d.append(model[j][0])
+                    self.points3d.append(model[j][1])
+                    self.points3d.append(model[j][2])
+                    self.points3d.append(model[j][3])
+                    self.points3d.append(model[j][4])
+                    self.points2d.append(tags[i][0])
+                    self.points2d.append(tags[i][1])
+                    self.points2d.append(tags[i][2])
+                    self.points2d.append(tags[i][3])
+                    self.points2d.append(tags[i][4])
 
         # NOT SURE HOW TO MAKE 4x4 matrix.
         six.print_('\n******* 6. Registration data *******')
-        six.print_(points3D)
-        six.print_(points2D)
+        six.print_(self.points3d)
+        six.print_(self.points2d)
         six.print_('******* END *******')
 
-        points3D = numpy.asarray(points3D)
-        points2D = numpy.asarray(points2D)
+        self.points3d = numpy.asarray(self.points3d)
+        self.points2d = numpy.asarray(self.points2d)
 
         # rvec = []
         # tvec = []
@@ -228,7 +229,8 @@ def run_demo(config_file):
     viewer.start()
 
     # To do the registration process.
-    viewer.registration(pointers, reference_data, mtx33d, dist14d, intrinsics)
+    # viewer.registration(pointers, reference_data, mtx33d, dist14d, intrinsics)
+    viewer.registration(pointers, reference_data)
 
     # start the application
     sys.exit(app.exec_())
