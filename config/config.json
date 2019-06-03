@@ -22,5 +22,8 @@
     },
     "pointerData": {
         "pointer_file": "tests/data/pointers/pointers.txt"
+    },
+    "intrinsicsData": {
+        "intrinsics_file": "tests/data/intrinsics/intrinsics.txt"
     }
 }

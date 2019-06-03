@@ -9,6 +9,7 @@ import json
 import numpy
 import six
 import cv2.aruco as aruco
+import cv2
 # import sksurgerycore.configuration.configuration_manager as config
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
@@ -76,7 +77,6 @@ class OverlayApp(OverlayBaseApp):
 
             self._move_model(rvecs[0][0], tvecs[0][0])
 
-
     def _move_model(self, rotation, translation):
         """Internal method to move the rendered models in
         some interesting way"""
@@ -101,6 +101,59 @@ class OverlayApp(OverlayBaseApp):
             # uncomment the next line for some interesting results.
             # actor.SetOrientation( rotation)
 
+    def registration(self, tags, model, mtx33d, dist14d, intrinsics):
+        """Internal method for doing registration"""
+
+        # models = referenceData
+        # tags = calibration_data
+
+        points3D = []
+        points2D = []
+
+        for item in range(len(tags)):
+            for subitem in range(len(model)):
+                if tags[item][0] == model[subitem][0]:
+
+                    points3D.append(model[subitem][0])
+                    points3D.append(model[subitem][1])
+                    points3D.append(model[subitem][2])
+                    points3D.append(model[subitem][3])
+                    points3D.append(model[subitem][4])
+                    points2D.append(tags[item][0])
+                    points2D.append(tags[item][1])
+                    points2D.append(tags[item][2])
+                    points2D.append(tags[item][3])
+                    points2D.append(tags[item][4])
+
+        # NOT SURE HOW TO MAKE 4x4 matrix.
+        six.print_('\n******* 6. Registration data *******')
+        six.print_(points3D)
+        six.print_(points2D)
+        six.print_('******* END *******')
+
+        points3D = numpy.asarray(points3D)
+        points2D = numpy.asarray(points2D)
+
+        # rvec = []
+        # tvec = []
+        #
+        # dist14d = numpy.asarray(dist14d)
+        #
+        # rvec, tvec = cv2.solvePnP(points3D, points2D, intrinsics, dist14d)
+        #
+        # rotation_matrix = []
+        #
+        # cv2.Rodrigues(rvec, rotation_matrix)
+        #
+        # six.print_(rotation_matrix)
+
+
+
+
+
+
+
+
 
 def run_demo(config_file):
 
@@ -124,27 +177,44 @@ def run_demo(config_file):
     ref_points = configuration_data['referenceData']['ref_file']
     world_points = configuration_data['worldData']['world_file']
     pointers_data = configuration_data['pointerData']['pointer_file']
+    intrinsics_data = configuration_data['intrinsicsData']['intrinsics_file']
+
 
     calibration_data = numpy.load(calibration_path)
     six.print_('\n******* 1. Calibration Data *******')
-    six.print_(calibration_data['mtx'])
-    six.print_(calibration_data['dist'])
+    # This is mentioned as intrinsics in BARD.
+    mtx33d = calibration_data['mtx']
+    six.print_(mtx33d)
+
+    # This is mentioned as distortion in BARD.
+    dist14d = calibration_data['dist']
+    six.print_(dist14d)
     six.print_('******* END *******')
 
+    # This is mentioned as modeltowrold (modelAlignArg) in BARD.
+    six.print_('\n******* 3. World Points Data *******')
+    world44d = numpy.loadtxt(world_points)
+    six.print_(world44d)
+    six.print_('******* END *******')
+
+    # This is mentioned as world coordinates (worldRefArg) in BARD.
     reference_data = numpy.loadtxt(ref_points)
     six.print_('\n******* 2. Reference Data *******')
     six.print_(reference_data)
     six.print_('******* END *******')
 
-    six.print_('\n******* 3. World Points Data *******')
-    world_data = numpy.loadtxt(world_points)
-    six.print_(world_data)
-    six.print_('******* END *******')
-
+    # These are probably pivot calibration in BARD
     six.print_('\n******* 4. Pointers Data *******')
     pointers = numpy.loadtxt(pointers_data)
     six.print_(pointers)
     six.print_('******* END *******')
+
+    # This is intrinsic data from BARD
+    six.print_('\n******* 4. Intrinsics Data *******')
+    intrinsics = numpy.loadtxt(intrinsics_data)
+    six.print_(intrinsics)
+    six.print_('******* END *******')
+
 
     viewer = OverlayApp(video_source)
 
@@ -156,6 +226,9 @@ def run_demo(config_file):
 
     # start the viewer
     viewer.start()
+
+    # To do the registration process.
+    viewer.registration(pointers, reference_data, mtx33d, dist14d, intrinsics)
 
     # start the application
     sys.exit(app.exec_())
