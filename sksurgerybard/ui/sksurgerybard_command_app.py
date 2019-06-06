@@ -25,7 +25,8 @@ class OverlayApp(OverlayBaseApp):
 
         # the aruco tag dictionary to use. DICT_4X4_50 will work with the tag in
         # ../tags/aruco_4by4_0.pdf
-        self.dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
+        self.dictionary = aruco.getPredefinedDictionary(aruco.
+                                                        DICT_ARUCO_ORIGINAL)
 
         # The size of the aruco tag in mm
         self.marker_size = 50
@@ -34,12 +35,14 @@ class OverlayApp(OverlayBaseApp):
         self.ref_data1 = numpy.array(ref_data)
 
         # Camera Calibration
+        _ = mtx33d
         # self.camera_projection_mat = mtx33d
         self.camera_projection_mat = numpy.array([[560.0, 0.0, 320.0],
                                                   [0.0, 560.0, 240.0],
                                                   [0.0, 0.0, 1.0]])
 
         # Distortion
+        _ = dist14d
         # self.camera_distortion = dist14d
         self.camera_distortion = numpy.zeros((1, 4), numpy.float32)
 
@@ -138,7 +141,7 @@ class OverlayApp(OverlayBaseApp):
         points2d = []
         count = 0
 
-        for i, value in enumerate(ref_file):
+        for _, value in enumerate(ref_file):
             for j, value1 in enumerate(ids):
                 if value[0] == value1[0]:
                     count += 1
@@ -158,44 +161,44 @@ class OverlayApp(OverlayBaseApp):
 
         if count == 0:
             return False, None
-        else:
-            points3d = numpy.array(points3d).reshape((count*4), 3)
-            points2d = numpy.array(points2d).reshape((count*4), 2)
 
-            # print('points3d', points3d)
-            # print('points2d', points2d)
+        points3d = numpy.array(points3d).reshape((count*4), 3)
+        points2d = numpy.array(points2d).reshape((count*4), 2)
 
-            # print('after shape', points3d)
+        # print('points3d', points3d)
+        # print('points2d', points2d)
 
-            # print('points3d', points3d)
+        # print('after shape', points3d)
 
-            # # NOT SURE HOW TO MAKE 4x4 matrix.
-            # six.print_('\n******* 6. 3D points *******')
-            # points3d = points3d.reshape(4, 3)
-            # six.print_(points3d)
-            # six.print_('\n******* 6. 2D points *******')
-            # six.print_(tags[0][0])
-            # six.print_('******* END *******')
+        # print('points3d', points3d)
 
-            #
-            # print(points2d[0])
-            # print(points3d)
+        # # NOT SURE HOW TO MAKE 4x4 matrix.
+        # six.print_('\n******* 6. 3D points *******')
+        # points3d = points3d.reshape(4, 3)
+        # six.print_(points3d)
+        # six.print_('\n******* 6. 2D points *******')
+        # six.print_(tags[0][0])
+        # six.print_('******* END *******')
 
-            # print('points3d', points3d)
-            # print('points2d', points2d)
+        #
+        # print(points2d[0])
+        # print(points3d)
 
-            _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
-                                      self.camera_projection_mat,
-                                      self.camera_distortion)
+        # print('points3d', points3d)
+        # print('points2d', points2d)
 
-            # six.print_('\n******* Rotation *******')
-            # six.print_('******* END *******')
-            # six.print_(rvec)
-            # six.print_('\n******* Translation *******')
-            # six.print_(tvec)
-            # six.print_('******* END *******')
+        _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
+                                       self.camera_projection_mat,
+                                       self.camera_distortion)
 
-            return True, (rvec1, tvec1)
+        # six.print_('\n******* Rotation *******')
+        # six.print_('******* END *******')
+        # six.print_(rvec)
+        # six.print_('\n******* Translation *******')
+        # six.print_(tvec)
+        # six.print_('******* END *******')
+
+        return True, (rvec1, tvec1)
 
 
 
@@ -288,4 +291,3 @@ def run_demo(config_file):
 
     # start the application
     sys.exit(app.exec_())
-
