@@ -9,7 +9,7 @@ import json
 import numpy
 import six
 import cv2.aruco as aruco
-# import cv2
+import cv2
 # import sksurgerycore.configuration.configuration_manager as config
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
@@ -19,23 +19,28 @@ class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source):
+    def __init__(self, image_source, mtx33d, dist14d, ref_data):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
         # the aruco tag dictionary to use. DICT_4X4_50 will work with the tag in
         # ../tags/aruco_4by4_0.pdf
-        self.dictionary = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+        self.dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
 
         # The size of the aruco tag in mm
         self.marker_size = 50
 
-        # we'll use opencv to estimate the pose of the visible aruco tags.
-        # for that we need a calibrated camera. For now let's just use a
-        # a hard coded estimate. Maybe you could improve on this.
+        # ref.txt data
+        self.ref_data1 = numpy.array(ref_data)
+
+        # Camera Calibration
+        # self.camera_projection_mat = mtx33d
         self.camera_projection_mat = numpy.array([[560.0, 0.0, 320.0],
                                                   [0.0, 560.0, 240.0],
                                                   [0.0, 0.0, 1.0]])
+
+        # Distortion
+        # self.camera_distortion = dist14d
         self.camera_distortion = numpy.zeros((1, 4), numpy.float32)
 
         # and call the constructor for the base class
@@ -45,15 +50,20 @@ class OverlayApp(OverlayBaseApp):
             # super doesn't work the same in py2.7
             OverlayBaseApp.__init__(self, image_source)
 
-        self.points3d = []
-        self.points2d = []
+        self.rvec = []
+        self.tvec = []
 
     def update(self):
         """Update the background render with a new frame and
         scan for aruco tags"""
 
         _, image = self.video_source.read()
-        self._aruco_detect_and_follow(image)
+
+        #
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        #
+        self._aruco_detect_and_follow(gray)
 
         # Without the next line the model does not show as the clipping range
         # does not change to accommodate model motion. Uncomment it to
@@ -68,17 +78,31 @@ class OverlayApp(OverlayBaseApp):
         """
 
         # detect any markers
-        marker_corners, _, _ = aruco.detectMarkers(image, self.dictionary)
+        marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
+
+        # six.print_(marker_corners)
+        # six.print_(ids)
+
+        # six.print(self.ref_data1)
 
         if marker_corners:
-            # if any markers found, try and determine their pose
-            rvecs, tvecs, _ = \
-                    aruco.estimatePoseSingleMarkers(marker_corners,
-                                                    self.marker_size,
-                                                    self.camera_projection_mat,
-                                                    self.camera_distortion)
+            success, tup = self.registration(ids, marker_corners,
+                                             self.ref_data1)
+            if success:
+                self.rvec, self.tvec = tup
+                # self._move_model(self.rvec, self.tvec)
 
-            self._move_model(rvecs[0][0], tvecs[0][0])
+        six.print_('\n******* Rotation *******')
+        six.print_('******* END *******')
+        six.print_(self.rvec)
+        six.print_('\n******* Translation *******')
+        six.print_(self.tvec)
+        six.print_('******* END *******')
+
+            # rotationP, translationP = self.registration(ids, marker_corners,
+            #                                           self.ref_data2)
+
+            # self._move_model(rvec, tvec)
 
     def _move_model(self, rotation, translation):
         """Internal method to move the rendered models in
@@ -104,56 +128,83 @@ class OverlayApp(OverlayBaseApp):
             # uncomment the next line for some interesting results.
             # actor.SetOrientation( rotation)
 
-    # def registration(self, tags, model, mtx33d, dist14d, intrinsics):
-    def registration(self, tags, model):
+    def registration(self, ids, tags, ref_file):
         """Internal method for doing registration"""
+        # print('ids =', ids)
+        # print('tags =', tags)
+        # print('ref file =', ref_file)
 
-        # models = referenceData
-        # tags = calibration_data
+        points3d = []
+        points2d = []
+        count = 0
 
-        for i in enumerate(tags):
-            for j in enumerate(model):
-                if tags[i][0] == model[j][0]:
+        for i, value in enumerate(ref_file):
+            for j, value1 in enumerate(ids):
+                if value[0] == value1[0]:
+                    count += 1
+                    points3d.extend(value[4:])
+                    # print('points3d', points3d)
+                    # numpy.points3d = points3d.append(value)
+                    points2d.extend(tags[j])
+                    # print('points2d', points2d)
+                    # print(j)
+                    # print(tags[j])
+                    # print('points3d list = ', points3d)
 
-                    self.points3d.append(model[j][0])
-                    self.points3d.append(model[j][1])
-                    self.points3d.append(model[j][2])
-                    self.points3d.append(model[j][3])
-                    self.points3d.append(model[j][4])
-                    self.points2d.append(tags[i][0])
-                    self.points2d.append(tags[i][1])
-                    self.points2d.append(tags[i][2])
-                    self.points2d.append(tags[i][3])
-                    self.points2d.append(tags[i][4])
+        # print('*****************')
+        # print(count)
+        # print('points3d', points3d)
+        # print('points2d', points2d)
 
-        # NOT SURE HOW TO MAKE 4x4 matrix.
-        six.print_('\n******* 6. Registration data *******')
-        six.print_(self.points3d)
-        six.print_(self.points2d)
-        six.print_('******* END *******')
+        if count == 0:
+            return False, None
+        else:
+            points3d = numpy.array(points3d).reshape((count*4), 3)
+            points2d = numpy.array(points2d).reshape((count*4), 2)
 
-        self.points3d = numpy.asarray(self.points3d)
-        self.points2d = numpy.asarray(self.points2d)
+            # print('points3d', points3d)
+            # print('points2d', points2d)
 
-        # rvec = []
-        # tvec = []
-        #
-        # dist14d = numpy.asarray(dist14d)
-        #
-        # rvec, tvec = cv2.solvePnP(points3D, points2D, intrinsics, dist14d)
+            # print('after shape', points3d)
+
+            # print('points3d', points3d)
+
+            # # NOT SURE HOW TO MAKE 4x4 matrix.
+            # six.print_('\n******* 6. 3D points *******')
+            # points3d = points3d.reshape(4, 3)
+            # six.print_(points3d)
+            # six.print_('\n******* 6. 2D points *******')
+            # six.print_(tags[0][0])
+            # six.print_('******* END *******')
+
+            #
+            # print(points2d[0])
+            # print(points3d)
+
+            # print('points3d', points3d)
+            # print('points2d', points2d)
+
+            _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
+                                      self.camera_projection_mat,
+                                      self.camera_distortion)
+
+            # six.print_('\n******* Rotation *******')
+            # six.print_('******* END *******')
+            # six.print_(rvec)
+            # six.print_('\n******* Translation *******')
+            # six.print_(tvec)
+            # six.print_('******* END *******')
+
+            return True, (rvec1, tvec1)
+
+
+
         #
         # rotation_matrix = []
         #
         # cv2.Rodrigues(rvec, rotation_matrix)
         #
         # six.print_(rotation_matrix)
-
-
-
-
-
-
-
 
 
 def run_demo(config_file):
@@ -180,14 +231,13 @@ def run_demo(config_file):
     pointers_data = configuration_data['pointerData']['pointer_file']
     intrinsics_data = configuration_data['intrinsicsData']['intrinsics_file']
 
-
     calibration_data = numpy.load(calibration_path)
     six.print_('\n******* 1. Calibration Data *******')
-    # This is mentioned as intrinsics in BARD.
+    # # This is mentioned as intrinsics in BARD.
     mtx33d = calibration_data['mtx']
     six.print_(mtx33d)
 
-    # This is mentioned as distortion in BARD.
+    # # This is mentioned as distortion in BARD.
     dist14d = calibration_data['dist']
     six.print_(dist14d)
     six.print_('******* END *******')
@@ -216,8 +266,7 @@ def run_demo(config_file):
     six.print_(intrinsics)
     six.print_('******* END *******')
 
-
-    viewer = OverlayApp(video_source)
+    viewer = OverlayApp(video_source, mtx33d, dist14d, reference_data)
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
@@ -230,18 +279,13 @@ def run_demo(config_file):
 
     # To do the registration process.
     # viewer.registration(pointers, reference_data, mtx33d, dist14d, intrinsics)
-    viewer.registration(pointers, reference_data)
+
+    # list of id's
+    # ids_pointers = pointers[:, :1]
+    # viewer.registration(ids_pointers)
+
+    # viewer.registration(pointers, reference_data)
 
     # start the application
     sys.exit(app.exec_())
 
-    # app = QApplication([])
-
-    # viewer = OverlayOnVideoFeed(video_source)
-    #
-    # viewer.add_vtk_models_from_dir(models_path)
-    #
-    # # start the viewer
-    # viewer.start()
-    #
-    # return sys.exit(app.exec_())
