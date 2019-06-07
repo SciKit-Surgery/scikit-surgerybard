@@ -6,11 +6,10 @@
 
 import sys
 import json
-import numpy
+import numpy as np
 import six
-import cv2.aruco as aruco
 import cv2
-# import sksurgerycore.configuration.configuration_manager as config
+import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 
@@ -32,19 +31,19 @@ class OverlayApp(OverlayBaseApp):
         self.marker_size = 50
 
         # ref.txt data
-        self.ref_data1 = numpy.array(ref_data)
+        self.ref_data1 = np.array(ref_data)
 
         # Camera Calibration
         _ = mtx33d
         # self.camera_projection_mat = mtx33d
-        self.camera_projection_mat = numpy.array([[560.0, 0.0, 320.0],
-                                                  [0.0, 560.0, 240.0],
-                                                  [0.0, 0.0, 1.0]])
+        self.camera_projection_mat = np.array([[560.0, 0.0, 320.0],
+                                               [0.0, 560.0, 240.0],
+                                               [0.0, 0.0, 1.0]])
 
         # Distortion
         _ = dist14d
         # self.camera_distortion = dist14d
-        self.camera_distortion = numpy.zeros((1, 4), numpy.float32)
+        self.camera_distortion = np.zeros((1, 4), np.float32)
 
         # and call the constructor for the base class
         if sys.version_info > (3, 0):
@@ -83,33 +82,23 @@ class OverlayApp(OverlayBaseApp):
         # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
-        # six.print_(marker_corners)
-        # six.print_(ids)
-
-        # six.print(self.ref_data1)
-
         if marker_corners:
-            success, tup = self.registration(ids, marker_corners,
-                                             self.ref_data1)
+            success, output_matrix = self.registration(ids, marker_corners,
+                                                       self.ref_data1)
             if success:
-                self.rvec, self.tvec = tup
+                six.print_('\n******* Output Matrix *******')
+                six.print_(output_matrix)
+                six.print_('******* END *******')
+
+                # rotationP, translationP = self.registration(ids,
+                # marker_corners, self.ref_data2)
                 # self._move_model(self.rvec, self.tvec)
-
-        six.print_('\n******* Rotation *******')
-        six.print_('******* END *******')
-        six.print_(self.rvec)
-        six.print_('\n******* Translation *******')
-        six.print_(self.tvec)
-        six.print_('******* END *******')
-
-            # rotationP, translationP = self.registration(ids, marker_corners,
-            #                                           self.ref_data2)
-
-            # self._move_model(rvec, tvec)
 
     def _move_model(self, rotation, translation):
         """Internal method to move the rendered models in
         some interesting way"""
+
+        print('_move_model')
 
         # because the camera won't normally be at the origin,
         # we need to find it and make movement relative to it
@@ -119,10 +108,12 @@ class OverlayApp(OverlayBaseApp):
         for actor in \
                 self.vtk_overlay_window.get_foreground_renderer().GetActors():
             # opencv and vtk seem to have different x-axis, flip the x-axis
-            translation[0] = -translation[0]
+            # translation[0] = -translation[0]
+            translation = -translation
+            translation1 = np.transpose(translation)
 
             # set the position, relative to the camera
-            actor.SetPosition(camera.GetPosition() - translation)
+            actor.SetPosition(camera.GetPosition() - translation1)
 
             # rvecs are in radians, VTK in degrees.
             rotation = 180 * rotation/3.14
@@ -133,9 +124,6 @@ class OverlayApp(OverlayBaseApp):
 
     def registration(self, ids, tags, ref_file):
         """Internal method for doing registration"""
-        # print('ids =', ids)
-        # print('tags =', tags)
-        # print('ref file =', ref_file)
 
         points3d = []
         points2d = []
@@ -146,68 +134,36 @@ class OverlayApp(OverlayBaseApp):
                 if value[0] == value1[0]:
                     count += 1
                     points3d.extend(value[4:])
-                    # print('points3d', points3d)
-                    # numpy.points3d = points3d.append(value)
                     points2d.extend(tags[j])
-                    # print('points2d', points2d)
-                    # print(j)
-                    # print(tags[j])
-                    # print('points3d list = ', points3d)
-
-        # print('*****************')
-        # print(count)
-        # print('points3d', points3d)
-        # print('points2d', points2d)
 
         if count == 0:
             return False, None
 
-        points3d = numpy.array(points3d).reshape((count*4), 3)
-        points2d = numpy.array(points2d).reshape((count*4), 2)
-
-        # print('points3d', points3d)
-        # print('points2d', points2d)
-
-        # print('after shape', points3d)
-
-        # print('points3d', points3d)
-
-        # # NOT SURE HOW TO MAKE 4x4 matrix.
-        # six.print_('\n******* 6. 3D points *******')
-        # points3d = points3d.reshape(4, 3)
-        # six.print_(points3d)
-        # six.print_('\n******* 6. 2D points *******')
-        # six.print_(tags[0][0])
-        # six.print_('******* END *******')
-
-        #
-        # print(points2d[0])
-        # print(points3d)
-
-        # print('points3d', points3d)
-        # print('points2d', points2d)
+        points3d = np.array(points3d).reshape((count*4), 3)
+        points2d = np.array(points2d).reshape((count*4), 2)
 
         _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
                                        self.camera_projection_mat,
                                        self.camera_distortion)
 
-        # six.print_('\n******* Rotation *******')
-        # six.print_('******* END *******')
-        # six.print_(rvec)
-        # six.print_('\n******* Translation *******')
-        # six.print_(tvec)
-        # six.print_('******* END *******')
+        rotation_matrix, _ = cv2.Rodrigues(rvec1)
 
-        return True, (rvec1, tvec1)
+        six.print_('\n******* Rotation Matrix *******')
+        six.print_(rotation_matrix)
+        six.print_('******* END *******')
 
+        output_matrix = np.identity(4)
 
+        for i in range(3):
+            for j in range(3):
+                output_matrix[i, j] = rotation_matrix[i, j]
+        output_matrix[i, 3] = tvec1[i, 0]
 
-        #
-        # rotation_matrix = []
-        #
-        # cv2.Rodrigues(rvec, rotation_matrix)
-        #
-        # six.print_(rotation_matrix)
+        six.print_('\n******* Output Matrix *******')
+        six.print_(output_matrix)
+        six.print_('******* END *******')
+
+        return True, output_matrix
 
 
 def run_demo(config_file):
@@ -234,40 +190,30 @@ def run_demo(config_file):
     pointers_data = configuration_data['pointerData']['pointer_file']
     intrinsics_data = configuration_data['intrinsicsData']['intrinsics_file']
 
-    calibration_data = numpy.load(calibration_path)
-    six.print_('\n******* 1. Calibration Data *******')
-    # # This is mentioned as intrinsics in BARD.
+    calibration_data = np.load(calibration_path)
+
     mtx33d = calibration_data['mtx']
-    six.print_(mtx33d)
 
     # # This is mentioned as distortion in BARD.
     dist14d = calibration_data['dist']
-    six.print_(dist14d)
-    six.print_('******* END *******')
 
     # This is mentioned as modeltowrold (modelAlignArg) in BARD.
-    six.print_('\n******* 3. World Points Data *******')
-    world44d = numpy.loadtxt(world_points)
-    six.print_(world44d)
-    six.print_('******* END *******')
+    world44d = np.loadtxt(world_points)
+    # To ignore lint error for now
+    _ = world44d
 
     # This is mentioned as world coordinates (worldRefArg) in BARD.
-    reference_data = numpy.loadtxt(ref_points)
-    six.print_('\n******* 2. Reference Data *******')
-    six.print_(reference_data)
-    six.print_('******* END *******')
+    reference_data = np.loadtxt(ref_points)
 
     # These are probably pivot calibration in BARD
-    six.print_('\n******* 4. Pointers Data *******')
-    pointers = numpy.loadtxt(pointers_data)
-    six.print_(pointers)
-    six.print_('******* END *******')
+    pointers = np.loadtxt(pointers_data)
+    # To ignore lint error for now
+    _ = pointers
 
     # This is intrinsic data from BARD
-    six.print_('\n******* 4. Intrinsics Data *******')
-    intrinsics = numpy.loadtxt(intrinsics_data)
-    six.print_(intrinsics)
-    six.print_('******* END *******')
+    intrinsics = np.loadtxt(intrinsics_data)
+    # To ignore lint error for now
+    _ = intrinsics
 
     viewer = OverlayApp(video_source, mtx33d, dist14d, reference_data)
 
@@ -279,15 +225,4 @@ def run_demo(config_file):
 
     # start the viewer
     viewer.start()
-
-    # To do the registration process.
-    # viewer.registration(pointers, reference_data, mtx33d, dist14d, intrinsics)
-
-    # list of id's
-    # ids_pointers = pointers[:, :1]
-    # viewer.registration(ids_pointers)
-
-    # viewer.registration(pointers, reference_data)
-
-    # start the application
     sys.exit(app.exec_())
