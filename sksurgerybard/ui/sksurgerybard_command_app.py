@@ -18,7 +18,7 @@ class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source, mtx33d, dist14d, ref_data):
+    def __init__(self, image_source, mtx33d, dist14d, ref_data, ref_point_data):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -32,6 +32,9 @@ class OverlayApp(OverlayBaseApp):
 
         # ref.txt data
         self.ref_data1 = np.array(ref_data)
+
+        # refPointer.txt data
+        self.ref_pointer_data = np.array(ref_point_data)
 
         # Camera Calibration
         _ = mtx33d
@@ -79,26 +82,32 @@ class OverlayApp(OverlayBaseApp):
         https://docs.opencv.org/3.4/d5/dae/tutorial_aruco_detection.html
         """
 
-        # detect any markers
+        # # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
-        if marker_corners:
-            success, output_matrix = self.registration(ids, marker_corners,
-                                                       self.ref_data1)
+        if marker_corners and ids[0] != 0:
+            success, output_mat = self.register_ref(ids, marker_corners,
+                                                    self.ref_data1)
             if success:
-                six.print_('\n******* Output Matrix *******')
-                six.print_(output_matrix)
+                six.print_('\n******* Registration Reference *******')
+                six.print_(output_mat)
                 six.print_('******* END *******')
 
-                # rotationP, translationP = self.registration(ids,
-                # marker_corners, self.ref_data2)
-                # self._move_model(self.rvec, self.tvec)
+        if marker_corners and ids[0] != 0:
+            success1, output_mat = self.register_point(ids, marker_corners,
+                                                       self.ref_pointer_data)
+            if success1:
+                six.print_('\n******* Pointer Reference *******')
+                six.print_(output_mat)
+                six.print_('******* END *******')
+
+        # rotationP, translationP = self.registration(ids,
+        #         marker_corners, self.ref_data2)
+        #         self._move_model(self.rvec, self.tvec)
 
     def _move_model(self, rotation, translation):
         """Internal method to move the rendered models in
         some interesting way"""
-
-        print('_move_model')
 
         # because the camera won't normally be at the origin,
         # we need to find it and make movement relative to it
@@ -122,7 +131,7 @@ class OverlayApp(OverlayBaseApp):
             # uncomment the next line for some interesting results.
             # actor.SetOrientation( rotation)
 
-    def registration(self, ids, tags, ref_file):
+    def register_ref(self, ids, tags, ref_file):
         """Internal method for doing registration"""
 
         points3d = []
@@ -148,10 +157,6 @@ class OverlayApp(OverlayBaseApp):
 
         rotation_matrix, _ = cv2.Rodrigues(rvec1)
 
-        six.print_('\n******* Rotation Matrix *******')
-        six.print_(rotation_matrix)
-        six.print_('******* END *******')
-
         output_matrix = np.identity(4)
 
         for i in range(3):
@@ -159,9 +164,40 @@ class OverlayApp(OverlayBaseApp):
                 output_matrix[i, j] = rotation_matrix[i, j]
         output_matrix[i, 3] = tvec1[i, 0]
 
-        six.print_('\n******* Output Matrix *******')
-        six.print_(output_matrix)
-        six.print_('******* END *******')
+        return True, output_matrix
+
+    def register_point(self, ids, tags, ref_file):
+        """Internal method for doing registration"""
+
+        points3d = []
+        points2d = []
+        count = 0
+
+        for _, value in enumerate(ref_file):
+            for j, value1 in enumerate(ids):
+                if value[0] == value1[0]:
+                    count += 1
+                    points3d.extend(value[4:])
+                    points2d.extend(tags[j])
+
+        if count == 0:
+            return False, None
+
+        points3d = np.array(points3d).reshape((count*4), 3)
+        points2d = np.array(points2d).reshape((count*4), 2)
+
+        _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
+                                       self.camera_projection_mat,
+                                       self.camera_distortion)
+
+        rotation_matrix, _ = cv2.Rodrigues(rvec1)
+
+        output_matrix = np.identity(4)
+
+        for i in range(3):
+            for j in range(3):
+                output_matrix[i, j] = rotation_matrix[i, j]
+        output_matrix[i, 3] = tvec1[i, 0]
 
         return True, output_matrix
 
@@ -189,6 +225,7 @@ def run_demo(config_file):
     world_points = configuration_data['worldData']['world_file']
     pointers_data = configuration_data['pointerData']['pointer_file']
     intrinsics_data = configuration_data['intrinsicsData']['intrinsics_file']
+    ref_pointer_file = configuration_data['pointersData']['pointer_file']
 
     calibration_data = np.load(calibration_path)
 
@@ -203,7 +240,9 @@ def run_demo(config_file):
     _ = world44d
 
     # This is mentioned as world coordinates (worldRefArg) in BARD.
-    reference_data = np.loadtxt(ref_points)
+    ref_data = np.loadtxt(ref_points)
+
+    ref_point_data = np.loadtxt(ref_pointer_file)
 
     # These are probably pivot calibration in BARD
     pointers = np.loadtxt(pointers_data)
@@ -215,7 +254,7 @@ def run_demo(config_file):
     # To ignore lint error for now
     _ = intrinsics
 
-    viewer = OverlayApp(video_source, mtx33d, dist14d, reference_data)
+    viewer = OverlayApp(video_source, mtx33d, dist14d, ref_data, ref_point_data)
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
