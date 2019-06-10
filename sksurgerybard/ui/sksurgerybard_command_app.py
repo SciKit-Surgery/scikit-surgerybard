@@ -87,7 +87,7 @@ class OverlayApp(OverlayBaseApp):
 
         if marker_corners and ids[0] != 0:
             success, output_mat = self.register(ids, marker_corners,
-                                                    self.ref_data1)
+                                                self.ref_data1)
             if success:
                 six.print_('\n******* Registration Reference *******')
                 six.print_(output_mat)
@@ -95,7 +95,7 @@ class OverlayApp(OverlayBaseApp):
 
         if marker_corners and ids[0] != 0:
             success1, output_mat = self.register(ids, marker_corners,
-                                                       self.ref_pointer_data)
+                                                 self.ref_pointer_data)
             if success1:
                 six.print_('\n******* Pointer Reference *******')
                 six.print_(output_mat)
