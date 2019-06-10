@@ -86,7 +86,7 @@ class OverlayApp(OverlayBaseApp):
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
         if marker_corners and ids[0] != 0:
-            success, output_mat = self.register_ref(ids, marker_corners,
+            success, output_mat = self.register(ids, marker_corners,
                                                     self.ref_data1)
             if success:
                 six.print_('\n******* Registration Reference *******')
@@ -94,7 +94,7 @@ class OverlayApp(OverlayBaseApp):
                 six.print_('******* END *******')
 
         if marker_corners and ids[0] != 0:
-            success1, output_mat = self.register_point(ids, marker_corners,
+            success1, output_mat = self.register(ids, marker_corners,
                                                        self.ref_pointer_data)
             if success1:
                 six.print_('\n******* Pointer Reference *******')
@@ -131,42 +131,7 @@ class OverlayApp(OverlayBaseApp):
             # uncomment the next line for some interesting results.
             # actor.SetOrientation( rotation)
 
-    def register_ref(self, ids, tags, ref_file):
-        """Internal method for doing registration"""
-
-        points3d = []
-        points2d = []
-        count = 0
-
-        for _, value in enumerate(ref_file):
-            for j, value1 in enumerate(ids):
-                if value[0] == value1[0]:
-                    count += 1
-                    points3d.extend(value[4:])
-                    points2d.extend(tags[j])
-
-        if count == 0:
-            return False, None
-
-        points3d = np.array(points3d).reshape((count*4), 3)
-        points2d = np.array(points2d).reshape((count*4), 2)
-
-        _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
-                                       self.camera_projection_mat,
-                                       self.camera_distortion)
-
-        rotation_matrix, _ = cv2.Rodrigues(rvec1)
-
-        output_matrix = np.identity(4)
-
-        for i in range(3):
-            for j in range(3):
-                output_matrix[i, j] = rotation_matrix[i, j]
-        output_matrix[i, 3] = tvec1[i, 0]
-
-        return True, output_matrix
-
-    def register_point(self, ids, tags, ref_file):
+    def register(self, ids, tags, ref_file):
         """Internal method for doing registration"""
 
         points3d = []
