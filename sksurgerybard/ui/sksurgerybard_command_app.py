@@ -7,7 +7,7 @@
 import sys
 import json
 import numpy as np
-import six
+# import six
 import cv2
 import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
@@ -55,9 +55,6 @@ class OverlayApp(OverlayBaseApp):
             # super doesn't work the same in py2.7
             OverlayBaseApp.__init__(self, image_source)
 
-        self.rvec = []
-        self.tvec = []
-
     def update(self):
         """Update the background render with a new frame and
         scan for aruco tags"""
@@ -86,28 +83,35 @@ class OverlayApp(OverlayBaseApp):
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
         if marker_corners and ids[0] != 0:
-            success, output_mat = self.register(ids, marker_corners,
+            success, rvec, tvec = self.register(ids, marker_corners,
                                                 self.ref_data1)
             if success:
-                six.print_('\n******* Registration Reference *******')
-                six.print_(output_mat)
-                six.print_('******* END *******')
+                # print('******')
+                # print(rvec)
+                # print('******')
+                # print(tvec)
+                self._move_model(rvec, tvec)
 
         if marker_corners and ids[0] != 0:
-            success1, output_mat = self.register(ids, marker_corners,
-                                                 self.ref_pointer_data)
+            success1, rvec1, tvec1 = self.register(ids, marker_corners,
+                                                   self.ref_pointer_data)
             if success1:
-                six.print_('\n******* Pointer Reference *******')
-                six.print_(output_mat)
-                six.print_('******* END *******')
+                # print('******')
+                # print(rvec1)
+                # print('******')
+                # print(tvec1)
+                self._move_model(rvec1, tvec1)
 
         # rotationP, translationP = self.registration(ids,
         #         marker_corners, self.ref_data2)
-        #         self._move_model(self.rvec, self.tvec)
 
     def _move_model(self, rotation, translation):
         """Internal method to move the rendered models in
         some interesting way"""
+
+
+        # print('******* rotation')
+        # print(rotation)
 
         # because the camera won't normally be at the origin,
         # we need to find it and make movement relative to it
@@ -117,12 +121,12 @@ class OverlayApp(OverlayBaseApp):
         for actor in \
                 self.vtk_overlay_window.get_foreground_renderer().GetActors():
             # opencv and vtk seem to have different x-axis, flip the x-axis
-            # translation[0] = -translation[0]
-            translation = -translation
-            translation1 = np.transpose(translation)
+            translation1 = np.negative(translation[0])
+
+            np.cam_pos = np.asarray(camera.GetPosition())
 
             # set the position, relative to the camera
-            actor.SetPosition(camera.GetPosition() - translation1)
+            actor.SetPosition(np.cam_pos - translation1)
 
             # rvecs are in radians, VTK in degrees.
             rotation = 180 * rotation/3.14
@@ -146,7 +150,7 @@ class OverlayApp(OverlayBaseApp):
                     points2d.extend(tags[j])
 
         if count == 0:
-            return False, None
+            return False, None, None
 
         points3d = np.array(points3d).reshape((count*4), 3)
         points2d = np.array(points2d).reshape((count*4), 2)
@@ -155,16 +159,20 @@ class OverlayApp(OverlayBaseApp):
                                        self.camera_projection_mat,
                                        self.camera_distortion)
 
-        rotation_matrix, _ = cv2.Rodrigues(rvec1)
+        return True, rvec1, tvec1
 
-        output_matrix = np.identity(4)
+        # Temporary commented to try out the direct method.
 
-        for i in range(3):
-            for j in range(3):
-                output_matrix[i, j] = rotation_matrix[i, j]
-        output_matrix[i, 3] = tvec1[i, 0]
-
-        return True, output_matrix
+        # rotation_matrix, _ = cv2.Rodrigues(rvec1)
+        #
+        # output_matrix = np.identity(4)
+        #
+        # for i in range(3):
+        #     for j in range(3):
+        #         output_matrix[i, j] = rotation_matrix[i, j]
+        # output_matrix[i, 3] = tvec1[i, 0]
+        #
+        # return True, output_matrix
 
 
 def run_demo(config_file):
