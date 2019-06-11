@@ -18,7 +18,7 @@ class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source, mtx33d, dist14d, ref_data, ref_point_data):
+    def __init__(self, image_source, mtx33d, dist15d, ref_data, ref_point_data):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -37,15 +37,16 @@ class OverlayApp(OverlayBaseApp):
         self.ref_pointer_data = np.array(ref_point_data)
 
         # Camera Calibration
-        _ = mtx33d
-        # self.camera_projection_mat = mtx33d
-        self.camera_projection_mat = np.array([[560.0, 0.0, 320.0],
-                                               [0.0, 560.0, 240.0],
-                                               [0.0, 0.0, 1.0]])
+        # _ = mtx33d
+        self.camera_projection_mat = mtx33d
+        # self.camera_projection_mat = np.array([[560.0, 0.0, 320.0],
+        #                                        [0.0, 560.0, 240.0],
+        #                                        [0.0, 0.0, 1.0]])
 
         # Distortion
-        _ = dist14d
-        # self.camera_distortion = dist14d
+        _ = dist15d
+        # print(dist15d)
+        # self.camera_distortion = dist15d
         self.camera_distortion = np.zeros((1, 4), np.float32)
 
         # and call the constructor for the base class
@@ -205,7 +206,7 @@ def run_demo(config_file):
     mtx33d = calibration_data['mtx']
 
     # # This is mentioned as distortion in BARD.
-    dist14d = calibration_data['dist']
+    dist15d = calibration_data['dist']
 
     # This is mentioned as modeltowrold (modelAlignArg) in BARD.
     world44d = np.loadtxt(world_points)
@@ -227,7 +228,7 @@ def run_demo(config_file):
     # To ignore lint error for now
     _ = intrinsics
 
-    viewer = OverlayApp(video_source, mtx33d, dist14d, ref_data, ref_point_data)
+    viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, ref_point_data)
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
