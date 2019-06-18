@@ -198,7 +198,6 @@ def run_demo(config_file):
     ref_points = configuration_data['referenceData']['ref_file']
     world_points = configuration_data['worldData']['world_file']
     pointers_data = configuration_data['pointerData']['pointer_file']
-    intrinsics_data = configuration_data['intrinsicsData']['intrinsics_file']
     ref_pointer_file = configuration_data['pointersData']['pointer_file']
 
     calibration_data = np.load(calibration_path)
@@ -222,11 +221,6 @@ def run_demo(config_file):
     pointers = np.loadtxt(pointers_data)
     # To ignore lint error for now
     _ = pointers
-
-    # This is intrinsic data from BARD
-    intrinsics = np.loadtxt(intrinsics_data)
-    # To ignore lint error for now
-    _ = intrinsics
 
     viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, ref_point_data)
 
