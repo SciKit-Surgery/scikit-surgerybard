@@ -12,13 +12,13 @@ from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerycore.configuration.configuration_manager import \
         ConfigurationManager
 
-
+from sksurgerycore.transforms.transform_manager import TransformManager
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source, mtx33d, dist15d, ref_data, ref_point_data, using_pointer):
+    def __init__(self, image_source, mtx33d, dist15d, ref_data, modelreference2model, using_pointer, pointer_ref):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -30,21 +30,24 @@ class OverlayApp(OverlayBaseApp):
         # The size of the aruco tag in mm
         self.marker_size = 50
 
+        #use the transformation manager
+        self._tm = TransformManager()
+        
+        #self._tm.add ( "modelreference2model", modelreference2model)
+        self._tm.add ( "model2modelreference", modelreference2model)
         # ref.txt data
         self.ref_data1 = np.array(ref_data)
 
         self.ref_pointer_data = []
         # refPointer.txt data
+        self._using_pointer = False
         if using_pointer:
             self._using_pointer = True
-            self.ref_pointer_data = np.array(ref_point_data)
+            self.ref_pointer_data = np.array(pointer_ref)
 
         # Camera Calibration
         # _ = mtx33d
         self.camera_projection_mat = mtx33d
-        # self.camera_projection_mat = np.array([[560.0, 0.0, 320.0],
-        #                                        [0.0, 560.0, 240.0],
-        #                                        [0.0, 0.0, 1.0]])
 
         # Distortion
         _ = dist15d
@@ -58,6 +61,8 @@ class OverlayApp(OverlayBaseApp):
         else:
             # super doesn't work the same in py2.7
             OverlayBaseApp.__init__(self, image_source)
+        
+        self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
     def update(self):
         """Update the background render with a new frame and
@@ -74,7 +79,7 @@ class OverlayApp(OverlayBaseApp):
         # Without the next line the model does not show as the clipping range
         # does not change to accommodate model motion. Uncomment it to
         # see what happens.
-        self.vtk_overlay_window.set_camera_state({"ClippingRange": [10, 800]})
+        self.vtk_overlay_window.set_camera_state({"ClippingRange": [10, 8000]})
         self.vtk_overlay_window.set_video_image(image)
         self.vtk_overlay_window.Render()
 
@@ -87,30 +92,35 @@ class OverlayApp(OverlayBaseApp):
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
         if marker_corners and ids[0] != 0:
-            success, rvec, tvec = self.register(ids, marker_corners,
+            success, camera2modelreference = self.register(ids, marker_corners,
                                                 self.ref_data1)
+
+            #self._tm.add("camera2modelreference",  camera2modelreference)
+            self._tm.add("modelreference2camera",  camera2modelreference)
+            camera2model = self._tm.get("camera2model")
+            model2camera = self._tm.get("model2camera")
             if success:
-                # print('******')
-                # print(rvec)
-                # print('******')
-                # print(tvec)
-                self._move_model(rvec, tvec)
+                self._move_model(model2camera)
+                print ( camera2model)
+                print ( model2camera)
+                print ( camera2model @ model2camera )
+                print ("--------------------------------------")
 
         if self._using_pointer:
             if marker_corners and ids[0] != 0:
-                success1, rvec1, tvec1 = self.register(ids, marker_corners,
+                success1, camera2pointerref = self.register(ids, marker_corners,
                                                    self.ref_pointer_data)
                 if success1:
                     # print('******')
                     # print(rvec1)
                     # print('******')
-                    print(tvec1)
+                    print(camera2pointerref)
 
 
         # rotationP, translationP = self.registration(ids,
         #         marker_corners, self.ref_data2)
 
-    def _move_model(self, rotation, translation):
+    def _move_model(self, camera2model):
         """Internal method to move the rendered models in
         some interesting way"""
 
@@ -120,21 +130,24 @@ class OverlayApp(OverlayBaseApp):
 
         # because the camera won't normally be at the origin,
         # we need to find it and make movement relative to it
-        camera = self.vtk_overlay_window.get_foreground_camera()
+        #camera = self.vtk_overlay_window.get_foreground_camera()
+       
 
+        self.vtk_overlay_window.set_camera_pose(camera2model)
+     #   self.vtk_overlay_window.renderer.ResetCamera()
         # Iterate through the rendered models
-        for actor in \
-                self.vtk_overlay_window.get_foreground_renderer().GetActors():
+        #for actor in \
+        #        self.vtk_overlay_window.get_foreground_renderer().GetActors():
             # opencv and vtk seem to have different x-axis, flip the x-axis
-            translation1 = np.negative(translation[0])
+        #    translation1 = np.negative(translation[0])
 
-            np.cam_pos = np.asarray(camera.GetPosition())
+        #    np.cam_pos = np.asarray(camera.GetPosition())
 
             # set the position, relative to the camera
-            actor.SetPosition(np.cam_pos - translation1)
+        #    actor.SetPosition(np.cam_pos - translation1)
 
             # rvecs are in radians, VTK in degrees.
-            rotation = 180 * rotation/3.14
+        #    rotation = 180 * rotation/3.14
 
             # for orientation, opencv axes don't line up with VTK,
             # uncomment the next line for some interesting results.
@@ -164,20 +177,14 @@ class OverlayApp(OverlayBaseApp):
                                        self.camera_projection_mat,
                                        self.camera_distortion)
 
-        return True, rvec1, tvec1
-
-        # Temporary commented to try out the direct method.
-
-        # rotation_matrix, _ = cv2.Rodrigues(rvec1)
-        #
-        # output_matrix = np.identity(4)
-        #
-        # for i in range(3):
-        #     for j in range(3):
-        #         output_matrix[i, j] = rotation_matrix[i, j]
-        # output_matrix[i, 3] = tvec1[i, 0]
-        #
-        # return True, output_matrix
+        rotation_matrix, _ = cv2.Rodrigues(rvec1)
+        output_matrix = np.identity(4)
+        for i in range(3):
+            for j in range(3):
+                output_matrix[i, j] = rotation_matrix[i, j]
+            output_matrix[i, 3] = tvec1[i, 0]
+        
+        return True, output_matrix
 
 
 def run_demo(config_file):
@@ -202,7 +209,7 @@ def run_demo(config_file):
     calibration_path = configuration_data.get('camera').get('calibration')
     models_path = configuration_data.get('models').get('models_dir')
     ref_points = configuration_data.get('models').get('ref_file')
-    world_points = configuration_data.get('models').get('model_to_reference')
+    reference2model_file = configuration_data.get('models').get('reference_to_model')
     if 'pointerData' in configuration_data:
         pointers_data = configuration_data.get('pointerData').get('pointer_tag_file')
         ref_pointer_file = configuration_data.get('pointerData').get('pointer_tag_to_tip')
@@ -216,21 +223,18 @@ def run_demo(config_file):
     # # This is mentioned as distortion in BARD.
     dist15d = calibration_data['dist']
 
-    # This is mentioned as modeltowrold (modelAlignArg) in BARD.
-    world44d = np.loadtxt(world_points)
-    # To ignore lint error for now
-    _ = world44d
-
     # This is mentioned as world coordinates (worldRefArg) in BARD.
     ref_data = np.loadtxt(ref_points)
+    reference2model = np.loadtxt(reference2model_file)
 
+    ref_point_data = []
     if using_pointer:
         ref_point_data = np.loadtxt(ref_pointer_file)
 
         # These are probably pivot calibration in BARD
         pointers = np.loadtxt(pointers_data)
 
-    viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, ref_point_data, using_pointer)
+    viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, reference2model, using_pointer, ref_point_data)
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
