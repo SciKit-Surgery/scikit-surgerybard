@@ -2,23 +2,23 @@
 
 """ Demo app, to show OpenCV video and PySide2 widgets together."""
 
-# pylint: disable=import-error
-
 import sys
-import json
 import numpy as np
 # import six
 import cv2
 import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgerycore.configuration.configuration_manager import \
+        ConfigurationManager
+
 
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source, mtx33d, dist15d, ref_data, ref_point_data):
+    def __init__(self, image_source, mtx33d, dist15d, ref_data, ref_point_data, using_pointer):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -33,8 +33,11 @@ class OverlayApp(OverlayBaseApp):
         # ref.txt data
         self.ref_data1 = np.array(ref_data)
 
+        self.ref_pointer_data = []
         # refPointer.txt data
-        self.ref_pointer_data = np.array(ref_point_data)
+        if using_pointer:
+            self._using_pointer = True
+            self.ref_pointer_data = np.array(ref_point_data)
 
         # Camera Calibration
         # _ = mtx33d
@@ -93,15 +96,16 @@ class OverlayApp(OverlayBaseApp):
                 # print(tvec)
                 self._move_model(rvec, tvec)
 
-        if marker_corners and ids[0] != 0:
-            success1, rvec1, tvec1 = self.register(ids, marker_corners,
+        if self._using_pointer:
+            if marker_corners and ids[0] != 0:
+                success1, rvec1, tvec1 = self.register(ids, marker_corners,
                                                    self.ref_pointer_data)
-            if success1:
-                # print('******')
-                # print(rvec1)
-                # print('******')
-                # print(tvec1)
-                self._move_model(rvec1, tvec1)
+                if success1:
+                    # print('******')
+                    # print(rvec1)
+                    # print('******')
+                    print(tvec1)
+
 
         # rotationP, translationP = self.registration(ids,
         #         marker_corners, self.ref_data2)
@@ -189,18 +193,23 @@ def run_demo(config_file):
     # # the ConfigurationManager, and that we are not ever writing back to file.
     # configuration_data = configuration_manager.get_copy()
 
-    with open(config_file) as file:
-        configuration_data = json.load(file)
+    configurer = ConfigurationManager(config_file)
 
-    video_source = configuration_data['camera']['source']
-    calibration_path = configuration_data['calibrationData']['path']
-    models_path = configuration_data['models']['models_dir']
-    ref_points = configuration_data['referenceData']['ref_file']
-    world_points = configuration_data['worldData']['world_file']
-    pointers_data = configuration_data['pointerData']['pointer_file']
-    ref_pointer_file = configuration_data['pointersData']['pointer_file']
+    configuration_data = configurer.get_copy()
+    
+    using_pointer = False
+    video_source = configuration_data.get('camera').get('source')
+    calibration_path = configuration_data.get('camera').get('calibration')
+    models_path = configuration_data.get('models').get('models_dir')
+    ref_points = configuration_data.get('models').get('ref_file')
+    world_points = configuration_data.get('models').get('model_to_reference')
+    if 'pointerData' in configuration_data:
+        pointers_data = configuration_data.get('pointerData').get('pointer_tag_file')
+        ref_pointer_file = configuration_data.get('pointerData').get('pointer_tag_to_tip')
+        using_pointer = True
 
     calibration_data = np.load(calibration_path)
+    print ( calibration_data )
 
     mtx33d = calibration_data['mtx']
 
@@ -215,14 +224,13 @@ def run_demo(config_file):
     # This is mentioned as world coordinates (worldRefArg) in BARD.
     ref_data = np.loadtxt(ref_points)
 
-    ref_point_data = np.loadtxt(ref_pointer_file)
+    if using_pointer:
+        ref_point_data = np.loadtxt(ref_pointer_file)
 
-    # These are probably pivot calibration in BARD
-    pointers = np.loadtxt(pointers_data)
-    # To ignore lint error for now
-    _ = pointers
+        # These are probably pivot calibration in BARD
+        pointers = np.loadtxt(pointers_data)
 
-    viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, ref_point_data)
+    viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, ref_point_data, using_pointer)
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
