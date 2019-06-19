@@ -30,8 +30,8 @@ the application.
   (b) Run the following, to get intrinsic parameters and distortion parameters
 
 ::
-  bardCameraCalibration -help
-  bardCameraCalibration -x 9 -y 7 -s 24 -o intrinsics.txt *.png 
+  python bardCameraCalibration -help
+  python bardCameraCalibration -x 14 -y 10 -s 24 -o <output_dir> -i <output_dir> 
 
 (filling in appropriate parameters: so -x gives the number of chessboard squares in the x direction, -y the number of chessboard squares in the y direction and -s gives the size of each chessboard square in millimetres)
 
