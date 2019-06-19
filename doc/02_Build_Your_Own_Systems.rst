@@ -22,9 +22,10 @@ Build Your Own Image Guided Surgery System
   (a) Take 5-20 pictures of chessboard using
 
 ::
-  bardGrabber -d <output_dir>
+  python bardGrabVideoImages.py -o <output_dir>
 
-hitting the ‘d’ key to dump a video image to the output folder.
+hitting the ‘c’ key to dump a video image to the output folder. Press 'q' to quit
+the application.
 
   (b) Run the following, to get intrinsic parameters and distortion parameters
 
