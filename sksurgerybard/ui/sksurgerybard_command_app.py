@@ -14,6 +14,7 @@ from sksurgerycore.configuration.configuration_manager import \
 
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
+from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -241,7 +242,21 @@ def run_demo(config_file):
     # to render and optionally a colours.txt defining the
     # colours to render in.
     model_dir = models_path
+    #here we want to move the models so they're in reference coords
     viewer.add_vtk_models_from_dir(model_dir)
+   
+    matrix=create_vtk_matrix_from_numpy(reference2model)
+    for actor in viewer.vtk_overlay_window.foreground_renderer.GetActors():
+        actor.SetUserMatrix(matrix);
+        #print (actor)     
+
+    #vtk_matrix = mu.create_vtk_matrix_from_numpy(matrix)
+
+    #    names = self.get_surface_model_names()
+    #    for name in names:
+    #        model = self.surface_model_loader.get_surface_model(name)
+     #       model.actor.SetUserMatrix(vtk_matrix)
+
     #here we add some spheres to represent the ref grid
     spheres=VTKSphereModel(ref_data[:,1:4],radius=5.0)
     viewer.vtk_overlay_window.add_vtk_actor(spheres.actor)
