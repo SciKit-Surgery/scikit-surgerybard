@@ -1,3 +1,4 @@
+PySide2
 pytest
 # This file lists the python packages that your software depends on.
 # It is used by pip to manage software dependencies. It is not to be
@@ -5,4 +6,6 @@ pytest
 # doc/requirements.rst
 numpy
 glob2
+scikit-surgerycore
+scikit-surgeryutils
 opencv-contrib-python

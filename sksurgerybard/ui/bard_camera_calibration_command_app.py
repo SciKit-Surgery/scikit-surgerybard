@@ -8,7 +8,7 @@ import cv2
 import six
 
 
-def run_demo(input_dir, output_file, width, height):
+def run_demo(input_dir, output_dir, width, height):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
@@ -56,16 +56,24 @@ def run_demo(input_dir, output_file, width, height):
             # images are not our requirement here.
 
             # Draw and display the corners
-            img = cv2.drawChessboardCorners(img, (14, 10), corners2, ret)
-            cv2.imshow('img', img)
-            cv2.waitKey(1000)
+            # img = cv2.drawChessboardCorners(img, (width, height),
+            # corners2, ret)
+            # cv2.imshow('img', img)
+            # cv2.waitKey(1000)
 
     # Now to do the calibration
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points,
                                                        gray.shape[::-1],
                                                        None, None)
 
+    # --------- Save result
+    output_file = output_dir + 'calibrationData'
     np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+
+    filename = output_dir + "/cameraMatrix.txt"
+    np.savetxt(filename, mtx, delimiter=',')
+    filename = output_dir + "/cameraDistortion.txt"
+    np.savetxt(filename, dist, delimiter=',')
 
     six.print_("RMS =", ret)
 
@@ -73,4 +81,6 @@ def run_demo(input_dir, output_file, width, height):
     six.print_(mtx)
     six.print_(dist)
 
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
+
+    return ret, mtx, dist

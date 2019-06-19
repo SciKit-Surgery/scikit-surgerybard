@@ -1,0 +1,32 @@
+{
+    "camera": {
+        "source": 0,
+        "width": 1280,
+        "height": 720,
+        "grab": 33,
+        "clock": 15,
+        "fullscreen": false
+
+    },
+    "calibrationData": {
+        "path": "tests/data/calibrationData.npz"
+    },
+    "models": {
+        "models_dir": "tests/data/models"
+    },
+    "referenceData": {
+        "ref_file": "tests/data/referencePoints/ref.txt"
+    },
+        "pointersData": {
+        "pointer_file": "tests/data/pointers/pointers.txt"
+    },
+    "worldData": {
+        "world_file": "tests/data/worldPoints/world.txt"
+    },
+    "pointerData": {
+        "pointer_file": "tests/data/pointers/pointers.txt"
+    },
+    "intrinsicsData": {
+        "intrinsics_file": "tests/data/intrinsics/intrinsics.txt"
+    }
+}
