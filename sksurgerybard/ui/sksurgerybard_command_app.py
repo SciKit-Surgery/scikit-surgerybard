@@ -15,7 +15,7 @@ from sksurgerycore.configuration.configuration_manager import \
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
-
+import vtk
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
@@ -96,63 +96,41 @@ class OverlayApp(OverlayBaseApp):
                                                 self.ref_data1)
 
             #self._tm.add("camera2modelreference",  camera2modelreference)
-            self._tm.add("camera2modelreference",  camera2modelreference)
-            camera2model = self._tm.get("camera2model")
-            model2camera = self._tm.get("model2camera")
-            modelreference2camera=self._tm.get("modelreference2camera")
             if success:
-                self._move_model(modelreference2camera)
-                #print ( camera2modelreference)
+                self._tm.add("camera2modelreference",  camera2modelreference)
+                camera2model = self._tm.get("camera2model")
+                model2camera = self._tm.get("model2camera")
+                modelreference2camera=self._tm.get("modelreference2camera")
+                self.vtk_overlay_window.set_camera_pose(modelreference2camera)
                 #print ( modelreference2camera)
                 #print ( camera2modelreference @ modelreference2camera )
                 #print ("--------------------------------------")
 
         if self._using_pointer:
             if marker_corners and ids[0] != 0:
-                success1, camera2pointerref = self.register(ids, marker_corners,
+                success, camera2pointerref = self.register(ids, marker_corners,
                                                    self.ref_pointer_data)
-                if success1:
+                if success:
+                    self._tm.add("camera2pointerref",  camera2pointerref)
+                    pointerref2model = self._tm.get("pointerref2model")
+                    model2pointerref = self._tm.get("pointerref2model")
+                    actors = self.vtk_overlay_window.foreground_renderer.GetActors()
+                    no_actors=actors.GetNumberOfItems()
+                    matrix=create_vtk_matrix_from_numpy(pointerref2model)
+                    matrix=create_vtk_matrix_from_numpy(model2pointerref)
+                    #for actor in actors:
+                    for index, actor in enumerate (actors):
+                        if index >= no_actors - 2:
+                            actor.SetUserMatrix(matrix)
+                  #  for actor in viewer.vtk_overlay_window.foreground_renderer.GetActors():
+                   #     actor.SetUserMatrix(matrix);
+                   # print ("Pointer SUCCESS " , pointerref2model)
                     # print('******')
+                   # print(camera2pointerref)
+
                     # print(rvec1)
                     # print('******')
-                    print(camera2pointerref)
 
-
-        # rotationP, translationP = self.registration(ids,
-        #         marker_corners, self.ref_data2)
-
-    def _move_model(self, camera2model):
-        """Internal method to move the rendered models in
-        some interesting way"""
-
-
-        # print('******* rotation')
-        # print(rotation)
-
-        # because the camera won't normally be at the origin,
-        # we need to find it and make movement relative to it
-        #camera = self.vtk_overlay_window.get_foreground_camera()
-       
-
-        self.vtk_overlay_window.set_camera_pose(camera2model)
-     #   self.vtk_overlay_window.renderer.ResetCamera()
-        # Iterate through the rendered models
-        #for actor in \
-        #        self.vtk_overlay_window.get_foreground_renderer().GetActors():
-            # opencv and vtk seem to have different x-axis, flip the x-axis
-        #    translation1 = np.negative(translation[0])
-
-        #    np.cam_pos = np.asarray(camera.GetPosition())
-
-            # set the position, relative to the camera
-        #    actor.SetPosition(np.cam_pos - translation1)
-
-            # rvecs are in radians, VTK in degrees.
-        #    rotation = 180 * rotation/3.14
-
-            # for orientation, opencv axes don't line up with VTK,
-            # uncomment the next line for some interesting results.
-            # actor.SetOrientation( rotation)
 
     def register(self, ids, tags, ref_file):
         """Internal method for doing registration"""
@@ -160,6 +138,7 @@ class OverlayApp(OverlayBaseApp):
         points3d = []
         points2d = []
         count = 0
+        output_matrix = np.identity(4)
 
         for _, value in enumerate(ref_file):
             for j, value1 in enumerate(ids):
@@ -169,7 +148,7 @@ class OverlayApp(OverlayBaseApp):
                     points2d.extend(tags[j])
 
         if count == 0:
-            return False, None, None
+            return False, output_matrix
 
         points3d = np.array(points3d).reshape((count*4), 3)
         points2d = np.array(points2d).reshape((count*4), 2)
@@ -179,7 +158,6 @@ class OverlayApp(OverlayBaseApp):
                                        self.camera_distortion)
 
         rotation_matrix, _ = cv2.Rodrigues(rvec1)
-        output_matrix = np.identity(4)
         for i in range(3):
             for j in range(3):
                 output_matrix[i, j] = rotation_matrix[i, j]
@@ -212,8 +190,8 @@ def run_demo(config_file):
     ref_points = configuration_data.get('models').get('ref_file')
     reference2model_file = configuration_data.get('models').get('reference_to_model')
     if 'pointerData' in configuration_data:
-        pointers_data = configuration_data.get('pointerData').get('pointer_tag_file')
-        ref_pointer_file = configuration_data.get('pointerData').get('pointer_tag_to_tip')
+        ref_pointer_file = configuration_data.get('pointerData').get('pointer_tag_file')
+        pointer_tip_file = configuration_data.get('pointerData').get('pointer_tag_to_tip')
         using_pointer = True
 
     calibration_data = np.load(calibration_path)
@@ -228,15 +206,14 @@ def run_demo(config_file):
     ref_data = np.loadtxt(ref_points)
     reference2model = np.loadtxt(reference2model_file)
 
-    ref_point_data = []
+    ref_point_data = None
+    pointer_tip = np.zeros((1,3))
     if using_pointer:
         ref_point_data = np.loadtxt(ref_pointer_file)
-
-        # These are probably pivot calibration in BARD
-        pointers = np.loadtxt(pointers_data)
+        pointer_tip = np.reshape(np.loadtxt(pointer_tip_file),(1,3))
+        
 
     viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, reference2model, using_pointer, ref_point_data)
-
 
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
@@ -258,8 +235,17 @@ def run_demo(config_file):
      #       model.actor.SetUserMatrix(vtk_matrix)
 
     #here we add some spheres to represent the ref grid
-    spheres=VTKSphereModel(ref_data[:,1:4],radius=5.0)
-    viewer.vtk_overlay_window.add_vtk_actor(spheres.actor)
+    model_reference_spheres=VTKSphereModel(ref_data[:,1:4],radius=5.0)
+    viewer.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+
+    if using_pointer:
+        print ((ref_point_data[:,1:4]))
+        print (pointer_tip)
+        pointer_reference_spheres=VTKSphereModel(ref_point_data[:,1:4],radius=5.0)
+        viewer.vtk_overlay_window.add_vtk_actor(pointer_reference_spheres.actor)
+        pointer_tip_sphere=VTKSphereModel(pointer_tip,radius=3.0)
+        viewer.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
+
 
     #for reasons I do not understan, it doesn't render properly 
     #until I resize the window. I tried the following, it didn't work
