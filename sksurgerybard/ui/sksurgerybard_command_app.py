@@ -13,6 +13,7 @@ from sksurgerycore.configuration.configuration_manager import \
         ConfigurationManager
 
 from sksurgerycore.transforms.transform_manager import TransformManager
+from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -27,9 +28,6 @@ class OverlayApp(OverlayBaseApp):
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
 
-        # The size of the aruco tag in mm
-        self.marker_size = 50
-
         #use the transformation manager
         self._tm = TransformManager()
         
@@ -37,6 +35,7 @@ class OverlayApp(OverlayBaseApp):
         self._tm.add ( "model2modelreference", modelreference2model)
         # ref.txt data
         self.ref_data1 = np.array(ref_data)
+
 
         self.ref_pointer_data = []
         # refPointer.txt data
@@ -79,7 +78,7 @@ class OverlayApp(OverlayBaseApp):
         # Without the next line the model does not show as the clipping range
         # does not change to accommodate model motion. Uncomment it to
         # see what happens.
-        self.vtk_overlay_window.set_camera_state({"ClippingRange": [10, 8000]})
+        #self.vtk_overlay_window.set_camera_state({"ClippingRange": [10, 8000]})
         self.vtk_overlay_window.set_video_image(image)
         self.vtk_overlay_window.Render()
 
@@ -96,15 +95,16 @@ class OverlayApp(OverlayBaseApp):
                                                 self.ref_data1)
 
             #self._tm.add("camera2modelreference",  camera2modelreference)
-            self._tm.add("modelreference2camera",  camera2modelreference)
+            self._tm.add("camera2modelreference",  camera2modelreference)
             camera2model = self._tm.get("camera2model")
             model2camera = self._tm.get("model2camera")
+            modelreference2camera=self._tm.get("modelreference2camera")
             if success:
-                self._move_model(model2camera)
-                print ( camera2model)
-                print ( model2camera)
-                print ( camera2model @ model2camera )
-                print ("--------------------------------------")
+                self._move_model(modelreference2camera)
+                #print ( camera2modelreference)
+                #print ( modelreference2camera)
+                #print ( camera2modelreference @ modelreference2camera )
+                #print ("--------------------------------------")
 
         if self._using_pointer:
             if marker_corners and ids[0] != 0:
@@ -236,12 +236,21 @@ def run_demo(config_file):
 
     viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data, reference2model, using_pointer, ref_point_data)
 
+
     # Set a model directory containing the models you wish
     # to render and optionally a colours.txt defining the
     # colours to render in.
     model_dir = models_path
     viewer.add_vtk_models_from_dir(model_dir)
+    #here we add some spheres to represent the ref grid
+    spheres=VTKSphereModel(ref_data[:,1:4],radius=5.0)
+    viewer.vtk_overlay_window.add_vtk_actor(spheres.actor)
 
+    #for reasons I do not understan, it doesn't render properly 
+    #until I resize the window. I tried the following, it didn't work
+    #viewer.vtk_overlay_window.__update_video_image_camera()
+    #viewer.vtk_overlay_window.__update_projection_matrix()
+    #viewer.vtk_overlay_window.resize(1280,960)
     # start the viewer
     viewer.start()
     sys.exit(app.exec_())
