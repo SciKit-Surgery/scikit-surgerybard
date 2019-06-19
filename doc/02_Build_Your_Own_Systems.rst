@@ -54,16 +54,12 @@ where the -w option specifies a list of 3D coordinates and point IDs for each ta
 ::
   bard -w ~/build/BARD/Data/ref.txt -i ~/build/BARD/Data/intrinsics.txt -x 1280 -y 720 -p ~/build/BARD/Data/pointer.txt -r -d ~/BARD
 
-This will dump tracking matrices for the pointer into the folder ~/BARD. Put all tracking matrices into 1 file. 
+This will dump tracking matrices for the pointer into the folder ~/BARD.  
 
 ::
-  bardPivotCalibration --help
-  bardPivotCalibration --matrixDirectory ~/BARD
+  python bardPivotCalibration.py --help
+  python bardPivotCalibration.py --input ~/BARD
 
-or 
-
-::
-  bin/bardPivotCalibration -i trackingMatrices.txt -o pivot.txt
 
 which will calculate a matrix, whose translational component is the offset of the pointer tip from the origin of the pointer model.
 
