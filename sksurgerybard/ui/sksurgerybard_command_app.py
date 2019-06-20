@@ -50,6 +50,12 @@ class OverlayApp(OverlayBaseApp):
 
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
+        #start things off with the camera at the origin.
+        camera2modelreference = np.identity(4)
+        self._tm.add("camera2modelreference", camera2modelreference)
+        modelreference2camera = self._tm.get("modelreference2camera")
+        self.vtk_overlay_window.set_camera_pose(modelreference2camera)
+
     def update(self):
         """Update the background render with a new frame and
         scan for aruco tags"""
