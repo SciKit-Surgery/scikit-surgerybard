@@ -8,11 +8,10 @@ import cv2
 import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
-from sksurgerycore.configuration.configuration_manager import \
-        ConfigurationManager
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
+from sksurgerybard.algorithms.bard_algorithms import configure_bard
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -139,49 +138,12 @@ def run_demo(config_file):
 
     app = QApplication([])
 
-    configurer = ConfigurationManager(config_file)
-
-    configuration_data = configurer.get_copy()
-
-    using_pointer = False
-    video_source = configuration_data.get(
-        'camera').get('source')
-    calibration_path = configuration_data.get(
-        'camera').get('calibration')
-    models_path = configuration_data.get(
-        'models').get('models_dir')
-    ref_points = configuration_data.get(
-        'models').get('ref_file')
-    reference2model_file = configuration_data.get(
-        'models').get('reference_to_model')
-    if 'pointerData' in configuration_data:
-        ref_pointer_file = configuration_data.get(
-            'pointerData').get('pointer_tag_file')
-        pointer_tip_file = configuration_data.get(
-            'pointerData').get('pointer_tag_to_tip')
-        using_pointer = True
-
-    calibration_data = np.load(calibration_path)
-
-    mtx33d = calibration_data['mtx']
-
-    dist15d = calibration_data['dist']
-
-    ref_data = np.loadtxt(ref_points)
-    reference2model = np.loadtxt(reference2model_file)
-
-    ref_point_data = None
-    pointer_tip = np.zeros((1, 3))
-    if using_pointer:
-        ref_point_data = np.loadtxt(ref_pointer_file)
-        pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
-
-
+    (video_source, mtx33d, dist15d, ref_data, reference2model, using_pointer,
+     ref_point_data, models_path, pointer_tip) = configure_bard(config_file)
     viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data,
                         reference2model, using_pointer, ref_point_data)
 
-    model_dir = models_path
-    viewer.add_vtk_models_from_dir(model_dir)
+    viewer.add_vtk_models_from_dir(models_path)
 
     matrix = create_vtk_matrix_from_numpy(reference2model)
     for actor in viewer.vtk_overlay_window.foreground_renderer.GetActors():
