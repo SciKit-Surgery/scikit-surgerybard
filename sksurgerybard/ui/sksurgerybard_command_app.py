@@ -53,8 +53,6 @@ class OverlayApp(OverlayBaseApp):
         #start things off with the camera at the origin.
         camera2modelreference = np.identity(4)
         self._tm.add("camera2modelreference", camera2modelreference)
-        modelreference2camera = self._tm.get("modelreference2camera")
-        self.vtk_overlay_window.set_camera_pose(modelreference2camera)
 
     def update(self):
         """Update the background render with a new frame and
@@ -77,20 +75,21 @@ class OverlayApp(OverlayBaseApp):
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
         if marker_corners and ids[0] != 0:
-            success, camera2modelreference = self.register(
+            success, modelreference2camera = self.register(
                 ids, marker_corners, self.model_reference_tags)
 
             if success:
-                self._tm.add("camera2modelreference", camera2modelreference)
-                modelreference2camera = self._tm.get("modelreference2camera")
-                self.vtk_overlay_window.set_camera_pose(modelreference2camera)
+                self._tm.add("modelreference2camera", modelreference2camera)
+
+        camera2modelreference = self._tm.get("camera2modelreference")
+        self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
         if self._using_pointer:
             if marker_corners and ids[0] != 0:
-                success, camera2pointerref = self.register(
+                success, pointerref2camera = self.register(
                     ids, marker_corners, self.pointer_reference_tags)
                 if success:
-                    self._tm.add("camera2pointerref", camera2pointerref)
+                    self._tm.add("pointerref2camera", pointerref2camera)
                     ptrref2modelref = self._tm.get("pointerref2modelreference")
                     actors = \
                         self.vtk_overlay_window.foreground_renderer.GetActors()
