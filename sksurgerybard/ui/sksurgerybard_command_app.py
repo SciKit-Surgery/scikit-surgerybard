@@ -28,11 +28,11 @@ class OverlayApp(OverlayBaseApp):
         self._tm = TransformManager()
 
         self._tm.add("model2modelreference", modelreference2model)
-    
+
         self.model_reference_tags = None
         if ref_data is not None:
             self.model_reference_tags = np.array(ref_data)
-    
+
         self.pointer_reference_tags = None
         if pointer_ref is not None:
             self.pointer_reference_tags = np.array(pointer_ref)
