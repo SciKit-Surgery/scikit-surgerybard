@@ -8,18 +8,17 @@ import cv2
 import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
-from sksurgerycore.configuration.configuration_manager import \
-        ConfigurationManager
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
+from sksurgerybard.algorithms.bard_algorithms import configure_bard
 
 class OverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
     def __init__(self, image_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, using_pointer, pointer_ref):
+                 modelreference2model, pointer_ref):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -30,13 +29,12 @@ class OverlayApp(OverlayBaseApp):
 
         self._tm.add("model2modelreference", modelreference2model)
 
-        self.model_reference_tags = np.array(ref_data)
+        self.model_reference_tags = None
+        if ref_data is not None:
+            self.model_reference_tags = np.array(ref_data)
 
-
-        self.ref_pointer_data = []
-        self._using_pointer = False
-        if using_pointer:
-            self._using_pointer = True
+        self.pointer_reference_tags = None
+        if pointer_ref is not None:
             self.pointer_reference_tags = np.array(pointer_ref)
 
         # Camera Calibration
@@ -53,6 +51,8 @@ class OverlayApp(OverlayBaseApp):
         #start things off with the camera at the origin.
         camera2modelreference = np.identity(4)
         self._tm.add("camera2modelreference", camera2modelreference)
+
+        self.pointer_models = 0
 
     def update(self):
         """Update the background render with a new frame and
@@ -74,17 +74,18 @@ class OverlayApp(OverlayBaseApp):
         # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
-        if marker_corners and ids[0] != 0:
-            success, modelreference2camera = self.register(
-                ids, marker_corners, self.model_reference_tags)
+        if self.model_reference_tags is not None:
+            if marker_corners and ids[0] != 0:
+                success, modelreference2camera = self.register(
+                    ids, marker_corners, self.model_reference_tags)
 
-            if success:
-                self._tm.add("modelreference2camera", modelreference2camera)
+                if success:
+                    self._tm.add("modelreference2camera", modelreference2camera)
 
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        if self._using_pointer:
+        if self.pointer_reference_tags is not None:
             if marker_corners and ids[0] != 0:
                 success, pointerref2camera = self.register(
                     ids, marker_corners, self.pointer_reference_tags)
@@ -96,7 +97,7 @@ class OverlayApp(OverlayBaseApp):
                     no_actors = actors.GetNumberOfItems()
                     matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
                     for index, actor in enumerate(actors):
-                        if index >= no_actors - 2:
+                        if index >= no_actors - self.pointer_models:
                             actor.SetUserMatrix(matrix)
 
     def register(self, ids, tags, ref_file):
@@ -139,63 +140,34 @@ def run_demo(config_file):
 
     app = QApplication([])
 
-    configurer = ConfigurationManager(config_file)
-
-    configuration_data = configurer.get_copy()
-
-    using_pointer = False
-    video_source = configuration_data.get(
-        'camera').get('source')
-    calibration_path = configuration_data.get(
-        'camera').get('calibration')
-    models_path = configuration_data.get(
-        'models').get('models_dir')
-    ref_points = configuration_data.get(
-        'models').get('ref_file')
-    reference2model_file = configuration_data.get(
-        'models').get('reference_to_model')
-    if 'pointerData' in configuration_data:
-        ref_pointer_file = configuration_data.get(
-            'pointerData').get('pointer_tag_file')
-        pointer_tip_file = configuration_data.get(
-            'pointerData').get('pointer_tag_to_tip')
-        using_pointer = True
-
-    calibration_data = np.load(calibration_path)
-
-    mtx33d = calibration_data['mtx']
-
-    dist15d = calibration_data['dist']
-
-    ref_data = np.loadtxt(ref_points)
-    reference2model = np.loadtxt(reference2model_file)
-
-    ref_point_data = None
-    pointer_tip = np.zeros((1, 3))
-    if using_pointer:
-        ref_point_data = np.loadtxt(ref_pointer_file)
-        pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
-
-
+    (video_source, mtx33d, dist15d, ref_data, reference2model,
+     ref_point_data, models_path, pointer_tip) = configure_bard(config_file)
     viewer = OverlayApp(video_source, mtx33d, dist15d, ref_data,
-                        reference2model, using_pointer, ref_point_data)
+                        reference2model, ref_point_data)
 
-    model_dir = models_path
-    viewer.add_vtk_models_from_dir(model_dir)
+    if models_path:
+        viewer.add_vtk_models_from_dir(models_path)
 
     matrix = create_vtk_matrix_from_numpy(reference2model)
     for actor in viewer.vtk_overlay_window.foreground_renderer.GetActors():
         actor.SetUserMatrix(matrix)
 
-    model_reference_spheres = VTKSphereModel(ref_data[:, 1:4], radius=5.0)
-    viewer.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+    if ref_data is not None:
+        model_reference_spheres = VTKSphereModel(ref_data[:, 1:4], radius=5.0)
+        viewer.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
 
-    if using_pointer:
+    if ref_point_data is not None:
         pointer_reference_spheres = VTKSphereModel(
             ref_point_data[:, 1:4], radius=5.0)
         viewer.vtk_overlay_window.add_vtk_actor(pointer_reference_spheres.actor)
+        viewer.pointer_models = viewer.pointer_models + 1
+
+    if pointer_tip is not None:
         pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
         viewer.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
+        viewer.pointer_models = viewer.pointer_models + 1
+
 
     viewer.start()
+
     sys.exit(app.exec_())
