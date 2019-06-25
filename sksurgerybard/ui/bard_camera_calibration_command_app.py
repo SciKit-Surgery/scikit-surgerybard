@@ -8,7 +8,7 @@ import cv2
 import six
 
 
-def run_demo(input_dir, output_dir, width, height):
+def run_demo(input_dir, output_dir, width, height, grid_size_mm):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
@@ -20,7 +20,7 @@ def run_demo(input_dir, output_dir, width, height):
 
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     objp = np.zeros((width * height, 3), np.float32)
-    objp[:, :2] = np.mgrid[0:width, 0:height].T.reshape(-1, 2)
+    objp[:, :2] = np.mgrid[0:width, 0:height].T.reshape(-1, 2) * grid_size_mm
 
     # Arrays to store object points and image points from all the images.
     obj_points = []  # 3d point in real world space
