@@ -1,28 +1,24 @@
 # coding=utf-8
 
-""" Demo app, to show OpenCV video and PySide2 widgets together."""
+""" Overlay class for the BARD application."""
 
-import sys
 import os
+from time import time
 import numpy as np
 import cv2
 import cv2.aruco as aruco
-from time import time
 
-from PySide2.QtWidgets import QApplication
 from sksurgerycore.transforms.transform_manager import TransformManager
-from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
-from sksurgerybard.algorithms.bard_algorithms import configure_bard
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
-from sksurgeryimage.acquire.video_source import TimestampedVideoSource
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
     def __init__(self, video_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, pointer_ref, outdir, dims=None):
+                 modelreference2model, pointer_ref, pointer_tip,
+                 outdir, dims=None):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -57,9 +53,10 @@ class BARDOverlayApp(OverlayBaseApp):
         self._tm.add("camera2modelreference", camera2modelreference)
 
         self.pointer_models = 0
+        self._pointer_tip = pointer_tip
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                         self.keyPressEvent)
+                                            self.key_press_event)
 
         self._outdir = outdir
 
@@ -142,18 +139,39 @@ class BARDOverlayApp(OverlayBaseApp):
 
         return True, output_matrix
 
-    def keyPressEvent(self, obj, ev):
+    def key_press_event(self, _obj_not_used, _ev_not_used):
         """
-        :param ev: Event
+        Handles a key press event
+
         """
 
-        if self.vtk_overlay_window.GetKeySym() == 'd': 
+        if self.vtk_overlay_window.GetKeySym() == 'd':
+            pointermat = None
             try:
-                pointermat = self._tm.get("pointerref2modelreference") 
-                matoutdir = os.path.join(self._outdir,  'bard_pointer_matrices')
+                pointermat = self._tm.get("pointerref2modelreference")
+
+            except ValueError:
+                print("No pointer matrix available")
+
+            if pointermat is not None:
+                matoutdir = os.path.join(self._outdir, 'bard_pointer_matrices')
+                filename = '{0:d}.txt'.format(int(time()*1e7))
                 if not os.path.isdir(matoutdir):
-                    os.mkdir(matoutdir)    
-                filename = os.path.join(matoutdir, '{0:d}.txt').format(int(time()*1e7))
-                np.savetxt(filename, pointermat)
-            except:
-                print ("No pointer matrix available")
+                    os.mkdir(matoutdir)
+                np.savetxt(os.path.join(matoutdir, filename), pointermat)
+                print("Pointer matrix written to ",
+                      os.path.join(matoutdir, filename))
+
+                if self._pointer_tip is not None:
+                    tipoutdir = os.path.join(self._outdir, 'bard_pointer_tips')
+                    pointer_tip_location = \
+                        pointermat[0:3, 0:3] @ np.reshape(self._pointer_tip,
+                                                          (3, 1)) + \
+                        np.reshape(pointermat[0:3, 3], (3, 1))
+                    if not os.path.isdir(tipoutdir):
+                        os.mkdir(tipoutdir)
+
+                    np.savetxt(os.path.join(tipoutdir, filename),
+                               pointer_tip_location)
+                    print("Pointer tip written to ",
+                          os.path.join(tipoutdir, filename))
