@@ -11,14 +11,16 @@ from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgerybard.algorithms.bard_algorithms import configure_bard
+from sksurgerybard.widgets.bard_overlay import BARDVTKOverlayWindow
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgeryimage.acquire.video_source import TimestampedVideoSource
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, image_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, pointer_ref):
+    def __init__(self, video_source, mtx33d, dist15d, ref_data,
+                 modelreference2model, pointer_ref, dims=None):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -44,7 +46,12 @@ class BARDOverlayApp(OverlayBaseApp):
         self.camera_distortion = dist15d
 
         # call the constructor for the base class
-        super().__init__(image_source)
+        self.vtk_overlay_window = BARDVTKOverlayWindow()
+        self.video_source = TimestampedVideoSource(video_source, dims)
+        self.update_rate = 30
+        self.img = None
+        self.timer = None
+        self.save_frame = None
 
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
