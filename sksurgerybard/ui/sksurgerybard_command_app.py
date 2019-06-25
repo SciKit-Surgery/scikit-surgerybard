@@ -3,15 +3,11 @@
 """ Demo app, to show OpenCV video and PySide2 widgets together."""
 
 import sys
-import numpy as np
-import cv2
-import cv2.aruco as aruco
 from PySide2.QtWidgets import QApplication
-from sksurgerybard.widgets.bard_overlay_app import BARDOverlayApp
-from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgerybard.algorithms.bard_algorithms import configure_bard
+from sksurgerybard.widgets.bard_overlay_app import BARDOverlayApp
 
 
 def run_demo(config_file):
@@ -23,7 +19,7 @@ def run_demo(config_file):
     (video_source, mtx33d, dist15d, ref_data, reference2model,
      ref_point_data, models_path, pointer_tip) = configure_bard(config_file)
     viewer = BARDOverlayApp(video_source, mtx33d, dist15d, ref_data,
-                        reference2model, ref_point_data)
+                            reference2model, ref_point_data)
 
     if models_path:
         viewer.add_vtk_models_from_dir(models_path)
