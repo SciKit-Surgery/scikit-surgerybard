@@ -11,7 +11,7 @@ from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgerybard.algorithms.bard_algorithms import configure_bard
-from sksurgerybard.widgets.bard_overlay import BARDVTKOverlayWindow
+from sksurgerybard.widgets.bard_vtk_overlay_window import BARDVTKOverlayWindow
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryimage.acquire.video_source import TimestampedVideoSource
 

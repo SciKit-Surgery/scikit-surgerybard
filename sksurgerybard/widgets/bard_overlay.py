@@ -5,10 +5,15 @@ from sksurgeryimage.acquire.video_source import TimestampedVideoSource
 
 from sksurgeryvtk.widgets.vtk_overlay_window import VTKOverlayWindow
 
-class BARDVTKOverlayWindow (VTKOverlayWindow):
+from sksurgerybard.widgets.BARDQVTKRenderWindowInteractor import \
+    BARDQVTKRenderWindowInteractor
+
+
+class BARDVTKOverlayWindow (BARDQVTKRenderWindowInteractor):
 
     def __init__(self):
         super().__init__()
+
 
 
 
