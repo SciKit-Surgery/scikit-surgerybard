@@ -32,7 +32,8 @@ def configure_camera(camera_config):
               "trying some default values")
         video_source = 0
 
-    return video_source, mtx33d, dist5d
+    dims = None
+    return video_source, mtx33d, dist5d, dims
 
 
 def configure_model_and_ref(model_config):
@@ -92,7 +93,7 @@ def configure_bard(configuration_file):
     configuration_data = configurer.get_copy()
 
     camera_config = configuration_data.get('camera')
-    video_source, mtx33d, dist5d = configure_camera(camera_config)
+    video_source, mtx33d, dist5d, dims = configure_camera(camera_config)
 
     model_config = configuration_data.get('models')
     ref_data, reference2model, models_path = \
@@ -101,6 +102,11 @@ def configure_bard(configuration_file):
     pointer_config = configuration_data.get('pointerData')
     ref_point_data, pointer_tip = configure_pointer(pointer_config)
 
+    outdir = configuration_data.get('out path')
+
+    if outdir is None:
+        outdir = './'
+
     return video_source, mtx33d, dist5d, ref_data, \
                         reference2model, ref_point_data, \
-                        models_path, pointer_tip
+                        models_path, pointer_tip, outdir, dims

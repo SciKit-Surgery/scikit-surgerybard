@@ -17,9 +17,10 @@ def run_demo(config_file):
     app = QApplication([])
 
     (video_source, mtx33d, dist15d, ref_data, reference2model,
-     ref_point_data, models_path, pointer_tip) = configure_bard(config_file)
+     ref_point_data, models_path, pointer_tip,
+     outdir, dims) = configure_bard(config_file)
     viewer = BARDOverlayApp(video_source, mtx33d, dist15d, ref_data,
-                            reference2model, ref_point_data)
+                            reference2model, ref_point_data, outdir, dims)
 
     if models_path:
         viewer.add_vtk_models_from_dir(models_path)

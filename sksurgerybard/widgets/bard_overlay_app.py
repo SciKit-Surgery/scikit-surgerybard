@@ -3,9 +3,12 @@
 """ Demo app, to show OpenCV video and PySide2 widgets together."""
 
 import sys
+import os
 import numpy as np
 import cv2
 import cv2.aruco as aruco
+from time import time
+
 from PySide2.QtWidgets import QApplication
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
@@ -19,7 +22,7 @@ class BARDOverlayApp(OverlayBaseApp):
     detect aruco tags and move the model to follow."""
 
     def __init__(self, video_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, pointer_ref, dims=None):
+                 modelreference2model, pointer_ref, outdir, dims=None):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
@@ -57,6 +60,8 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
                          self.keyPressEvent)
+
+        self._outdir = outdir
 
     def update(self):
         """Update the background render with a new frame and
@@ -142,4 +147,13 @@ class BARDOverlayApp(OverlayBaseApp):
         :param ev: Event
         """
 
-        print ("bard overlay _ keyPress event" , ev, self.vtk_overlay_window.GetKeySym(),  self._tm.get("camera2modelreference"))
+        if self.vtk_overlay_window.GetKeySym() == 'd': 
+            try:
+                pointermat = self._tm.get("pointerref2modelreference") 
+                matoutdir = os.path.join(self._outdir,  'bard_pointer_matrices')
+                if not os.path.isdir(matoutdir):
+                    os.mkdir(matoutdir)    
+                filename = os.path.join(matoutdir, '{0:d}.txt').format(int(time()*1e7))
+                np.savetxt(filename, pointermat)
+            except:
+                print ("No pointer matrix available")
