@@ -11,7 +11,6 @@ from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgerybard.algorithms.bard_algorithms import configure_bard
-from sksurgerybard.widgets.bard_vtk_overlay_window import BARDVTKOverlayWindow
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryimage.acquire.video_source import TimestampedVideoSource
 
@@ -46,12 +45,7 @@ class BARDOverlayApp(OverlayBaseApp):
         self.camera_distortion = dist15d
 
         # call the constructor for the base class
-        self.vtk_overlay_window = BARDVTKOverlayWindow()
-        self.video_source = TimestampedVideoSource(video_source, dims)
-        self.update_rate = 30
-        self.img = None
-        self.timer = None
-        self.save_frame = None
+        super().__init__(video_source, dims)
 
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
@@ -60,6 +54,9 @@ class BARDOverlayApp(OverlayBaseApp):
         self._tm.add("camera2modelreference", camera2modelreference)
 
         self.pointer_models = 0
+
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                         self.keyPressEvent)
 
     def update(self):
         """Update the background render with a new frame and
@@ -140,3 +137,9 @@ class BARDOverlayApp(OverlayBaseApp):
 
         return True, output_matrix
 
+    def keyPressEvent(self, obj, ev):
+        """
+        :param ev: Event
+        """
+
+        print ("bard overlay _ keyPress event" , ev, self.vtk_overlay_window.GetKeySym(),  self._tm.get("camera2modelreference"))
