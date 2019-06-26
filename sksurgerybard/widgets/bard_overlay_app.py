@@ -44,6 +44,8 @@ class BARDOverlayApp(OverlayBaseApp):
         self.camera_distortion = dist15d
 
         # call the constructor for the base class
+        dims = None
+
         super().__init__(video_source, dims)
 
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
@@ -51,14 +53,16 @@ class BARDOverlayApp(OverlayBaseApp):
         #start things off with the camera at the origin.
         camera2modelreference = np.identity(4)
         self._tm.add("camera2modelreference", camera2modelreference)
+        camera2modelreference = self._tm.get("camera2modelreference")
+        self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
         self.pointer_models = 0
         self._pointer_tip = pointer_tip
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
                                             self.key_press_event)
-
         self._outdir = outdir
+        self._resize_flag = True
 
     def update(self):
         """Update the background render with a new frame and
@@ -71,6 +75,9 @@ class BARDOverlayApp(OverlayBaseApp):
         self._aruco_detect_and_follow(gray)
 
         self.vtk_overlay_window.set_video_image(image)
+        if self._resize_flag:
+            self.vtk_overlay_window.resizeEvent(None)
+            self._resize_flag = False
         self.vtk_overlay_window.Render()
 
     def _aruco_detect_and_follow(self, image):
