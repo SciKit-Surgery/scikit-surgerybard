@@ -19,17 +19,15 @@ def main(args=None):
     # ADD POSITIONAL ARGUMENTS
 
     parser.add_argument("-i", "--input",
-                        required=False,
-                        default='tests/data/Calibration/',
-                        help="Multiple valued argument, "
-                             "of files of images, containing "
-                             "chessboards."
+                        required=True,
+                        help="Directory containing png images of "
+                             "chessboard."
                         )
 
     parser.add_argument("-o",
                         "--output",
                         required=False,
-                        default='tests/data/',
+                        default='./',
                         help="Output text file for intrinsic and "
                              "distortion params"
                         )
@@ -49,11 +47,13 @@ def main(args=None):
                              "along the height (y)",
                         type=int
                         )
-    #
-    # parser.add_argument("-s", "--size",
-    #                     help="Square size in millimetres",
-    #                     type=float
-    #                     )
+
+    parser.add_argument("-s", "--size",
+                        required=False,
+                        default=3,
+                        help="Square size in millimetres",
+                        type=float
+                        )
 
     # ADD OPTINAL ARGUMENTS
 
@@ -76,6 +76,7 @@ def main(args=None):
     output_dir = args.output
     width = args.xcorners
     height = args.ycorners
-    # size = args.size
+    size = args.size
+    verbose = args.verbose
 
-    run_demo(input_dir, output_dir, width, height)
+    run_demo(input_dir, output_dir, width, height, size, verbose)

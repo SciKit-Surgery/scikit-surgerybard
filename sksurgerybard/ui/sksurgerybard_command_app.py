@@ -6,7 +6,7 @@ import sys
 from PySide2.QtWidgets import QApplication
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
-from sksurgerybard.algorithms.bard_algorithms import configure_bard
+from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
 from sksurgerybard.widgets.bard_overlay_app import BARDOverlayApp
 
 
