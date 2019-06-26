@@ -5,18 +5,14 @@
 import glob
 import numpy as np
 import cv2
-import six
 
-
-def run_demo(input_dir, output_dir, width, height, grid_size_mm):
+def run_demo(input_dir, output_dir, width, height, grid_size_mm, verbose):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
     # https://opencv-python-tutroals.readthedocs.io/en/
     # latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 
-    # termination criteria
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     objp = np.zeros((width * height, 3), np.float32)
@@ -48,39 +44,39 @@ def run_demo(input_dir, output_dir, width, height, grid_size_mm):
         if ret is True:
             obj_points.append(objp)
 
-            corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1),
+            # termination criteria for sub pixel corner finding
+            criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+            search_window = (11, 11) #pixels window around pixels to search
+            zero_zone = (-1, -1) # not used
+            corners2 = cv2.cornerSubPix(gray, corners, search_window, zero_zone,
                                         criteria)
             img_points.append(corners2)
 
-            # Line is commented because displaying
-            # images are not our requirement here.
+        else:
+            if verbose:
+                print("Found insufficient corners on image ", fname)
 
-            # Draw and display the corners
-            # img = cv2.drawChessboardCorners(img, (width, height),
-            # corners2, ret)
-            # cv2.imshow('img', img)
-            # cv2.waitKey(1000)
+        if verbose:
+            img = cv2.drawChessboardCorners(img, (width, height), corners2, ret)
+            cv2.imshow('img', img)
+            cv2.waitKey(3000)
+
 
     # Now to do the calibration
-    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points,
+    rms, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points,
                                                        gray.shape[::-1],
                                                        None, None)
 
     # --------- Save result
     output_file = output_dir + 'calibrationData'
-    np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+    np.savez(output_file, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs,
+            rms_error=rms)
 
-    filename = output_dir + "/cameraMatrix.txt"
-    np.savetxt(filename, mtx, delimiter=',')
-    filename = output_dir + "/cameraDistortion.txt"
-    np.savetxt(filename, dist, delimiter=',')
+    
+    if verbose:
+        print("RMS =", rms)
+        print(mtx)
+        print(dist)
+        print(tvecs)
 
-    six.print_("RMS =", ret)
 
-    # Output Calib Data
-    six.print_(mtx)
-    six.print_(dist)
-
-    # cv2.destroyAllWindows()
-
-    return ret, mtx, dist
