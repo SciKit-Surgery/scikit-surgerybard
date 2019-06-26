@@ -18,12 +18,14 @@ Outcomes:
 After completing the workshop the student should be able to:
 - Calibrate a video camera using a standard chessboard pattern.
 - Calibrate a tracked pointer using an invariant point method.
+- Explain the relationship between calibration errors and 
+  calibration residual errors for the above two cases.
 - Register a CT model of a pelvic phantom to physical space using
-  fiducial markers.
+  fiducial marker based registration.
+- Explain the difference between fiducial registration 
+  error, target registration error, and fiducial localisation error.
 - Explain how rigid body transforms between different coordinate systems are
   combined to create a basic augmented reality system.
-- Explain the difference between calibration residual error, fiducial registration 
-  error, and target registration error.
 - Combine the above to create a augmented reality demonstration using the supplied phantom. 
 
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/

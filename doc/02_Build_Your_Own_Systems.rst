@@ -13,9 +13,13 @@ Build Your Own Image Guided Surgery System
   :align: center
 
 
-2. Select a USB camera. There are 2 spare in the TIG lab, or in Matt's office 8.24.
+2. Find a USB camera, there are a few in the lab, or we can use a tablet with a rear facing camera.
 
-3. Compile BARD in DEBUG mode using CMake and your compiler of choice. Basic build instructions are in the README.md in the repository containing this document.
+3. Get B.A.R.D. 
+
+::
+  pip install scikit-surgerybard
+
 
 4. Calibrate USB camera.
 
