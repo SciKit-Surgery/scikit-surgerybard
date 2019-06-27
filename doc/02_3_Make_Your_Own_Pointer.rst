@@ -38,63 +38,45 @@ Now run this:
 ::
   python sksurgerybard.py --config config/pointer_markers.json
 
-This will dump tracking matrices for the pointer into the folder ~/BARD.  
+Move the pointer around in front of the camera. You should be able to see that 
+BARD is tracking the markers, so we know where they are, however we're going to use the
+tip of the pointer to locate the fiducial markers. We find the tip of the pointer 
+using a "pivot calibration". The tip of the pointer is held stationary whilst the 
+markers are pivoted around the tip. Pressing the "d" key whilst BARD is running will write 
+the pointer tracking matrix to the file pointer_position/bard_pointer_matrices. Do this around 100 
+times.Whilst doing this it is important that you do not 
+move either the pointer tip or the tracking system (webcam).
 
 ::
   python bardPivotCalibration.py --help
-  python bardPivotCalibration.py --input ~/BARD
+  python bardPivotCalibration.py --input pointer_position/bard_pointer_matrices
 
+The output of this should be list of 7 numbers. The first three are the x, y and z coordinates of the
+pointer tip relative to the tracking markers and should be copied into a file named 
+pointer_tip.txt. The next three numbers are the x,y, and z coordinates of the pointer 
+pivot point relative to the webcam. These can be ignored for now. 
 
-which will calculate a matrix, whose translational component is the offset of the pointer tip from the origin of the pointer model.
+The last number is the RMS pointer tip spread. Have a discussion about what it means. 
+Is a lower number here good or bad? What happens to the results if you rerun this with more or 
+less pointer pose.
 
-Does the translation component look correct? The origin of the pointer coordinate system is the centre of the 2 x 3 pattern (see Fig 1.)
-
-10. Then, edit the pointer.txt file to contain the calibrated pointer position for point ID 9999. The format is 
-
-::
-  pointId x0 y0 z0 x1 y1 z1 x2 y2 z2 x3 y3 z3 x4 y4 z4
-
-where point zero is the centre of the tag, followed by the 4 corners. Here we are using a dummy tag ID (9999) to represent the tip, so the centre and corners can all be the same point.
-
-If the pivot calibration looks inaccurate, simply work out the tip position by measuring it. The origin is the centre of the pattern, and the x and y axes are aligned with the tags (if you copied Fig 1.)
-
-11. For each point you want to measure, you should clear down (delete) the contents of ~/BARD (or write the data to a new folder). For each point run:
-
-:: 
-  bard -w ~/build/BARD/Data/ref.txt -i ~/build/BARD/Data/intrinsics.txt -x 1280 -y 720 -p ~/build/BARD/Data/pointer.txt -t -d ~/BARD
-
-
-(which if you compare with step 8, you are recording the tip position instead of the matrix).
-
-Control-C to kill the program each time, and the last generated file will contain the location of the pointer tip. So, you can measure the position in world coordinates of the prostate phantom fiducials.
-
-12. Create a plain text-file containing the coordinates of the prostate phantom fiducials. The file BARD/Data/CT.txt has 4 markers. These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. You should end up with a file, of the same format as CT.txt, containing the corresponding world coordinates, lets call it world.txt.
-
-13. Compute the registration of CT points in CT.txt to your world points. 
+Now edit config/pointer_markers.json to include the line
 
 ::
-  bardProcrustes -f world.txt -m CT.txt -o register.txt
+  "pointer_tag_to_tip": "data/pointer_tip.txt"
 
-So here -f stands for "fixed" points, also called "target" points in the literature, and -m stands for "moving" points, also called "source" points in the literature.
+within the pointerData  entry.
 
-14. Finally, we should be able to render the prostate CT model, overlaid on the live video using the following:
-
+New run 
 ::
-  bard -w ~/build/BARD/Data/ref.txt -i ~/build/BARD/Data/intrinsics.txt -x 1280 -y 720 –m pelvis.vtk –a registration.txt
+  python sksurgerybard.py --config config/pointer_markers.json
 
-As the reference board is attached to the phantom, you should be able to move the camera, and observe the prostate model, overlaid on the video from different angles, as long as the tracking markers are in view.
-
-15. Step through the registration process another 2 times, to see how repeatable it is. What is the mean FRE from your 3 attempts?
-
-.. image:: overlay_01.png
-  :height: 400px
-  :alt: Screenshot after registration. FRE=12mm
-  :align: center
-
-.. image:: overlat_02.png
-  :height: 400px
-  :alt: Screenshot after registration. FRE=12mm
-  :align: center
+When you place the pointer in front of the camera, you should now see an additional sphere
+representing the pointer tip. Do the real and virtual images line up. Try it with a few
+different pivot calibrations and see if there is any correlation between the apparent 
+accuracy and the RMS error value. If you press "d" now BARD should write the pointer tip position to 
+a file in pointer_position/bard_pointer_tips. You can use this functionality to locate and record the 
+fiducial marker positions in physical space.
 
 
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
