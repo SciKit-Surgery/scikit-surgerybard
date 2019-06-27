@@ -16,6 +16,7 @@ The workshop aims to introduce students to some key concepts used in image guide
 
 Outcomes:
 After completing the workshop the student should be able to:
+
 - Calibrate a video camera using a standard chessboard pattern.
 - Calibrate a tracked pointer using an invariant point method.
 - Explain the relationship between calibration errors and 

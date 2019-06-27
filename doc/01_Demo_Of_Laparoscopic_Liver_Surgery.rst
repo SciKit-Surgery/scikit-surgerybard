@@ -6,18 +6,20 @@
 Demo of Laparoscopic Liver Surgery System
 ===============================================
 
+Here we demonstrate the SmartLiver IGS system.
 
-    1. The aim is to display CT models on top of live laparoscopic video
-    2. Talk  overview of system components
+- The aim is to display CT models on top of live laparoscopic video
+- Talk overview of system components
         a. Optical Tracker
         b. Endoscopic stack
         c. NVidia SDI input
-    3. Perform “manual” registration using NiftySLS Liver Surgery plugin
-    4. Perform “ICP” registration using NiftySLS Liver Surgery plugin
+- Perform “manual” registration using NiftySLS Liver Surgery plugin
+- Perform “ICP” registration using NiftySLS Liver Surgery plugin
 
 (all steps will probably require live demo/assistance).
 
-    5. Discuss Coordinate Systems – Compare “Laparoscopic System” with “Home Made” System (see Task 2)
+- Discuss Coordinate Systems
+- Compare “Laparoscopic System” with “Home Made” System (see Task 2)
 
 For Laparoscopic System:
 

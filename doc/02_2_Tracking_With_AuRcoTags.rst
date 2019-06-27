@@ -13,7 +13,6 @@ for specialist equipment by utilising the ArUco tag library that forms part of
 OpenCV.
 
 1. Try running the following, and check that the USB camera can track the reference marker
-
 ::
    python sksurgerybard.py --config config/reference_only.json
 
@@ -37,7 +36,6 @@ a registration to be performed once. Here we have glued the marker to the phanto
 so model2reference should not change.
 
 Now try running
-
 :: 
    python sksurgerybard.py --config config/reference_with_model.json
 
