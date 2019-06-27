@@ -8,4 +8,5 @@ numpy
 glob2
 scikit-surgerycore
 scikit-surgeryutils
+scikit-surgeryvtk
 opencv-contrib-python

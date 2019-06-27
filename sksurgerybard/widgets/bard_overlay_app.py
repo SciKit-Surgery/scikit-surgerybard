@@ -61,7 +61,12 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
                                             self.key_press_event)
+
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+
         self._outdir = outdir
+
         self._resize_flag = True
 
     def update(self):
