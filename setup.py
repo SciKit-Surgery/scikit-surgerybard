@@ -72,12 +72,10 @@ setup(
             'bardGrabVideoImages=sksurgerybard.ui.bard_grab_'
             'video_images_command_line:main',
             'bardReadRef=sksurgerybard.ui.bard_read_load_'
-            'ref_points_command_line:main',
-            'bardReadRef=sksurgerybard.ui.bard_read_load_'
             'world_points_command_line:main',
             'bardReadPointers=sksurgerybard.ui.bard_read_load_'
             'pointers_command_line:main',
-            'sksurgerybard=sksurgerybard.ui.sksurgerybard_command_line:main','sksurgerybard=sksurgerybard.ui.sksurgerybard_command_line:main',
+            'sksurgerybard=sksurgerybard.ui.sksurgerybard_command_line:main',
         ],
     },
 )
