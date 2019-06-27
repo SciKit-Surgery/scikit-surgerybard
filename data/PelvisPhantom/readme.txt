@@ -1,0 +1,1 @@
+This is ct data and derived segmentations for a rigid pelvis phantom developed for testing IGI software. The phantom contains a pelvis bone, a prostate and a ureathra together with 8 strategically placed fiducials used to determine the gold standard transform.
