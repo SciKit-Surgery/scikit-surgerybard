@@ -49,6 +49,7 @@ setup(
         exclude=[
             'doc',
             'tests',
+            'data',
         ]
     ),
 
@@ -58,6 +59,8 @@ setup(
         'glob2',
         'opencv-contrib-python',
         'scikit-surgerycore',
+        'scikit-surgeryutils',
+        'scikit-surgeryvtk',
     ],
 
     entry_points={
