@@ -1,6 +1,6 @@
 .. highlight:: shell
 
-.. _Introduction:
+.. _Make_Pointer:
 
 ===============================================
 Make your own pointer

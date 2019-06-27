@@ -1,6 +1,10 @@
 .. highlight:: shell
 
-.. _Introduction:
+.. _Register_and_Overlay:
+
+=============================
+Register and Overlay Model
+=============================
 
 Create a plain text-file containing the coordinates of the prostate phantom fiducials, in the same order and format as data/PelvisPhantom/CT_Fiduicial_Markers.txt. These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. You should end up with a file, of the same format as CT.txt, containing the corresponding world coordinates, lets call it world.txt.
 
@@ -35,7 +39,7 @@ and the apparent accuracy? Make some videos and discuss. Here's a couple we made
   :alt: Screenshot after registration. FRE=12mm
   :align: center
 
-.. image:: overlat_02.png
+.. image:: overlay_02.png
   :height: 400px
   :alt: Screenshot after registration. FRE=12mm
   :align: center

@@ -1,6 +1,6 @@
 .. highlight:: shell
 
-.. _Introduction:
+.. _Demonstration_of_clinical_system:
 
 ===============================================
 Demo of Laparoscopic Liver Surgery System

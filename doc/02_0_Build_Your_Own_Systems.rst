@@ -1,6 +1,6 @@
 .. highlight:: shell
 
-.. _Introduction:
+.. _Build_Your_Own_System:
 
 ===============================================
 Build Your Own Image Guided Surgery System
