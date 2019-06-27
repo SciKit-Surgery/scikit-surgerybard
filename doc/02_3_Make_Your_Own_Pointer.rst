@@ -8,18 +8,35 @@ Make your own pointer
 
 BARD uses what is known as a fiducial based registration. Fiducial based 
 registration is the most widely used registration method in image guided 
-interventions, and is often used to validate new methods in research. Thus
+interventions, and is often used to validate new methods in research. 
+However it is often misunderstood or abused, so
 if you learn nothing else from this demo, please learn this.
 
 Fiducial based registration uses a set of identifiable marker points that 
 can be reliably located in both the model and patient space. 
-Within the data directory there are the files.
+Within the data directory there are files based on a CT scan of the
+pelvis phantom. 
 
 ::
-9. Do pivot calibration of a pointer. Use the second 2 x 3 barcode pattern to make a pointer from something like a pen. See Fig 1.
+  ls data/PelvisPhantom
+    CT_Fiduicial_Markers.txt  
+    DeciPelvis.vtk  
+    FullPelvis.vtk  
+    PhantomCroppedJuly08.gipl.gz 
 
+For now, have a look in the file "CT_Fiduicial_Markers.txt". This is an ordered list 
+of the positions of 4 fiducial markers. If we can find the corresponding points on the
+physical phantom, we can register the model to the physical world. This can be done by 
+minimising the mean distance between the two point sets, using the "Procustes" algorithm.
+
+Locating fiducial markers in physical space is usually done with a pointer, which 
+consists of some tracking markers attached to a tipped instrument. You may have seen some
+examples of clinical trackers in our lab. For BARD we shall make and calibrate our own 
+pointer, using the "pointer" markers, a pen, some cardboard and some sort of adhesive.
+
+Now run this:
 ::
-  bard -w ~/build/BARD/Data/ref.txt -i ~/build/BARD/Data/intrinsics.txt -x 1280 -y 720 -p ~/build/BARD/Data/pointer.txt -r -d ~/BARD
+  python sksurgerybard.py --config config/pointer_markers.json
 
 This will dump tracking matrices for the pointer into the folder ~/BARD.  
 
