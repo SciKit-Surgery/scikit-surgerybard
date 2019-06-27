@@ -10,6 +10,7 @@ Here we demonstrate the SmartLiver IGS system.
 
 - The aim is to display CT models on top of live laparoscopic video
 - Talk overview of system components
+
         a. Optical Tracker
         b. Endoscopic stack
         c. NVidia SDI input

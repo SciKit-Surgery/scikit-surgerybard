@@ -9,14 +9,12 @@ Register and Overlay Model
 Create a plain text-file containing the coordinates of the prostate phantom fiducials, in the same order and format as data/PelvisPhantom/CT_Fiduicial_Markers.txt. These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. You should end up with a file, of the same format as CT.txt, containing the corresponding world coordinates, lets call it world.txt.
 
 Compute the registration of CT points in CT.txt to your world points, run this;
-
 ::
   python bardProcrustes.py -f world.txt -m CT.txt
 
 So here -f stands for "fixed" points, also called "target" points in the literature, and -m stands for "moving" points, also called "source" points in the literature.
 This will output a rotation, a translation, and Fiducial Registration Error.
 Cut and paste the rotation and translation into a CT_to_world.txt file as 
-
 ::
   R11 R12 R13 T1
   R21 R22 R23 T2
@@ -25,7 +23,8 @@ Cut and paste the rotation and translation into a CT_to_world.txt file as
 
 and edit config/reference_with_model.json to use this file instead of data/id.txt.
 
-Rerun bard using this configuration file and see what happens. 
+Rerun BARD using this configuration file and see what happens. 
+
  - Is it a good registration?
  - What happens when you move the camera? 
  - What could you do to make it better?

@@ -21,9 +21,9 @@ When you place the reference marker (data/reference.pdf) in front of the webcam 
 see the tag pattern overlaid with spherical markers. Check that the webcam width and height 
 specified in the configuration file are the same as the images you performed calibration on.
 
-The configuration file (config/reference_only.json) references a file data/reference.txt
+The configuration file (print from config/reference_only.json) references a file data/reference.txt
 that defines a list of AruCo markers and their position in 3D space on the printed 
-reference marker. For tracking, OpenCV detects the marker in the image, forming a list 
+reference marker. For tracking, OpenCV detects the markers in the image, forming a list 
 of markers and their positions in physical and screen space. The pose of the camera 
 relative to the markers can then be estimated using OpenCV's solvePNP function, and the 
 virtual camera can be moved appropriately.
@@ -42,9 +42,10 @@ Now try running
 Move the webcam so that the reference markers are visible, and you should see
 a virtual representation of the pelvis overlaid on the video. But it's in the wrong
 place. If you look at config/reference_with_model.json you'll see that it lists
-a reference_to_model file, in this case "data/id.txt", or the identity transform.
+a reference_to_model file, in this case "data/id.txt", the identity transform.
 In order to make a nice overlay we need to work out the correct value for the 
-model2reference transform.
+model2reference transform. This is known as registration, which forms a key 
+component of most IGS systems.
 
 
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
