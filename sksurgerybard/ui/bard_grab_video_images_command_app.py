@@ -4,6 +4,7 @@
 
 """Hello world demo module"""
 
+import os
 import cv2
 import six
 
@@ -14,6 +15,9 @@ def run_demo(output_dir):
     cap.release()
 
     """
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
     cap = cv2.VideoCapture(0)
     i = 0  # to save all the clicked images
     while True:
@@ -25,8 +29,10 @@ def run_demo(output_dir):
         if key == ord('c'):
             i += 1
             cv2.imshow("imshow2", frame)
-            cv2.imwrite(output_dir + '/' + str(i) + '.png', frame)
-            six.print_("Wrote Image")
+            filename = str(i) + '.png'
+            outname = os.path.join(output_dir, filename)
+            cv2.imwrite(outname, frame)
+            six.print_("Wrote Image", outname)
 
     # release the capture
     cap.release()
