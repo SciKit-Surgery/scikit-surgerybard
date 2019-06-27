@@ -18,7 +18,23 @@ Build Your Own Image Guided Surgery System
 3. Get B.A.R.D. 
 
 ::
-  pip install scikit-surgerybard
+  git clone https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/
+
+or navigate to https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard
+and use the download button
+
+navigate to the scikit-surgerybard directory and run 
+
+::
+  pip install .
+
+You may need to add 
+
+::
+  pip install --user
+
+if you don't have administrative permissions.
+
 
 
 4. Calibrate USB camera.
