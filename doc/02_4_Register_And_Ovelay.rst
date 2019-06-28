@@ -8,9 +8,9 @@ Register and Overlay Model
 
 Create a plain text-file containing the coordinates of the prostate phantom fiducials, in the same order and format as data/PelvisPhantom/CT_Fiduicial_Markers.txt. These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. You should end up with a file, of the same format as CT.txt, containing the corresponding world coordinates, lets call it world.txt.
 
-Compute the registration of CT points in CT.txt to your world points, run this;
+Compute the registration of CT points in CT_Fiduicial_Markers.txt to your world points, run this;
 ::
-  python bardProcrustes.py -f world.txt -m CT.txt
+  python bardProcrustes.py -f world.txt -m data/PelvisPhantom/CT_Fiduicial_Markers.txt
 
 So here -f stands for "fixed" points, also called "target" points in the literature, and -m stands for "moving" points, also called "source" points in the literature.
 This will output a rotation, a translation, and Fiducial Registration Error.
