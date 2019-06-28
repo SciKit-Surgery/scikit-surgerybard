@@ -61,11 +61,12 @@ The last number is the RMS pointer tip spread. Have a discussion about what it m
 Is a lower number here good or bad? What happens to the results if you rerun this with more or 
 less pointer poses.
 
-Now edit config/pointer_markers.json to include the line
+Now edit config/pointer_markers.json to include the the pointer_tag_to_tip transform, within the pointerData entry:
 ::
-  "pointer_tag_to_tip": "data/pointer_tip.txt"
-
-within the pointerData  entry.
+    "pointerData": {
+        "pointer_tag_file": "data/pointer.txt",
+		    "pointer_tag_to_tip": "data/pointer_tip.txt"
+    },
 
 Now run; 
 ::
