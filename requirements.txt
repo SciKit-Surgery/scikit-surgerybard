@@ -1,11 +1,10 @@
-PySide2
-pytest
 # This file lists the python packages that your software depends on.
 # It is used by pip to manage software dependencies. It is not to be
 # confused with the software requirements, which are listed in
 # doc/requirements.rst
 numpy
 glob2
+PySide2<=5.11.0
 scikit-surgerycore
 scikit-surgeryutils
 scikit-surgeryvtk
