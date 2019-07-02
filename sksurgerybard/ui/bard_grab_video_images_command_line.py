@@ -23,6 +23,14 @@ def main(args=None):
                         help="Save captured images to given directory"
                         )
 
+    parser.add_argument("-s",
+                        "--source",
+                        required=False,
+                        default=0,
+                        help="Camera To Use"
+                        )
+
+
     # ADD OPTINAL ARGUMENTS
 
     parser.add_argument("-v", "--verbose",
@@ -41,5 +49,6 @@ def main(args=None):
 
     # Stores images in the directory.
     output_dir = args.output
+    source = args.source
 
-    run_demo(output_dir)
+    run_demo(output_dir, source)
