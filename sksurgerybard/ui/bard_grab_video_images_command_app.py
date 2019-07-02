@@ -9,7 +9,7 @@ import cv2
 import six
 
 
-def run_demo(output_dir):
+def run_demo(output_dir, source=0):
     """
     Run this if you are facing invalid images issue
     cap.release()
@@ -18,7 +18,7 @@ def run_demo(output_dir):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(int(source))
     i = 0  # to save all the clicked images
     while True:
         _, frame = cap.read()
