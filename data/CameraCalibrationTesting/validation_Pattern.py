@@ -59,7 +59,7 @@ def drawMarker(ctx,id10,sw,sh,x,y):
             ctx.fill();
 
 def drawTarget(ctx, x, y, size=20):
-     print (99999,"\t",x,"\t",y,"\t0\t", 
+     print (99999,"\t",x-size/2,"\t",y-size/2,"\t0\t", 
              x, "\t",y, "\t0\t",
              x, "\t",y, "\t0\t",
              x, "\t",y, "\t0\t",
