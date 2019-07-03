@@ -14,4 +14,3 @@ sphinx_rtd_theme
 pyinstaller
 pytest
 tox
-opencv-python
