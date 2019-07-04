@@ -32,7 +32,7 @@ You may need to add
 
 if you don't have administrative permissions.
 
-Another method to get BARD and all its dependant packages is
+:underline:`Another method to get BARD and all its dependant packages is the following`
 ::
   git clone https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard.git
 
