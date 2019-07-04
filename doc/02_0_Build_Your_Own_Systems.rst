@@ -45,13 +45,21 @@ Run the tox commands
   tox
 
 If tox run successfully,
-For Mac and Linux, activate the virtual environment using
+For Mac and Linux, activate the virtual environment using command
 ::
   source .tox/py36/bin/activate
 
-If all goes well the prompt should change to (py36)
+If all goes well the prompt should be preceded by (py36).
 
-You should now bard setup with all dependancies. Continue with the next task in the workshop.
+
+For Windows, activate the virtual environment using command
+::
+  .tox\py36\Scripts\activate
+
+If all goes well the prompt should be preceded by (py36).
+
+
+You should now have BARD setup with all dependancies in your computer. Continue with the next task.
 
 
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
