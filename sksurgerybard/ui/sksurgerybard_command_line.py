@@ -8,9 +8,9 @@ from sksurgerybard.ui.sksurgerybard_command_app import run_demo
 
 
 def main(args=None):
-    """Entry point for sksurgeryvideolag application"""
+    """Entry point for sksurgerybard application"""
 
-    parser = argparse.ArgumentParser(description='sksurgeryvideolag')
+    parser = argparse.ArgumentParser(description='sksurgerybard')
 
     parser.add_argument("-c", "--config",
                         required=False,

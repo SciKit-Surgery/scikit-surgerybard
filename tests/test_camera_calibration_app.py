@@ -43,11 +43,13 @@ def test_return_value():
 
 def test_fewer_images():
 
-    input_dir = 'tests/data/Calibration_test_case/'
-    output_dir = 'tests/data/'
-    width = 14
-    height = 10
-    size = 3
-    verbose = False
+    # input_dir = 'tests/data/Calibration_test_case/'
+    # output_dir = 'tests/data/'
+    # width = 14
+    # height = 10
+    # size = 3
+    # verbose = False
+    config_data = 'config/calibration_input_test.json'
+
     with pytest.raises(RuntimeError):
-        p.run_demo(input_dir, output_dir, width, height, size, verbose)
+        p.run_demo(config_data)
