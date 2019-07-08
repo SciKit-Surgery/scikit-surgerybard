@@ -7,8 +7,6 @@ import json
 import numpy as np
 import sksurgerybard.algorithms.bard_calibration_algorithms as bca
 
-# def run_demo(input_dir, output_dir, width, height, grid_size_mm, verbose):
-
 
 def run_demo(config_file):
     """ Demo app, to perform camera calibration """
