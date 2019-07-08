@@ -85,4 +85,5 @@ def main(args=None):
     # verbose = args.verbose
 
     # run_demo(input_dir, output_dir, width, height, size, verbose)
-    run_demo(args)
+    # print('The value of arg is ', args)
+    run_demo(args.config)
