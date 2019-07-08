@@ -35,10 +35,9 @@ the application.
 
 BARD provides a camera calibration program. Try it out.
 ::
-  python bardCameraCalibration.py -help
-  python bardCameraCalibration.py  --xcorners 14 --ycorners 10 --size 24 -i <output_dir> --verbose
+  python bardCameraCalibration.py  --config config/calibration_input.json
 
-(filling in appropriate parameters: so -x gives the number of chessboard squares in the x direction, -y the number of chessboard squares in the y direction and -s gives the size of each chessboard square in millimetres)
+(Default values in `config/calibration_input.json` should be find for most cases but if needed the default values can be changed in config/calibration_input.json file: so -x gives the number of chessboard squares in the x direction, -y the number of chessboard squares in the y direction and -s gives the size of each chessboard square in millimetres)
 
 This will find all file named .png in <output_dir>, attempt to detect chessboard corners from them, 
 and if successful use the corners to calibrate the camera.
