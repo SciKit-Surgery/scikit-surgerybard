@@ -10,5 +10,10 @@
     },
     "models": {
 	"ref_file": "data/CameraCalibrationTesting/validation_ref.txt"
+    },
+
+    "pointerData": {
+        "pointer_tag_file": "data/pointer.txt",
+        "pointer_tag_to_tip": "data/pointer_tip.txt"
     }
 }

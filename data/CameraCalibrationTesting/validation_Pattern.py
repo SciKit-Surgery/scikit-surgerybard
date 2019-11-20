@@ -1,4 +1,4 @@
-#! /usr/bin/python3.6
+#! /usr/bin/python3
 
 import cairo,argparse,random
 
@@ -146,6 +146,7 @@ if __name__ == '__main__':
         n = args.count    
     n=100
     markers = [args.first+i for i in range(0,n)]
+    markers.remove(365)
     if args.random:
         random.shuffle(markers)
         open(args.output+".txt","w").write(" ".join([str(x) for x in markers]))
