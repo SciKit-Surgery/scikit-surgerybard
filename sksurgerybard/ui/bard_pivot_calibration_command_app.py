@@ -25,7 +25,7 @@ def run_demo(input_dir, output_file):
 
     # The try block will attempt to convert the data into 4x4 matrix
     try:
-        matrices_4x4 = matrices.reshape(number_of_4x4_matrices, 4, 4)
+        matrices_4x4 = matrices.reshape((number_of_4x4_matrices, 4, 4))
 
     # The except block will exit the program if the data cannot be converted
     # to 4 x 4 matrix
