@@ -45,7 +45,6 @@ def run_demo(config_file):
         viewer.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
         viewer.pointer_models = viewer.pointer_models + 1
 
-
     viewer.start()
 
     sys.exit(app.exec_())
