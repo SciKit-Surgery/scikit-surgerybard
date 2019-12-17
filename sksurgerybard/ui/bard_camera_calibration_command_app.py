@@ -3,15 +3,28 @@
 """Basic Augmented Reality Demo BARD Application"""
 
 import glob
+import json
 import numpy as np
 import sksurgerybard.algorithms.bard_calibration_algorithms as bca
 
-def run_demo(input_dir, output_dir, width, height, grid_size_mm, verbose):
+
+def run_demo(config_file):
     """ Demo app, to perform camera calibration """
 
     # Calibration code added from the following link
     # https://opencv-python-tutroals.readthedocs.io/en/
     # latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
+
+    json_file = open(config_file)
+    json_data = json.load(json_file)
+    json_file.close()
+
+    input_dir = json_data["input_dir"]
+    output_dir = json_data["output_dir"]
+    width = int(json_data["width"])
+    height = int(json_data["height"])
+    grid_size_mm = float(json_data["grid_size_mm"])
+    verbose = json_data["verbose"]
 
     # *.png is appended to the supplied path to read all the png files in it.
     input_dir = input_dir + '*.png'
