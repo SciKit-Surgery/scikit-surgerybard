@@ -39,9 +39,10 @@ class BARDOverlayApp(OverlayBaseApp):
 
         # Camera Calibration
         # _ = mtx33d
-        self.camera_projection_mat = mtx33d
-
-        self.camera_distortion = dist15d
+        self.camera = {
+            'projection_mat' : mtx33d,
+            'distortion' : dist15d
+        }
 
         # call the constructor for the base class
         dims = None
@@ -63,7 +64,7 @@ class BARDOverlayApp(OverlayBaseApp):
                                             self.key_press_event)
 
         self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self.left_mouse_press_event)
+                                            self._left_mouse_press_event)
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
@@ -71,6 +72,11 @@ class BARDOverlayApp(OverlayBaseApp):
         self._outdir = outdir
 
         self._resize_flag = True
+
+        self.screen_interation_layout = {
+            'x_right_edge' : 0.80,
+            'x_left_edge' : 0.20
+        }
 
     def update(self):
         """Update the background render with a new frame and
@@ -113,13 +119,10 @@ class BARDOverlayApp(OverlayBaseApp):
                 if success:
                     self._tm.add("pointerref2camera", pointerref2camera)
                     ptrref2modelref = self._tm.get("pointerref2modelreference")
-                    actors = \
-                        self.vtk_overlay_window.foreground_renderer.GetActors()
-                    no_actors = actors.GetNumberOfItems()
+                    actors = self._get_model_actors()
                     matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-                    for index, actor in enumerate(actors):
-                        if index >= no_actors - self.pointer_models:
-                            actor.SetUserMatrix(matrix)
+                    for actor in actors:
+                        actor.SetUserMatrix(matrix)
 
     def register(self, ids, tags, ref_file):
         """Internal method for doing registration"""
@@ -143,8 +146,8 @@ class BARDOverlayApp(OverlayBaseApp):
         points2d = np.array(points2d).reshape((count*4), 2)
 
         _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
-                                       self.camera_projection_mat,
-                                       self.camera_distortion)
+                                       self.camera.get('projection_mat'),
+                                       self.camera.get('distortion'))
 
         rotation_matrix, _ = cv2.Rodrigues(rvec1)
         for i in range(3):
@@ -191,8 +194,37 @@ class BARDOverlayApp(OverlayBaseApp):
                     print("Pointer tip written to ",
                           os.path.join(tipoutdir, filename))
 
-    def left_mouse_press_event(self, _obj_not_used, _ev_not_used):
-        """
-        Handles a left mouse press event
-        """
-        print("Left Mouse at: ", self.vtk_overlay_window.GetEventPosition())
+    def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
+        mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
+        window_x, window_y = self.vtk_overlay_window.GetSize()
+
+        mouse_x /= window_x
+        mouse_y /= window_y
+
+        if mouse_x > self.screen_interation_layout.get('x_right_edge'):
+            self._visibility_toggle()
+
+        if mouse_x < self.screen_interation_layout.get('x_left_edge'):
+            self._change_opacity()
+
+    def _visibility_toggle(self):
+        print("Got visibility event")
+        actors = self._get_model_actors()
+        for actor in actors:
+            if actor.GetProperty().Visibilty:
+                print("Actor is visible")
+
+    def _change_opacity(self):
+        print("Got opacity event")
+        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
+        for actor in actors:
+            print(actor.GetProperty().GetOpacity())
+
+    def _get_model_actors(self):
+        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
+        no_actors = actors.GetNumberOfItems()
+        return_actors = []
+        for index, actor in enumerate(actors):
+            if index >= no_actors - self.pointer_models:
+                return_actors.append(actor)
+        return return_actors
