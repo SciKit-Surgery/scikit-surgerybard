@@ -119,7 +119,7 @@ class BARDOverlayApp(OverlayBaseApp):
                 if success:
                     self._tm.add("pointerref2camera", pointerref2camera)
                     ptrref2modelref = self._tm.get("pointerref2modelreference")
-                    actors = self._get_model_actors()
+                    actors = self._get_pointer_actors()
                     matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
                     for actor in actors:
                         actor.SetUserMatrix(matrix)
@@ -202,17 +202,24 @@ class BARDOverlayApp(OverlayBaseApp):
         mouse_y /= window_y
 
         if mouse_x > self.screen_interation_layout.get('x_right_edge'):
-            self._visibility_toggle()
+            self._visibility_toggle(mouse_y)
 
         if mouse_x < self.screen_interation_layout.get('x_left_edge'):
             self._change_opacity()
 
-    def _visibility_toggle(self):
+    def _visibility_toggle(self, y_pos):
         print("Got visibility event")
         actors = self._get_model_actors()
-        for actor in actors:
-            if actor.GetProperty().Visibilty:
-                print("Actor is visible")
+        if y_pos > 0.5:
+            for actor in actors:
+                if actor.GetVisibility():
+                    actor.SetVisibility(False)
+                    return
+        if y_pos <= 0.5:
+            for actor in actors:
+                if not actor.GetVisibility():
+                    actor.SetVisibility(True)
+                    return
 
     def _change_opacity(self):
         print("Got opacity event")
@@ -221,6 +228,15 @@ class BARDOverlayApp(OverlayBaseApp):
             print(actor.GetProperty().GetOpacity())
 
     def _get_model_actors(self):
+        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
+        no_actors = actors.GetNumberOfItems()
+        return_actors = []
+        for index, actor in enumerate(actors):
+            if index < no_actors - self.pointer_models:
+                return_actors.append(actor)
+        return return_actors
+
+    def _get_pointer_actors(self):
         actors = self.vtk_overlay_window.foreground_renderer.GetActors()
         no_actors = actors.GetNumberOfItems()
         return_actors = []
