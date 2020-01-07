@@ -63,7 +63,7 @@ class BARDOverlayApp(OverlayBaseApp):
                                             self.key_press_event)
 
         self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self.mouse_event)
+                                            self.left_mouse_press_event)
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
@@ -191,7 +191,8 @@ class BARDOverlayApp(OverlayBaseApp):
                     print("Pointer tip written to ",
                           os.path.join(tipoutdir, filename))
 
-    def mouse_event(self, _obj_not_used, _ev_not_used):
-
-        #print ( self.vtk_overlay_window.GetMousePos() )
-        print ( _ev_not_used.x(), _ev_not_used.y() )
+    def left_mouse_press_event(self, _obj_not_used, _ev_not_used):
+        """
+        Handles a left mouse press event
+        """
+        print("Left Mouse at: ", self.vtk_overlay_window.GetEventPosition())
