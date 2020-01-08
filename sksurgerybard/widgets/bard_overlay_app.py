@@ -13,6 +13,8 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
+from sksurgerybard.algorithms.bard_interaction_algorithms import \
+        visibility_toggle, change_opacity
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -89,7 +91,7 @@ class BARDOverlayApp(OverlayBaseApp):
         matrix = create_vtk_matrix_from_numpy(modelreference2model)
         self._model_list = {'anatomy' : 0, 'reference' : 0, 'pointers' : 0}
 
-        for actor in self.vtk_overlay_window.foreground_renderer.GetActors():
+        for actor in self._get_all_actors():
             actor.SetUserMatrix(matrix)
             self._model_list['anatomy'] = self._model_list.get('anatomy') + 1
 
@@ -236,45 +238,27 @@ class BARDOverlayApp(OverlayBaseApp):
         mouse_y /= window_y
 
         if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            self._visibility_toggle(mouse_y)
+            visibility_toggle(self._get_anatomy_actors(), mouse_y)
 
         if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
-            self._change_opacity()
+            change_opacity(self._get_all_actors(), mouse_y)
 
-    def _visibility_toggle(self, y_pos):
-        print("Got visibility event")
-        actors = self._get_model_actors()
-        if y_pos > 0.5:
-            for actor in reversed(actors):
-                if actor.GetVisibility():
-                    actor.SetVisibility(False)
-                    return
-        if y_pos <= 0.5:
-            for actor in actors:
-                if not actor.GetVisibility():
-                    actor.SetVisibility(True)
-                    return
-
-    def _change_opacity(self):
-        print("Got opacity event")
-        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
-        for actor in actors:
-            print(actor.GetProperty().GetOpacity())
-
-    def _get_model_actors(self):
-        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
-        no_actors = actors.GetNumberOfItems()
+    def _get_anatomy_actors(self):
+        actors = self._get_all_actors()
         return_actors = []
         for index, actor in enumerate(actors):
-            if index < no_actors - self._model_list.get('pointers'):
+            if index < self._model_list.get('anatomy'):
                 return_actors.append(actor)
         return return_actors
 
     def _get_pointer_actors(self):
-        actors = self.vtk_overlay_window.foreground_renderer.GetActors()
+        actors = self._get_all_actors()
         no_actors = actors.GetNumberOfItems()
         return_actors = []
         for index, actor in enumerate(actors):
             if index >= no_actors - self._model_list.get('pointers'):
                 return_actors.append(actor)
         return return_actors
+
+    def _get_all_actors(self):
+        return self.vtk_overlay_window.foreground_renderer.GetActors()
