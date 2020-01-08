@@ -73,7 +73,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._resize_flag = True
 
-        self.screen_interation_layout = {
+        self.screen_interaction_layout = {
             'x_right_edge' : 0.80,
             'x_left_edge' : 0.20
         }
@@ -201,17 +201,17 @@ class BARDOverlayApp(OverlayBaseApp):
         mouse_x /= window_x
         mouse_y /= window_y
 
-        if mouse_x > self.screen_interation_layout.get('x_right_edge'):
+        if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
             self._visibility_toggle(mouse_y)
 
-        if mouse_x < self.screen_interation_layout.get('x_left_edge'):
+        if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
             self._change_opacity()
 
     def _visibility_toggle(self, y_pos):
         print("Got visibility event")
         actors = self._get_model_actors()
         if y_pos > 0.5:
-            for actor in actors:
+            for actor in reversed(actors):
                 if actor.GetVisibility():
                     actor.SetVisibility(False)
                     return
