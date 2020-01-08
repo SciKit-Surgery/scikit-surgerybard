@@ -62,7 +62,6 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        self.pointer_models = 0
         self._pointer_tip = pointer_tip
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
@@ -88,25 +87,29 @@ class BARDOverlayApp(OverlayBaseApp):
             self.add_vtk_models_from_dir(models_path)
 
         matrix = create_vtk_matrix_from_numpy(modelreference2model)
+        self._model_list = {'anatomy' : 0, 'reference' : 0, 'pointers' : 0}
+
         for actor in self.vtk_overlay_window.foreground_renderer.GetActors():
             actor.SetUserMatrix(matrix)
+            self._model_list['anatomy'] = self._model_list.get('anatomy') + 1
 
         if ref_data is not None:
             model_reference_spheres = VTKSphereModel(
                 ref_data[:, 1:4], radius=5.0)
             self.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+            self._model_list['reference'] = 1
 
         if pointer_ref is not None:
             pointer_reference_spheres = VTKSphereModel(
                 pointer_ref[:, 1:4], radius=5.0)
             self.vtk_overlay_window.add_vtk_actor(
                 pointer_reference_spheres.actor)
-            self.pointer_models = self.pointer_models + 1
+            self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
         if pointer_tip is not None:
             pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
             self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
-            self.pointer_models = self.pointer_models + 1
+            self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
 
     def update(self):
@@ -263,7 +266,7 @@ class BARDOverlayApp(OverlayBaseApp):
         no_actors = actors.GetNumberOfItems()
         return_actors = []
         for index, actor in enumerate(actors):
-            if index < no_actors - self.pointer_models:
+            if index < no_actors - self._model_list.get('pointers'):
                 return_actors.append(actor)
         return return_actors
 
@@ -272,6 +275,6 @@ class BARDOverlayApp(OverlayBaseApp):
         no_actors = actors.GetNumberOfItems()
         return_actors = []
         for index, actor in enumerate(actors):
-            if index >= no_actors - self.pointer_models:
+            if index >= no_actors - self._model_list.get('pointers'):
                 return_actors.append(actor)
         return return_actors
