@@ -10,17 +10,24 @@ import cv2.aruco as aruco
 
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
+from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
+from sksurgerybard.algorithms.bard_interaction_algorithms import \
+        visibility_toggle, change_opacity
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, video_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, pointer_ref, pointer_tip,
-                 outdir, dims=None):
+    def __init__(self, config_file):
+
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
+
+        (video_source, mtx33d, dist15d, ref_data, modelreference2model,
+         pointer_ref, models_path, pointer_tip,
+         outdir, dims) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -39,9 +46,10 @@ class BARDOverlayApp(OverlayBaseApp):
 
         # Camera Calibration
         # _ = mtx33d
-        self.camera_projection_mat = mtx33d
-
-        self.camera_distortion = dist15d
+        self.camera = {
+            'projection_mat' : mtx33d,
+            'distortion' : dist15d
+        }
 
         # call the constructor for the base class
         dims = None
@@ -56,11 +64,13 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        self.pointer_models = 0
         self._pointer_tip = pointer_tip
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
                                             self.key_press_event)
+
+        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                            self._left_mouse_press_event)
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
@@ -68,6 +78,41 @@ class BARDOverlayApp(OverlayBaseApp):
         self._outdir = outdir
 
         self._resize_flag = True
+
+        self.screen_interaction_layout = {
+            'x_right_edge' : 0.80,
+            'x_left_edge' : 0.20
+            }
+
+
+        if models_path:
+            self.add_vtk_models_from_dir(models_path)
+
+        matrix = create_vtk_matrix_from_numpy(modelreference2model)
+        self._model_list = {'anatomy' : 0, 'reference' : 0, 'pointers' : 0}
+
+        for actor in self._get_all_actors():
+            actor.SetUserMatrix(matrix)
+            self._model_list['anatomy'] = self._model_list.get('anatomy') + 1
+
+        if ref_data is not None:
+            model_reference_spheres = VTKSphereModel(
+                ref_data[:, 1:4], radius=5.0)
+            self.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+            self._model_list['reference'] = 1
+
+        if pointer_ref is not None:
+            pointer_reference_spheres = VTKSphereModel(
+                pointer_ref[:, 1:4], radius=5.0)
+            self.vtk_overlay_window.add_vtk_actor(
+                pointer_reference_spheres.actor)
+            self._model_list['pointers'] = self._model_list.get('pointers') + 1
+
+        if pointer_tip is not None:
+            pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
+            self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
+            self._model_list['pointers'] = self._model_list.get('pointers') + 1
+
 
     def update(self):
         """Update the background render with a new frame and
@@ -110,13 +155,10 @@ class BARDOverlayApp(OverlayBaseApp):
                 if success:
                     self._tm.add("pointerref2camera", pointerref2camera)
                     ptrref2modelref = self._tm.get("pointerref2modelreference")
-                    actors = \
-                        self.vtk_overlay_window.foreground_renderer.GetActors()
-                    no_actors = actors.GetNumberOfItems()
+                    actors = self._get_pointer_actors()
                     matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-                    for index, actor in enumerate(actors):
-                        if index >= no_actors - self.pointer_models:
-                            actor.SetUserMatrix(matrix)
+                    for actor in actors:
+                        actor.SetUserMatrix(matrix)
 
     def register(self, ids, tags, ref_file):
         """Internal method for doing registration"""
@@ -140,8 +182,8 @@ class BARDOverlayApp(OverlayBaseApp):
         points2d = np.array(points2d).reshape((count*4), 2)
 
         _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
-                                       self.camera_projection_mat,
-                                       self.camera_distortion)
+                                       self.camera.get('projection_mat'),
+                                       self.camera.get('distortion'))
 
         rotation_matrix, _ = cv2.Rodrigues(rvec1)
         for i in range(3):
@@ -187,3 +229,36 @@ class BARDOverlayApp(OverlayBaseApp):
                                pointer_tip_location)
                     print("Pointer tip written to ",
                           os.path.join(tipoutdir, filename))
+
+    def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
+        mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
+        window_x, window_y = self.vtk_overlay_window.GetSize()
+
+        mouse_x /= window_x
+        mouse_y /= window_y
+
+        if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
+            visibility_toggle(self._get_anatomy_actors(), mouse_y)
+
+        if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
+            change_opacity(self._get_all_actors(), mouse_y)
+
+    def _get_anatomy_actors(self):
+        actors = self._get_all_actors()
+        return_actors = []
+        for index, actor in enumerate(actors):
+            if index < self._model_list.get('anatomy'):
+                return_actors.append(actor)
+        return return_actors
+
+    def _get_pointer_actors(self):
+        actors = self._get_all_actors()
+        no_actors = actors.GetNumberOfItems()
+        return_actors = []
+        for index, actor in enumerate(actors):
+            if index >= no_actors - self._model_list.get('pointers'):
+                return_actors.append(actor)
+        return return_actors
+
+    def _get_all_actors(self):
+        return self.vtk_overlay_window.foreground_renderer.GetActors()
