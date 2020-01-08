@@ -10,17 +10,22 @@ import cv2.aruco as aruco
 
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
+from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow."""
 
-    def __init__(self, video_source, mtx33d, dist15d, ref_data,
-                 modelreference2model, pointer_ref, pointer_tip,
-                 outdir, dims=None):
+    def __init__(self, config_file):
+
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
+
+        (video_source, mtx33d, dist15d, ref_data, modelreference2model,
+         pointer_ref, models_path, pointer_tip,
+         outdir, dims) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -76,7 +81,33 @@ class BARDOverlayApp(OverlayBaseApp):
         self.screen_interaction_layout = {
             'x_right_edge' : 0.80,
             'x_left_edge' : 0.20
-        }
+            }
+
+
+        if models_path:
+            self.add_vtk_models_from_dir(models_path)
+
+        matrix = create_vtk_matrix_from_numpy(modelreference2model)
+        for actor in self.vtk_overlay_window.foreground_renderer.GetActors():
+            actor.SetUserMatrix(matrix)
+
+        if ref_data is not None:
+            model_reference_spheres = VTKSphereModel(
+                ref_data[:, 1:4], radius=5.0)
+            self.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+
+        if pointer_ref is not None:
+            pointer_reference_spheres = VTKSphereModel(
+                pointer_ref[:, 1:4], radius=5.0)
+            self.vtk_overlay_window.add_vtk_actor(
+                pointer_reference_spheres.actor)
+            self.pointer_models = self.pointer_models + 1
+
+        if pointer_tip is not None:
+            pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
+            self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
+            self.pointer_models = self.pointer_models + 1
+
 
     def update(self):
         """Update the background render with a new frame and
