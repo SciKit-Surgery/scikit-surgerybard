@@ -21,9 +21,6 @@ def visibility_toggle(actors, y_pos):
 def change_opacity(actors, opacity):
     """
     Changes the opacity of all actors passed.
-    Currently seems be broken, any values less than 1.0
-    results in dissapearance
     """
-    print("Got opacity event", opacity)
     for actor in actors:
-        actor.GetProperty().SetOpacity(1.0)
+        actor.GetProperty().SetOpacity(opacity)
