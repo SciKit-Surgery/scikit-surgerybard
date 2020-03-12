@@ -12,8 +12,7 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
-from sksurgerybard.algorithms.bard_visualisation import \
-        visibility_toggle, change_opacity
+from sksurgerybard.algorithms.bard_visualisation import BardVisualisation
 from sksurgerybard.algorithms.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
 from sksurgerybard.algorithms.pointer import BardPointerWriter
@@ -70,20 +69,6 @@ class BARDOverlayApp(OverlayBaseApp):
             os.mkdir(outdir)
 
         self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
-
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            BardKBEvent(
-                                                self._pointer_writer))
-
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            BardFootSwitchEvent())
-
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self._left_mouse_press_event)
-
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            BardMouseEvent())
-
         self._resize_flag = True
 
         self.screen_interaction_layout = {
@@ -119,6 +104,23 @@ class BARDOverlayApp(OverlayBaseApp):
             pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
             self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
+
+        self._bard_visualisation = BardVisualisation(self._get_all_actors(),
+                                               self._get_anatomy_actors())
+
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                            BardKBEvent(
+                                                self._pointer_writer))
+
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                            BardFootSwitchEvent())
+
+        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                            self._left_mouse_press_event)
+
+        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                            BardMouseEvent())
+
 
 
     def update(self):
@@ -208,10 +210,10 @@ class BARDOverlayApp(OverlayBaseApp):
         mouse_y /= window_y
 
         if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            visibility_toggle(self._get_anatomy_actors(), mouse_y)
+            self._bard_visualisation.visibility_toggle(mouse_y)
 
         if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
-            change_opacity(self._get_all_actors(), mouse_y)
+            self._bard_visualisation.change_opacity(mouse_y)
 
     def _get_anatomy_actors(self):
         actors = self._get_all_actors()
