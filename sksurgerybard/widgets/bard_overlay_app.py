@@ -3,7 +3,6 @@
 """ Overlay class for the BARD application."""
 
 import os
-from time import time
 import numpy as np
 import cv2
 import cv2.aruco as aruco
@@ -15,7 +14,8 @@ from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
 from sksurgerybard.algorithms.bard_interaction_algorithms import \
         visibility_toggle, change_opacity
-from sksurgerybard.algorithms.keyboard import BardKBCallbacks
+from sksurgerybard.algorithms.interaction import BardKBEvent, \
+        BardMouseEvent, BardFootSwitchEvent
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 class BARDOverlayApp(OverlayBaseApp):
@@ -66,19 +66,23 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            self.key_press_event)
-        
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            BardKBCallbacks())
-
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self._left_mouse_press_event)
-
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
 
         self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
+
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                            BardKBEvent(
+                                                self._pointer_writer))
+
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                            BardFootSwitchEvent())
+
+        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                            self._left_mouse_press_event)
+
+        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                            BardMouseEvent())
 
         self._resize_flag = True
 
@@ -195,14 +199,6 @@ class BARDOverlayApp(OverlayBaseApp):
             output_matrix[i, 3] = tvec1[i, 0]
 
         return True, output_matrix
-
-    def key_press_event(self, _obj_not_used, _ev_not_used):
-        """
-        Handles a key press event
-
-        """
-        if self.vtk_overlay_window.GetKeySym() == 'd':
-            self._pointer_writer.write_pointer_tip()
 
     def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
         mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
