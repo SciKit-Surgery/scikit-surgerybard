@@ -1,7 +1,9 @@
 """Callback for dealing with interaction events in BARD"""
 
 from platform import system
-from subprocess import run 
+from subprocess import run
+from collections import deque
+from time import time
 
 class BardKBEvent:
     """
@@ -34,8 +36,23 @@ class BardFootSwitchEvent:
                 print("Failed to disable ctrl-alt-f[]",
                       "using the footpedal may have unpredictable results")
 
+        self._key_symbols = deque(maxlen=3)
+        self._time_stamps = deque(maxlen=3)
+        for _ in range (3):
+            self._key_symbols.append('null')
+            self._time_stamps.append(0)
 
     def __call__(self, event, _event_type_not_used):
+        self._key_symbols.append(event.GetKeySym())
+        self._time_stamps.append(time())
+       
+        if self._key_symbols[2] == 'F5':
+            if self._key_symbols[1] == 'Alt_L':
+                if self._key_symbols[0] == 'Control_L':
+                    if self._time_stamps[2] - self._time_stamps[0] < 0.1:
+                        print('got left pedal event')
+
+            
         print(event.GetKeySym())
 
     def __del__(self):
