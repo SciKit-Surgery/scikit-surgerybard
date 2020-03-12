@@ -15,6 +15,8 @@ from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
 from sksurgerybard.algorithms.bard_interaction_algorithms import \
         visibility_toggle, change_opacity
+from sksurgerybard.algorithms.keyboard import BardKBCallbacks
+from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -64,10 +66,11 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        self._pointer_tip = pointer_tip
-
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
                                             self.key_press_event)
+        
+        self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                            BardKBCallbacks())
 
         self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
                                             self._left_mouse_press_event)
@@ -75,7 +78,7 @@ class BARDOverlayApp(OverlayBaseApp):
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
 
-        self._outdir = outdir
+        self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
 
         self._resize_flag = True
 
@@ -198,37 +201,8 @@ class BARDOverlayApp(OverlayBaseApp):
         Handles a key press event
 
         """
-
         if self.vtk_overlay_window.GetKeySym() == 'd':
-            pointermat = None
-            try:
-                pointermat = self._tm.get("pointerref2modelreference")
-
-            except ValueError:
-                print("No pointer matrix available")
-
-            if pointermat is not None:
-                matoutdir = os.path.join(self._outdir, 'bard_pointer_matrices')
-                filename = '{0:d}.txt'.format(int(time()*1e7))
-                if not os.path.isdir(matoutdir):
-                    os.mkdir(matoutdir)
-                np.savetxt(os.path.join(matoutdir, filename), pointermat)
-                print("Pointer matrix written to ",
-                      os.path.join(matoutdir, filename))
-
-                if self._pointer_tip is not None:
-                    tipoutdir = os.path.join(self._outdir, 'bard_pointer_tips')
-                    pointer_tip_location = \
-                        pointermat[0:3, 0:3] @ np.reshape(self._pointer_tip,
-                                                          (3, 1)) + \
-                        np.reshape(pointermat[0:3, 3], (3, 1))
-                    if not os.path.isdir(tipoutdir):
-                        os.mkdir(tipoutdir)
-
-                    np.savetxt(os.path.join(tipoutdir, filename),
-                               pointer_tip_location)
-                    print("Pointer tip written to ",
-                          os.path.join(tipoutdir, filename))
+            self._pointer_writer.write_pointer_tip()
 
     def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
         mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
