@@ -13,7 +13,7 @@ class BardVisualisation():
 
     def visibility_toggle(self, y_pos):
         """
-        Runs through a list of anatomy actors and turns 
+        Runs through a list of anatomy actors and turns
         visibility on or off in sequence, depending on value of y_pos
         """
         if y_pos > 0.5:

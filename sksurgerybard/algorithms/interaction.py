@@ -1,7 +1,7 @@
 """Callback for dealing with interaction events in BARD"""
 
 from platform import system
-from subprocess import run
+from subprocess import run, CalledProcessError
 from collections import deque
 from time import time
 
@@ -23,7 +23,7 @@ class BardKBEvent:
 class BardFootSwitchEvent:
     """
     Handles footswitch events for bard
-    This is for the footswitch in our lab, 
+    This is for the footswitch in our lab,
     which plugs into USB and has three buttons, that
     return ctrl-alt[5,6,7]
     """
@@ -31,27 +31,29 @@ class BardFootSwitchEvent:
         #disable ctrl-alt-f[] events on linux systems
         if system() == 'Linux':
             try:
-                _ = run(['setxkbmap', '-option', 'srvrkeys:none'])
-            except:
+                _ = run(['setxkbmap', '-option', 'srvrkeys:none'], check=True)
+            except CalledProcessError:
                 print("Failed to disable ctrl-alt-f[]",
                       "using the footpedal may have unpredictable results")
 
         self._key_symbols = deque(maxlen=3)
         self._time_stamps = deque(maxlen=3)
-        for _ in range (3):
+        for _ in range(3):
             self._key_symbols.append('null')
             self._time_stamps.append(0)
 
     def __call__(self, event, _event_type_not_used):
         self._key_symbols.append(event.GetKeySym())
         self._time_stamps.append(time())
-       
+
         time_tol = 0.5
-        print (self._key_symbols)
+        print(self._key_symbols)
         if self._key_symbols[2] == 'F5':
             if self._key_symbols[1] == 'Alt_L':
                 if self._key_symbols[0] == 'Control_L':
-                    if self._time_stamps[2] - self._time_stamps[0] < time_tol:
+                    time_diff = self._time_stamps[2] - self._time_stamps[0]
+                    print('got left pedal event', time_diff)
+                    if time_diff < time_tol:
                         print('got left pedal event')
                         return
 
@@ -60,11 +62,10 @@ class BardFootSwitchEvent:
         print("killing footswitch")
         if system() == 'Linux':
             try:
-                #_ = run(['setxkbmap', '-option'])
                 print("resetting keyboard")
-                _ = run(['setxkbmap'])
-                _ = run(['setxkbmap', '-option'])
-            except:
+                _ = run(['setxkbmap'], check=True)
+                _ = run(['setxkbmap', '-option'], check=True)
+            except CalledProcessError:
                 print("Failed to reset xkbmap srvrkeys, sorry.")
 
 
@@ -93,4 +94,3 @@ class BardMouseEvent:
 
         if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
             self._visualisation_control.change_opacity(mouse_y)
-
