@@ -72,8 +72,25 @@ class BardMouseEvent:
     """
     handles mouse events
     """
-    def __init__(self):
-        return
+    def __init__(self, visualisation_control):
+        self.screen_interaction_layout = {
+            'x_right_edge' : 0.80,
+            'x_left_edge' : 0.20
+            }
+
+        self._visualisation_control = visualisation_control
+
 
     def __call__(self, event, _event_type_not_used):
-        return
+        mouse_x, mouse_y = event.GetEventPosition()
+        window_x, window_y = event.GetSize()
+
+        mouse_x /= window_x
+        mouse_y /= window_y
+
+        if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
+            self._visualisation_control.visibility_toggle(mouse_y)
+
+        if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
+            self._visualisation_control.change_opacity(mouse_y)
+

@@ -71,12 +71,6 @@ class BARDOverlayApp(OverlayBaseApp):
         self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
         self._resize_flag = True
 
-        self.screen_interaction_layout = {
-            'x_right_edge' : 0.80,
-            'x_left_edge' : 0.20
-            }
-
-
         if models_path:
             self.add_vtk_models_from_dir(models_path)
 
@@ -105,7 +99,7 @@ class BARDOverlayApp(OverlayBaseApp):
             self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
-        self._bard_visualisation = BardVisualisation(self._get_all_actors(),
+        bard_visualisation = BardVisualisation(self._get_all_actors(),
                                                self._get_anatomy_actors())
 
         self.vtk_overlay_window.AddObserver("KeyPressEvent",
@@ -116,10 +110,7 @@ class BARDOverlayApp(OverlayBaseApp):
                                             BardFootSwitchEvent())
 
         self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self._left_mouse_press_event)
-
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            BardMouseEvent())
+                                            BardMouseEvent(bard_visualisation))
 
 
 
@@ -201,19 +192,6 @@ class BARDOverlayApp(OverlayBaseApp):
             output_matrix[i, 3] = tvec1[i, 0]
 
         return True, output_matrix
-
-    def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
-        mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
-        window_x, window_y = self.vtk_overlay_window.GetSize()
-
-        mouse_x /= window_x
-        mouse_y /= window_y
-
-        if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            self._bard_visualisation.visibility_toggle(mouse_y)
-
-        if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
-            self._bard_visualisation.change_opacity(mouse_y)
 
     def _get_anatomy_actors(self):
         actors = self._get_all_actors()
