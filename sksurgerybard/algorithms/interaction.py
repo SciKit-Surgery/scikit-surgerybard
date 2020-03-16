@@ -46,14 +46,14 @@ class BardFootSwitchEvent:
         self._key_symbols.append(event.GetKeySym())
         self._time_stamps.append(time())
        
+        time_tol = 0.5
+        print (self._key_symbols)
         if self._key_symbols[2] == 'F5':
             if self._key_symbols[1] == 'Alt_L':
                 if self._key_symbols[0] == 'Control_L':
-                    if self._time_stamps[2] - self._time_stamps[0] < 0.1:
+                    if self._time_stamps[2] - self._time_stamps[0] < time_tol:
                         print('got left pedal event')
-
-            
-        print(event.GetKeySym())
+                        return
 
     def __del__(self):
         #reenable ctrl-alt-f[] events on linux systems
