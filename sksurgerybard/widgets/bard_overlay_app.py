@@ -28,7 +28,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
-         outdir, dims) = configure_bard(config_file)
+         outdir, dims, interaction) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -45,8 +45,6 @@ class BARDOverlayApp(OverlayBaseApp):
         if pointer_ref is not None:
             self.pointer_reference_tags = np.array(pointer_ref)
 
-        # Camera Calibration
-        # _ = mtx33d
         self.camera = {
             'projection_mat' : mtx33d,
             'distortion' : dist15d
@@ -102,16 +100,20 @@ class BARDOverlayApp(OverlayBaseApp):
         bard_visualisation = BardVisualisation(self._get_all_actors(),
                                                self._get_anatomy_actors())
 
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            BardKBEvent(
-                                                self._pointer_writer))
+        if interaction.get('keyboard', False):
+            self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                                BardKBEvent(
+                                                    self._pointer_writer))
 
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            BardFootSwitchEvent())
+        if interaction.get('footswitch', False):
+            max_delay = interaction.get('maximum delay', 0.1)
+            self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                                BardFootSwitchEvent(max_delay))
 
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            BardMouseEvent(bard_visualisation))
-
+        if interaction.get('mouse', False):
+            self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                                BardMouseEvent(
+                                                    bard_visualisation))
 
 
     def update(self):

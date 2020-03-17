@@ -27,7 +27,10 @@ class BardFootSwitchEvent:
     which plugs into USB and has three buttons, that
     return ctrl-alt[5,6,7]
     """
-    def __init__(self):
+    def __init__(self, maximum_delay):
+        """
+        param: maximum delay (s) between first key in sequence and last
+        """
         #disable ctrl-alt-f[] events on linux systems
         if system() == 'Linux':
             try:
@@ -36,26 +39,29 @@ class BardFootSwitchEvent:
                 print("Failed to disable ctrl-alt-f[]",
                       "using the footpedal may have unpredictable results")
 
-        self._key_symbols = deque(maxlen=3)
+        self._time_tol = maximum_delay
+        self._key_buff = deque(maxlen=3)
         self._time_stamps = deque(maxlen=3)
         for _ in range(3):
-            self._key_symbols.append('null')
+            self._key_buff.append('null')
             self._time_stamps.append(0)
 
     def __call__(self, event, _event_type_not_used):
-        self._key_symbols.append(event.GetKeySym())
+        self._key_buff.append(event.GetKeySym())
         self._time_stamps.append(time())
 
-        time_tol = 0.5
-        print(self._key_symbols)
-        if self._key_symbols[2] == 'F5':
-            if self._key_symbols[1] == 'Alt_L':
-                if self._key_symbols[0] == 'Control_L':
-                    time_diff = self._time_stamps[2] - self._time_stamps[0]
-                    print('got left pedal event', time_diff)
-                    if time_diff < time_tol:
-                        print('got left pedal event')
-                        return
+        if self._key_buff[0] == 'Control_L' and self._key_buff[1] == 'Alt_L':
+
+            if (self._time_stamps[2] - self._time_stamps[0]) < self._time_tol:
+                if self._key_buff[2] == 'F5':
+                    print('got left pedal event')
+                    return
+                if self._key_buff[2] == 'F6':
+                    print('got middle pedal event')
+                    return
+                if self._key_buff[2] == 'F7':
+                    print('got right pedal event')
+                    return
 
     def __del__(self):
         #reenable ctrl-alt-f[] events on linux systems

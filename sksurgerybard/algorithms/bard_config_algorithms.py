@@ -107,6 +107,9 @@ def configure_bard(configuration_file):
     if outdir is None:
         outdir = './'
 
+
+    interaction = configuration_data.get('interaction', {})
+
     return video_source, mtx33d, dist5d, ref_data, \
                         reference2model, ref_point_data, \
-                        models_path, pointer_tip, outdir, dims
+                        models_path, pointer_tip, outdir, dims, interaction
