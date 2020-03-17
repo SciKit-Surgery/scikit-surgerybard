@@ -28,7 +28,8 @@ class BARDOverlayApp(OverlayBaseApp):
 
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
-         outdir, dims, interaction) = configure_bard(config_file)
+         outdir, dims, interaction,
+         visible_anatomy) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -73,11 +74,18 @@ class BARDOverlayApp(OverlayBaseApp):
             self.add_vtk_models_from_dir(models_path)
 
         matrix = create_vtk_matrix_from_numpy(modelreference2model)
-        self._model_list = {'anatomy' : 0, 'reference' : 0, 'pointers' : 0}
+        self._model_list = {'visible anatomy' : 0,
+                            'target anatomy' : 0,
+                            'reference' : 0,
+                            'pointers' : 0}
 
-        for actor in self._get_all_actors():
+        self._model_list['visible anatomy'] = visible_anatomy
+
+        for index, actor in enumerate(self._get_all_actors()):
             actor.SetUserMatrix(matrix)
-            self._model_list['anatomy'] = self._model_list.get('anatomy') + 1
+            if index >= visible_anatomy:
+                self._model_list['target anatomy'] = \
+                                self._model_list.get('target anatomy') + 1
 
         if ref_data is not None:
             model_reference_spheres = VTKSphereModel(
@@ -98,7 +106,7 @@ class BARDOverlayApp(OverlayBaseApp):
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
         bard_visualisation = BardVisualisation(self._get_all_actors(),
-                                               self._get_anatomy_actors())
+                                               self._model_list)
 
         if interaction.get('keyboard', False):
             self.vtk_overlay_window.AddObserver("KeyPressEvent",
@@ -194,14 +202,6 @@ class BARDOverlayApp(OverlayBaseApp):
             output_matrix[i, 3] = tvec1[i, 0]
 
         return True, output_matrix
-
-    def _get_anatomy_actors(self):
-        actors = self._get_all_actors()
-        return_actors = []
-        for index, actor in enumerate(actors):
-            if index < self._model_list.get('anatomy'):
-                return_actors.append(actor)
-        return return_actors
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()
