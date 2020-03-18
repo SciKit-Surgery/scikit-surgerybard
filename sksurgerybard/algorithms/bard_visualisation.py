@@ -66,6 +66,48 @@ class BardVisualisation():
                     actor.SetVisibility(True)
                     return
 
+    def toggle_visible_anatomy_vis(self):
+        """
+        cycles through different the visualisation for anatomy in
+        _visible_anatomy
+        """
+        for actor in self._visible_anatomy_actors:
+            if actor.GetProperty().GetRepresentation() < 2:
+                actor.GetProperty().SetRepresentation(
+                    (actor.GetProperty().GetRepresentation() + 1)%3)
+            else:
+                if actor.GetVisibility():
+                    actor.SetVisibility(0)
+                else:
+                    actor.SetVisibility(1)
+                    actor.GetProperty().SetRepresentation(0)
+
+    def next_target(self):
+        """
+        turns off visibility of all targets except the next one
+        """
+        no_of_actors = len(self._target_anatomy_actors)
+        found_next_target = False
+        for index, actor in enumerate(self._target_anatomy_actors):
+            if not actor.GetVisibility():
+                actor.SetVisibility(True)
+                self._target_anatomy_actors[
+                    (index -1)%no_of_actors].SetVisibility(False)
+                found_next_target = True
+                break
+
+        if not found_next_target:
+            for actor in self._target_anatomy_actors:
+                actor.SetVisibility(False)
+
+            self._target_anatomy_actors[0].SetVisibility(True)
+
+    def turn_on_all_targets(self):
+        """
+        turns on visibility of all targets
+        """
+        for actor in self._target_anatomy_actors:
+            actor.SetVisibility(True)
 
     def change_opacity(self, opacity):
         """

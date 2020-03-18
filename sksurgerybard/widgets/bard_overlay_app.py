@@ -115,8 +115,9 @@ class BARDOverlayApp(OverlayBaseApp):
 
         if interaction.get('footswitch', False):
             max_delay = interaction.get('maximum delay', 0.1)
-            self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                                BardFootSwitchEvent(max_delay))
+            self.vtk_overlay_window.AddObserver(
+                "KeyPressEvent",
+                BardFootSwitchEvent(max_delay, bard_visualisation))
 
         if interaction.get('mouse', False):
             self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",

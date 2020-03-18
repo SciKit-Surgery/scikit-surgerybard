@@ -16,9 +16,6 @@ class BardKBEvent:
         if event.GetKeySym() == 'd':
             self._pointer_writer.write_pointer_tip()
 
-        #print(event.GetKeyCode())
-        print(event.GetKeySym())
-
 
 class BardFootSwitchEvent:
     """
@@ -27,7 +24,7 @@ class BardFootSwitchEvent:
     which plugs into USB and has three buttons, that
     return ctrl-alt[5,6,7]
     """
-    def __init__(self, maximum_delay):
+    def __init__(self, maximum_delay, visualisation_control):
         """
         param: maximum delay (s) between first key in sequence and last
         """
@@ -46,6 +43,8 @@ class BardFootSwitchEvent:
             self._key_buff.append('null')
             self._time_stamps.append(0)
 
+        self._visualisation_control = visualisation_control
+
     def __call__(self, event, _event_type_not_used):
         self._key_buff.append(event.GetKeySym())
         self._time_stamps.append(time())
@@ -54,13 +53,13 @@ class BardFootSwitchEvent:
 
             if (self._time_stamps[2] - self._time_stamps[0]) < self._time_tol:
                 if self._key_buff[2] == 'F5':
-                    print('got left pedal event')
+                    self._visualisation_control.toggle_visible_anatomy_vis()
                     return
                 if self._key_buff[2] == 'F6':
-                    print('got middle pedal event')
+                    self._visualisation_control.next_target()
                     return
                 if self._key_buff[2] == 'F7':
-                    print('got right pedal event')
+                    self._visualisation_control.turn_on_all_targets()
                     return
 
     def __del__(self):
