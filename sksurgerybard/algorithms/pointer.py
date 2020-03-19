@@ -13,10 +13,36 @@ class BardPointerWriter():
         param: transform manager to containing pointer tracking matrix
         param: directory to write to
         param: pointer calibration
+        :raises: Attribute Error if transform mananger doesn't implement get.
+        :raises: TypeError of out_dir not str or path
+        :raises: FileNotFoundError if out_dir not writeable
         """
+
+        try:
+            transform_manager.get("unused")
+        except ValueError:
+            pass
+        except AttributeError:
+            raise AttributeError("transform manager has no method get",
+                                 ", check type")
+
         self._tm = transform_manager
         self._outdir = out_dir
         self._pointer_tip = pointer_tip
+
+        try:
+            self._matoutdir = path.join(out_dir, 'bard_pointer_matrices')
+            if not path.isdir(self._matoutdir):
+                mkdir(self._matoutdir)
+
+            self._tipoutdir = path.join(out_dir, 'bard_pointer_tips')
+            if not path.isdir(self._tipoutdir):
+                mkdir(self._tipoutdir)
+        except TypeError:
+            raise TypeError("out dir does not appear to be a valid directory")
+        except FileNotFoundError:
+            raise FileNotFoundError("out dir is not a writeable directory")
+
 
     def write_pointer_tip(self):
         """
@@ -30,27 +56,18 @@ class BardPointerWriter():
             print("No pointer matrix available")
 
         if pointermat is not None:
-            matoutdir = path.join(self._outdir, 'bard_pointer_matrices')
             filename = '{0:d}.txt'.format(int(time()*1e7))
-
-            if not path.isdir(matoutdir):
-                mkdir(matoutdir)
-
-            savetxt(path.join(matoutdir, filename), pointermat)
+            savetxt(path.join(self._matoutdir, filename), pointermat)
             print("Pointer matrix written to ",
-                  path.join(matoutdir, filename))
+                  path.join(self._matoutdir, filename))
 
             if self._pointer_tip is not None:
-                tipoutdir = path.join(self._outdir, 'bard_pointer_tips')
                 pointer_tip_location = \
                     pointermat[0:3, 0:3] @ reshape(self._pointer_tip,
                                                    (3, 1)) + \
                     reshape(pointermat[0:3, 3], (3, 1))
 
-                if not path.isdir(tipoutdir):
-                    mkdir(tipoutdir)
-
-                savetxt(path.join(tipoutdir, filename),
+                savetxt(path.join(self._tipoutdir, filename),
                         pointer_tip_location)
                 print("Pointer tip written to ",
-                      path.join(tipoutdir, filename))
+                      path.join(self._tipoutdir, filename))
