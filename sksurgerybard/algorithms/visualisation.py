@@ -24,25 +24,39 @@ class BardVisualisation():
         :params: a dictionary defining indexes for each actor type.
         The actors must be in order, [visible anatomy, target anatomy,
         reference, then pointers
+        :raises: Type error is actors do not implement required methods
         """
         self._all_actors = all_actors
         self._visible_anatomy_actors = []
         self._target_anatomy_actors = []
         self._reference_actors = []
         self._pointer_actors = []
+        
+        for actor in all_actors:
+            try:
+                visible = actor.GetVisibility()
+                actor.SetVisibility(visible)
+                        
+                rep = actor.GetProperty().GetRepresentation()
+                actor.GetProperty().SetRepresentation(rep)
+
+                opacity = actor.GetProperty().GetOpacity()
+                opacity = actor.GetProperty().SetOpacity(opacity)
+            except:
+                raise TypeError("Actor does not implement required methods, check type")
 
         for index, actor in enumerate(all_actors):
-            if index < model_list.get('visible anatomy'):
+            if index < model_list.get('visible anatomy', 0):
                 self._visible_anatomy_actors.append(actor)
 
             else:
-                if index < (model_list.get('visible anatomy') +
-                            model_list.get('target anatomy')):
+                if index < (model_list.get('visible anatomy', 0) +
+                            model_list.get('target anatomy', 0)):
                     self._target_anatomy_actors.append(actor)
                 else:
-                    if index < (model_list.get('visible anatomy') +
-                                model_list.get('target anatomy') +
-                                model_list.get('reference')):
+                    if index < (model_list.get('visible anatomy', 0) +
+                                model_list.get('target anatomy', 0) +
+                                model_list.get('reference', 0)):
                         self._reference_actors.append(actor)
                     else:
                         self._pointer_actors.append(actor)
@@ -66,7 +80,7 @@ class BardVisualisation():
                     actor.SetVisibility(True)
                     return
 
-    def toggle_visible_anatomy_vis(self):
+    def cycle_visible_anatomy_vis(self):
         """
         cycles through different the visualisation for anatomy in
         _visible_anatomy
@@ -87,20 +101,21 @@ class BardVisualisation():
         turns off visibility of all targets except the next one
         """
         no_of_actors = len(self._target_anatomy_actors)
-        found_next_target = False
-        for index, actor in enumerate(self._target_anatomy_actors):
-            if not actor.GetVisibility():
-                actor.SetVisibility(True)
-                self._target_anatomy_actors[
-                    (index -1)%no_of_actors].SetVisibility(False)
-                found_next_target = True
-                break
+        if no_of_actors > 0:
+            found_next_target = False
+            for index, actor in enumerate(self._target_anatomy_actors):
+                if not actor.GetVisibility():
+                    actor.SetVisibility(True)
+                    self._target_anatomy_actors[
+                        (index -1)%no_of_actors].SetVisibility(False)
+                    found_next_target = True
+                    break
 
-        if not found_next_target:
-            for actor in self._target_anatomy_actors:
-                actor.SetVisibility(False)
+            if not found_next_target:
+                for actor in self._target_anatomy_actors:
+                    actor.SetVisibility(False)
 
-            self._target_anatomy_actors[0].SetVisibility(True)
+                self._target_anatomy_actors[0].SetVisibility(True)
 
     def turn_on_all_targets(self):
         """

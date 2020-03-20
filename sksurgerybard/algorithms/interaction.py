@@ -53,7 +53,7 @@ class BardFootSwitchEvent:
 
             if (self._time_stamps[2] - self._time_stamps[0]) < self._time_tol:
                 if self._key_buff[2] == 'F5':
-                    self._visualisation_control.toggle_visible_anatomy_vis()
+                    self._visualisation_control.cycle_visible_anatomy_vis()
                     return
                 if self._key_buff[2] == 'F6':
                     self._visualisation_control.next_target()
