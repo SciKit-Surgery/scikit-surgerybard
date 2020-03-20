@@ -50,17 +50,13 @@ class BardFootSwitchEvent:
         self._time_stamps.append(time())
 
         if self._key_buff[0] == 'Control_L' and self._key_buff[1] == 'Alt_L':
-
             if (self._time_stamps[2] - self._time_stamps[0]) < self._time_tol:
                 if self._key_buff[2] == 'F5':
                     self._visualisation_control.cycle_visible_anatomy_vis()
-                    return
                 if self._key_buff[2] == 'F6':
                     self._visualisation_control.next_target()
-                    return
                 if self._key_buff[2] == 'F7':
                     self._visualisation_control.turn_on_all_targets()
-                    return
 
     def __del__(self):
         #reenable ctrl-alt-f[] events on linux systems

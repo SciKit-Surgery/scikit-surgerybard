@@ -12,6 +12,10 @@ class NextTargetEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class TurnOnAllEvent(Exception):#pylint: disable=missing-class-docstring
     pass
+class VisibilityToggleEvent(Exception):#pylint: disable=missing-class-docstring
+    pass
+class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
+    pass
 
 class _FakePointerWriter:
     def write_pointer_tip(self): # pylint: disable=no-self-use
@@ -28,6 +32,20 @@ class _FakeKBEvent:
         return self._key
 
 
+class _FakeMouseEvent:
+    def __init__(self, size, position):
+        self._size = size
+        self._position = position
+
+    def GetEventPosition(self):# pylint: disable=invalid-name
+        """return mouse position"""
+        return self._position
+
+    def GetSize(self):# pylint: disable=invalid-name
+        """return mouse position"""
+        return self._size
+
+
 class _FakeVisualisationControl:
     def cycle_visible_anatomy_vis(self): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
@@ -41,6 +59,13 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
+    def visibility_toggle(self, _): # pylint: disable=no-self-use
+        """Raises an error so we know when it's run"""
+        raise VisibilityToggleEvent
+
+    def change_opacity(self, _): # pylint: disable=no-self-use
+        """Raises an error so we know when it's run"""
+        raise ChangeOpacityEvent
 
 def test_keyboard_event():
     """
@@ -90,3 +115,23 @@ def test_footswitch_event():
     fs_event(alt, None)
     sleep(0.2)
     fs_event(function_7, None)
+
+
+def test_mouse_event():
+    """Tests for mouse events"""
+
+    mouse_event = inter.BardMouseEvent(_FakeVisualisationControl())
+
+    fake_mouse_event = _FakeMouseEvent([100, 100], [90, 10])
+
+    with pytest.raises(VisibilityToggleEvent):
+        mouse_event(fake_mouse_event, None)
+
+    fake_mouse_event = _FakeMouseEvent([100, 100], [17, 90])
+
+    with pytest.raises(ChangeOpacityEvent):
+        mouse_event(fake_mouse_event, None)
+
+    fake_mouse_event = _FakeMouseEvent([100, 100], [27, 90])
+
+    mouse_event(fake_mouse_event, None)
