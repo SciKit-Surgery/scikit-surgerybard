@@ -12,7 +12,7 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
-from sksurgerybard.algorithms.bard_visualisation import BardVisualisation
+from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
 from sksurgerybard.algorithms.pointer import BardPointerWriter
