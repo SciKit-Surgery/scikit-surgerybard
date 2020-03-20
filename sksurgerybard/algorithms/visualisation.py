@@ -31,19 +31,20 @@ class BardVisualisation():
         self._target_anatomy_actors = []
         self._reference_actors = []
         self._pointer_actors = []
-        
+
         for actor in all_actors:
             try:
                 visible = actor.GetVisibility()
                 actor.SetVisibility(visible)
-                        
+
                 rep = actor.GetProperty().GetRepresentation()
                 actor.GetProperty().SetRepresentation(rep)
 
                 opacity = actor.GetProperty().GetOpacity()
                 opacity = actor.GetProperty().SetOpacity(opacity)
             except:
-                raise TypeError("Actor does not implement required methods, check type")
+                raise TypeError("Actor does not implement required methods,",
+                                "check type")
 
         for index, actor in enumerate(all_actors):
             if index < model_list.get('visible anatomy', 0):
@@ -80,21 +81,6 @@ class BardVisualisation():
                     actor.SetVisibility(True)
                     return
 
-    def cycle_visible_anatomy_vis(self):
-        """
-        cycles through different the visualisation for anatomy in
-        _visible_anatomy
-        """
-        for actor in self._visible_anatomy_actors:
-            if actor.GetProperty().GetRepresentation() < 2:
-                actor.GetProperty().SetRepresentation(
-                    (actor.GetProperty().GetRepresentation() + 1)%3)
-            else:
-                if actor.GetVisibility():
-                    actor.SetVisibility(0)
-                else:
-                    actor.SetVisibility(1)
-                    actor.GetProperty().SetRepresentation(0)
 
     def next_target(self):
         """
@@ -117,12 +103,30 @@ class BardVisualisation():
 
                 self._target_anatomy_actors[0].SetVisibility(True)
 
+
     def turn_on_all_targets(self):
         """
         turns on visibility of all targets
         """
         for actor in self._target_anatomy_actors:
             actor.SetVisibility(True)
+
+
+    def cycle_visible_anatomy_vis(self):
+        """
+        cycles through different the visualisation for anatomy in
+        _visible_anatomy
+        """
+        for actor in self._visible_anatomy_actors:
+            if actor.GetProperty().GetRepresentation() < 2:
+                actor.GetProperty().SetRepresentation(
+                    (actor.GetProperty().GetRepresentation() + 1)%3)
+            else:
+                if actor.GetVisibility():
+                    actor.SetVisibility(0)
+                else:
+                    actor.SetVisibility(1)
+                    actor.GetProperty().SetRepresentation(0)
 
     def change_opacity(self, opacity):
         """
