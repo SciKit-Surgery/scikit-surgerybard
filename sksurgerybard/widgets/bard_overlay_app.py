@@ -3,7 +3,6 @@
 """ Overlay class for the BARD application."""
 
 import os
-from time import time
 import numpy as np
 import cv2
 import cv2.aruco as aruco
@@ -13,8 +12,10 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
-from sksurgerybard.algorithms.bard_interaction_algorithms import \
-        visibility_toggle, change_opacity
+from sksurgerybard.algorithms.visualisation import BardVisualisation
+from sksurgerybard.algorithms.interaction import BardKBEvent, \
+        BardMouseEvent, BardFootSwitchEvent
+from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -27,7 +28,8 @@ class BARDOverlayApp(OverlayBaseApp):
 
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
-         outdir, dims) = configure_bard(config_file)
+         outdir, dims, interaction,
+         visible_anatomy) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -44,8 +46,6 @@ class BARDOverlayApp(OverlayBaseApp):
         if pointer_ref is not None:
             self.pointer_reference_tags = np.array(pointer_ref)
 
-        # Camera Calibration
-        # _ = mtx33d
         self.camera = {
             'projection_mat' : mtx33d,
             'distortion' : dist15d
@@ -64,36 +64,28 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        self._pointer_tip = pointer_tip
-
-        self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                            self.key_press_event)
-
-        self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                            self._left_mouse_press_event)
-
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
 
-        self._outdir = outdir
-
+        self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
         self._resize_flag = True
-
-        self.screen_interaction_layout = {
-            'x_right_edge' : 0.80,
-            'x_left_edge' : 0.20
-            }
-
 
         if models_path:
             self.add_vtk_models_from_dir(models_path)
 
         matrix = create_vtk_matrix_from_numpy(modelreference2model)
-        self._model_list = {'anatomy' : 0, 'reference' : 0, 'pointers' : 0}
+        self._model_list = {'visible anatomy' : 0,
+                            'target anatomy' : 0,
+                            'reference' : 0,
+                            'pointers' : 0}
 
-        for actor in self._get_all_actors():
+        self._model_list['visible anatomy'] = visible_anatomy
+
+        for index, actor in enumerate(self._get_all_actors()):
             actor.SetUserMatrix(matrix)
-            self._model_list['anatomy'] = self._model_list.get('anatomy') + 1
+            if index >= visible_anatomy:
+                self._model_list['target anatomy'] = \
+                                self._model_list.get('target anatomy') + 1
 
         if ref_data is not None:
             model_reference_spheres = VTKSphereModel(
@@ -112,6 +104,25 @@ class BARDOverlayApp(OverlayBaseApp):
             pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
             self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
+
+        bard_visualisation = BardVisualisation(self._get_all_actors(),
+                                               self._model_list)
+
+        if interaction.get('keyboard', False):
+            self.vtk_overlay_window.AddObserver("KeyPressEvent",
+                                                BardKBEvent(
+                                                    self._pointer_writer))
+
+        if interaction.get('footswitch', False):
+            max_delay = interaction.get('maximum delay', 0.1)
+            self.vtk_overlay_window.AddObserver(
+                "KeyPressEvent",
+                BardFootSwitchEvent(max_delay, bard_visualisation))
+
+        if interaction.get('mouse', False):
+            self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
+                                                BardMouseEvent(
+                                                    bard_visualisation))
 
 
     def update(self):
@@ -192,64 +203,6 @@ class BARDOverlayApp(OverlayBaseApp):
             output_matrix[i, 3] = tvec1[i, 0]
 
         return True, output_matrix
-
-    def key_press_event(self, _obj_not_used, _ev_not_used):
-        """
-        Handles a key press event
-
-        """
-
-        if self.vtk_overlay_window.GetKeySym() == 'd':
-            pointermat = None
-            try:
-                pointermat = self._tm.get("pointerref2modelreference")
-
-            except ValueError:
-                print("No pointer matrix available")
-
-            if pointermat is not None:
-                matoutdir = os.path.join(self._outdir, 'bard_pointer_matrices')
-                filename = '{0:d}.txt'.format(int(time()*1e7))
-                if not os.path.isdir(matoutdir):
-                    os.mkdir(matoutdir)
-                np.savetxt(os.path.join(matoutdir, filename), pointermat)
-                print("Pointer matrix written to ",
-                      os.path.join(matoutdir, filename))
-
-                if self._pointer_tip is not None:
-                    tipoutdir = os.path.join(self._outdir, 'bard_pointer_tips')
-                    pointer_tip_location = \
-                        pointermat[0:3, 0:3] @ np.reshape(self._pointer_tip,
-                                                          (3, 1)) + \
-                        np.reshape(pointermat[0:3, 3], (3, 1))
-                    if not os.path.isdir(tipoutdir):
-                        os.mkdir(tipoutdir)
-
-                    np.savetxt(os.path.join(tipoutdir, filename),
-                               pointer_tip_location)
-                    print("Pointer tip written to ",
-                          os.path.join(tipoutdir, filename))
-
-    def _left_mouse_press_event(self, _obj_not_used, _ev_not_used):
-        mouse_x, mouse_y = self.vtk_overlay_window.GetEventPosition()
-        window_x, window_y = self.vtk_overlay_window.GetSize()
-
-        mouse_x /= window_x
-        mouse_y /= window_y
-
-        if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            visibility_toggle(self._get_anatomy_actors(), mouse_y)
-
-        if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
-            change_opacity(self._get_all_actors(), mouse_y)
-
-    def _get_anatomy_actors(self):
-        actors = self._get_all_actors()
-        return_actors = []
-        for index, actor in enumerate(actors):
-            if index < self._model_list.get('anatomy'):
-                return_actors.append(actor)
-        return return_actors
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()

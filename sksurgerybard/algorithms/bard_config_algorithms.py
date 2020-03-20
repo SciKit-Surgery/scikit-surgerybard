@@ -47,6 +47,7 @@ def configure_model_and_ref(model_config):
         models_path = model_config.get('models_dir')
         ref_points = model_config.get('ref_file')
         reference2model_file = model_config.get('reference_to_model')
+        visible_anatomy = model_config.get('visible_anatomy', 0)
 
     ref_data = None
     reference2model = np.identity(4)
@@ -57,7 +58,7 @@ def configure_model_and_ref(model_config):
     if reference2model_file is not None:
         reference2model = np.loadtxt(reference2model_file)
 
-    return ref_data, reference2model, models_path
+    return ref_data, reference2model, models_path, visible_anatomy
 
 def configure_pointer(pointer_config):
     """
@@ -96,7 +97,7 @@ def configure_bard(configuration_file):
     video_source, mtx33d, dist5d, dims = configure_camera(camera_config)
 
     model_config = configuration_data.get('models')
-    ref_data, reference2model, models_path = \
+    ref_data, reference2model, models_path, visible_anatomy = \
             configure_model_and_ref(model_config)
 
     pointer_config = configuration_data.get('pointerData')
@@ -107,6 +108,10 @@ def configure_bard(configuration_file):
     if outdir is None:
         outdir = './'
 
+
+    interaction = configuration_data.get('interaction', {})
+
     return video_source, mtx33d, dist5d, ref_data, \
                         reference2model, ref_point_data, \
-                        models_path, pointer_tip, outdir, dims
+                        models_path, pointer_tip, outdir, dims, interaction, \
+                        visible_anatomy
