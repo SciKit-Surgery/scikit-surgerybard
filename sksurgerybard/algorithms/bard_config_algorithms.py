@@ -110,8 +110,9 @@ def configure_bard(configuration_file):
 
 
     interaction = configuration_data.get('interaction', {})
+    speech_config = configuration_data.get('speech config', False)
 
     return video_source, mtx33d, dist5d, ref_data, \
                         reference2model, ref_point_data, \
                         models_path, pointer_tip, outdir, dims, interaction, \
-                        visible_anatomy
+                        visible_anatomy, speech_config
