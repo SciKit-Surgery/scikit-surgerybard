@@ -6,6 +6,7 @@ import os
 import numpy as np
 import cv2
 import cv2.aruco as aruco
+from sys import modules
 from threading import Thread
 
 from sksurgerycore.transforms.transform_manager import TransformManager
@@ -16,8 +17,11 @@ from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
 from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
-from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
 from sksurgerybard.algorithms.pointer import BardPointerWriter
+try:
+    from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
+except ModuleNotFoundError:
+    pass
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -127,11 +131,17 @@ class BARDOverlayApp(OverlayBaseApp):
                                                     bard_visualisation))
         
         self._speech_thread = None
+        self._speech_int = None
         if interaction.get('speech', False):
     
             if not speech_config:
-                raise KeyError("Requested speech interaction without",
+                raise KeyError("Requested speech interaction without" +
                                 " speech config key")
+
+            if 'sksurgeryspeech' not in modules:
+                raise ModuleNotFoundError("Requested speech interaction without," + 
+                                          " sksurgeryspeech installed, check, " + 
+                                          "your setup.")
 
             self._speech_int = BardSpeechInteractor(speech_config, bard_visualisation)
             self._speech_thread = Thread(target=self._speech_int, daemon = True)

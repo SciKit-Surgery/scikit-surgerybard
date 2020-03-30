@@ -6,7 +6,10 @@ from collections import deque
 from PySide2.QtCore import QObject, Slot, QThread
 from time import time, sleep
 import logging
-from sksurgeryspeech.algorithms.voice_recognition_service import VoiceRecognitionService
+try:
+    from sksurgeryspeech.algorithms.voice_recognition_service import VoiceRecognitionService
+except ModuleNotFoundError:
+    raise ModuleNotFoundError("sksurgeryspeech not present, check your settings")
 
 class BardSpeechInteractor(QObject):
     """
