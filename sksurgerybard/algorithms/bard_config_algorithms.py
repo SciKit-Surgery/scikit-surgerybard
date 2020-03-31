@@ -4,6 +4,9 @@
 import numpy as np
 from sksurgerycore.configuration.configuration_manager import \
         ConfigurationManager
+from sksurgerybard.algorithms.interaction import BardKBEvent, \
+        BardMouseEvent, BardFootSwitchEvent
+
 
 def configure_camera(camera_config):
     """
@@ -116,3 +119,27 @@ def configure_bard(configuration_file):
                         reference2model, ref_point_data, \
                         models_path, pointer_tip, outdir, dims, interaction, \
                         visible_anatomy, speech_config
+
+def configure_interaction(interaction_config, vtk_window, pointer_writer,
+                          bard_visualisation):
+    """
+    Configures BARD interaction events
+    :param: The configuration dictionary
+    :param: The vtk window to get interaction events from
+    :param: A pointer writer to be triggered by some events
+    :param: A visualisation manager to be triggered by some events
+    """
+    if interaction_config.get('keyboard', False):
+        vtk_window.AddObserver("KeyPressEvent",
+                               BardKBEvent(pointer_writer))
+
+    if interaction_config.get('footswitch', False):
+        max_delay = interaction_config.get('maximum delay', 0.1)
+        vtk_window.AddObserver(
+            "KeyPressEvent",
+            BardFootSwitchEvent(max_delay, bard_visualisation))
+
+
+    if interaction_config.get('mouse', False):
+        vtk_window.AddObserver("LeftButtonPressEvent",
+                               BardMouseEvent(bard_visualisation))

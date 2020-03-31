@@ -13,10 +13,9 @@ from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
-from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
+from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
+                configure_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
-from sksurgerybard.algorithms.interaction import BardKBEvent, \
-        BardMouseEvent, BardFootSwitchEvent
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 try:
     from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
@@ -114,21 +113,8 @@ class BARDOverlayApp(OverlayBaseApp):
         bard_visualisation = BardVisualisation(self._get_all_actors(),
                                                self._model_list)
 
-        if interaction.get('keyboard', False):
-            self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                                BardKBEvent(
-                                                    self._pointer_writer))
-
-        if interaction.get('footswitch', False):
-            max_delay = interaction.get('maximum delay', 0.1)
-            self.vtk_overlay_window.AddObserver(
-                "KeyPressEvent",
-                BardFootSwitchEvent(max_delay, bard_visualisation))
-
-        if interaction.get('mouse', False):
-            self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                                BardMouseEvent(
-                                                    bard_visualisation))
+        configure_interaction(interaction, self.vtk_overlay_window,
+                              self._pointer_writer, bard_visualisation)
 
         self._speech_thread = None
         self._speech_int = None
