@@ -2,12 +2,12 @@
 
 """ Overlay class for the BARD application."""
 
+from sys import modules
+from threading import Thread
 import os
 import numpy as np
 import cv2
 import cv2.aruco as aruco
-from sys import modules
-from threading import Thread
 
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
@@ -129,24 +129,25 @@ class BARDOverlayApp(OverlayBaseApp):
             self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
                                                 BardMouseEvent(
                                                     bard_visualisation))
-        
+
         self._speech_thread = None
         self._speech_int = None
         if interaction.get('speech', False):
-    
+
             if not speech_config:
                 raise KeyError("Requested speech interaction without" +
-                                " speech config key")
+                               " speech config key")
 
             if 'sksurgeryspeech' not in modules:
-                raise ModuleNotFoundError("Requested speech interaction without," + 
-                                          " sksurgeryspeech installed, check, " + 
-                                          "your setup.")
+                raise ModuleNotFoundError(
+                    "Requested speech interaction without " +
+                    "sksurgeryspeech installed check your setup.")
 
-            self._speech_int = BardSpeechInteractor(speech_config, bard_visualisation)
-            self._speech_thread = Thread(target=self._speech_int, daemon = True)
+            self._speech_int = BardSpeechInteractor(speech_config,
+                                                    bard_visualisation)
+            self._speech_thread = Thread(target=self._speech_int, daemon=True)
             self._speech_thread.start()
-    
+
     def __del__(self):
         if self._speech_int is not None:
             self._speech_int.stop_listener()
