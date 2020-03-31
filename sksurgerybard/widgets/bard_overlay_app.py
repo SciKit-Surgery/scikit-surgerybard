@@ -2,8 +2,6 @@
 
 """ Overlay class for the BARD application."""
 
-from sys import modules
-from threading import Thread
 import os
 import numpy as np
 import cv2
@@ -14,13 +12,9 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-                configure_interaction
+                configure_interaction, configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
-try:
-    from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
-except ModuleNotFoundError:
-    pass
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -116,28 +110,14 @@ class BARDOverlayApp(OverlayBaseApp):
         configure_interaction(interaction, self.vtk_overlay_window,
                               self._pointer_writer, bard_visualisation)
 
-        self._speech_thread = None
         self._speech_int = None
         if interaction.get('speech', False):
-
-            if not speech_config:
-                raise KeyError("Requested speech interaction without" +
-                               " speech config key")
-
-            if 'sksurgeryspeech' not in modules:
-                raise ModuleNotFoundError(
-                    "Requested speech interaction without " +
-                    "sksurgeryspeech installed check your setup.")
-
-            self._speech_int = BardSpeechInteractor(speech_config,
-                                                    bard_visualisation)
-            self._speech_thread = Thread(target=self._speech_int, daemon=True)
-            self._speech_thread.start()
+            self._speech_int = configure_speech_interaction(
+                speech_config, bard_visualisation)
 
     def __del__(self):
         if self._speech_int is not None:
             self._speech_int.stop_listener()
-
 
     def update(self):
         """Update the background render with a new frame and
