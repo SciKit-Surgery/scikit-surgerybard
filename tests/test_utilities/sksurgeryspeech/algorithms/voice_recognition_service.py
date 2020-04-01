@@ -8,7 +8,6 @@ class VoiceRecognitionService(QObject):
     sksurgeryspeech.algorithms
     """
 
-     
     start_listen = Signal()
     stop_timer = Signal()
     google_api_not_understand = Signal()
@@ -70,3 +69,8 @@ class VoiceRecognitionService(QObject):
                 print('Unknown signal (%s, %s)', signal[0], signal[1])
         else:
             self.voice_command.emit('quit')
+
+    @Slot()
+    def __stop(self):
+        self.timer.stop()
+        QThread.msleep(self.interval * 3)
