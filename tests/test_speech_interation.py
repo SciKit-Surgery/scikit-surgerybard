@@ -4,6 +4,9 @@ from time import sleep
 import sys
 import pytest
 
+from PySide2.QtWidgets import QApplication
+
+
 try:
     #we do this because bard_config_algorithms doesn't throw module not found 
     from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
@@ -12,6 +15,17 @@ except ModuleNotFoundError:
 
 from sksurgerybard.algorithms.bard_config_algorithms import \
                 configure_speech_interaction
+
+from sksurgerybard.algorithms.speech_interaction import \
+    _on_google_api_not_understand, _on_google_api_request_failure, \
+    _on_start_processing_request, _on_start_listen
+
+@pytest.fixture(scope="session")
+def setup_qt():
+
+    """ Create the QT application. """
+    app = QApplication([])
+    return app
 
 
 class WritePointerEvent(Exception):#pylint: disable=missing-class-docstring
@@ -49,7 +63,7 @@ class _FakeVisualisationControl:
         raise ChangeOpacityEvent
 
 
-def test_BardSpeechInteractor():
+def test_BardSpeechInteractor(setup_qt):
     config = {
         "timeout for command" : 1,
         "sensitivities" : [1.0],
@@ -66,8 +80,23 @@ def test_BardSpeechInteractor():
             ["unknown_command", "what's this"],
             ["voice_command", "quit"]],                
             }
+
     bard_speech = configure_speech_interaction(config, _FakeVisualisationControl())
 
-    sleep(2.0)
+    #I think the following slots should be fired by the bard_speech, but
+    #I can't make it work. So let's just run them here.
+    with pytest.raises(NextTargetEvent):
+        bard_speech._on_voice_signal('next')
+    with pytest.raises(TurnOnAllEvent):
+        bard_speech._on_voice_signal('clear')
+    with pytest.raises(CycleAnatomyEvent):
+        bard_speech._on_voice_signal('map')
+
+    _on_google_api_not_understand()
+    _on_google_api_request_failure()
+    _on_start_processing_request()
+    _on_start_listen()
+
+    sleep(0.5)
 
     bard_speech.stop_listener()
