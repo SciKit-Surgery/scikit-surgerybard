@@ -11,10 +11,9 @@ from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
-from sksurgerybard.algorithms.bard_config_algorithms import configure_bard
+from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
+                configure_interaction, configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
-from sksurgerybard.algorithms.interaction import BardKBEvent, \
-        BardMouseEvent, BardFootSwitchEvent
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 class BARDOverlayApp(OverlayBaseApp):
@@ -29,7 +28,7 @@ class BARDOverlayApp(OverlayBaseApp):
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
          outdir, dims, interaction,
-         visible_anatomy) = configure_bard(config_file)
+         visible_anatomy, speech_config) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -108,22 +107,17 @@ class BARDOverlayApp(OverlayBaseApp):
         bard_visualisation = BardVisualisation(self._get_all_actors(),
                                                self._model_list)
 
-        if interaction.get('keyboard', False):
-            self.vtk_overlay_window.AddObserver("KeyPressEvent",
-                                                BardKBEvent(
-                                                    self._pointer_writer))
+        configure_interaction(interaction, self.vtk_overlay_window,
+                              self._pointer_writer, bard_visualisation)
 
-        if interaction.get('footswitch', False):
-            max_delay = interaction.get('maximum delay', 0.1)
-            self.vtk_overlay_window.AddObserver(
-                "KeyPressEvent",
-                BardFootSwitchEvent(max_delay, bard_visualisation))
+        self._speech_int = None
+        if interaction.get('speech', False):
+            self._speech_int = configure_speech_interaction(
+                speech_config, bard_visualisation)
 
-        if interaction.get('mouse', False):
-            self.vtk_overlay_window.AddObserver("LeftButtonPressEvent",
-                                                BardMouseEvent(
-                                                    bard_visualisation))
-
+    def __del__(self):
+        if self._speech_int is not None:
+            self._speech_int.stop_listener()
 
     def update(self):
         """Update the background render with a new frame and
