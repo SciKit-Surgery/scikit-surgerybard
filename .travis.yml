@@ -25,7 +25,7 @@ script:
  - coverage run -a --source ./sksurgerybard -m pytest -v -s ./tests/
  - coverage report -m
  - if [ $LINT == 1 ]; then
-    pylint --rcfile=tests/pylintrc --extension-pkg-whitelist=PySide2,vtk,cv2, sksurgerybard sksurgerybard/widgets 
+    pylint --rcfile=tests/pylintrc --extension-pkg-whitelist=PySide2,vtk,cv2, sksurgerybard sksurgerybard/widgets; 
    fi
 
 after_success:
