@@ -59,7 +59,8 @@ setup(
         'glob2',
         'PySide2<=5.12.0',
         'opencv-contrib-python',
-        'scikit-surgerycore<0.6.0',
+        'scikit-surgerycore',
+        'scikit-surgerycalibration',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
     ],
@@ -68,7 +69,7 @@ setup(
         'console_scripts': [
             'bardCameraCalibration=sksurgerybard.ui.bard_camera_'
             'calibration_command_line:main',
-            'bardPivotCalibration=sksurgerybard.ui.bard_pivot_'
+            'bardPivotCalibration=sksurgerycalibration.ui.pivot_'
             'calibration_command_line:main',
             'bardGrabVideoImages=sksurgerybard.ui.bard_grab_'
             'video_images_command_line:main',
