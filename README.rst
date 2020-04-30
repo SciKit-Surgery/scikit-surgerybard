@@ -1,15 +1,19 @@
 Basic Augmented Reality Demo.
 ===============================
 
-.. image:: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/raw/master/project-icon.png
+.. image:: https://github.com/UCL/scikit-surgerybard/raw/master/project-icon.png
    :height: 128px
    :width: 128px
-   :target: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard
+   :target: https://github.com/UCL/scikit-surgerybard
    :alt: Logo
 
-.. image:: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/badges/master/pipeline.svg
-   :target: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/pipelines
-   :alt: GitLab-CI test status
+.. image:: https://travis-ci.com/UCL/scikit-surgerybard.svg?branch=master
+   :target: https://travis-ci.com/github/UCL/scikit-surgerybard
+   :alt: Travis CI test status
+
+.. image:: https://coveralls.io/repos/github/UCL/scikit-surgerybard/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/UCL/scikit-surgerybard?branch=master
+    :alt: Test coverage
 
 .. image:: https://readthedocs.org/projects/scikit-surgerybard/badge/?version=latest
     :target: http://scikit-surgerybard.readthedocs.io/en/latest/?badge=latest
@@ -19,7 +23,7 @@ Basic Augmented Reality Demo.
 
 Author: Stephen Thompson
 
-Basic Augmented Reality Demo. is part of the `SNAPPY`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
+Basic Augmented Reality Demo. is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 
 Basic Augmented Reality Demo. Python 3.6.
 
@@ -56,12 +60,12 @@ Supported by `Wellcome`_ and `EPSRC`_.
 
 
 .. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
-.. _`source code repository`: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard
+.. _`source code repository`: https://github.com/UCL/scikit-surgerybard
 .. _`Documentation`: https://scikit-surgerybard.readthedocs.io
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
+.. _`SciKit-Surgery`: https://github.com/UCL/scikit-surgery/wiki
 .. _`University College London (UCL)`: http://www.ucl.ac.uk/
 .. _`Wellcome`: https://wellcome.ac.uk/
 .. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`contributing guidelines`: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/blob/master/CONTRIBUTING.rst
-.. _`license file`: https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/blob/master/LICENSE
+.. _`contributing guidelines`: https://github.com/UCL/scikit-surgerybard/blob/master/CONTRIBUTING.rst
+.. _`license file`: https://github.com/UCL/scikit-surgerybard/blob/master/LICENSE
 

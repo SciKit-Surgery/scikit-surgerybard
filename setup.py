@@ -18,7 +18,7 @@ setup(
                 'based on scikit-surgery (SNAPPY)',
     long_description=long_description,
     long_description_content_type='text/x-rst',
-    url='https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/'
+    url='https://github.com/UCL/'
         'scikit-surgerybard',
     author='Mian Asbat Ahmad',
     author_email='rmapaah@ucl.ac.uk',
@@ -59,7 +59,7 @@ setup(
         'glob2',
         'PySide2<=5.12.0',
         'opencv-contrib-python',
-        'scikit-surgerycore>=0.2.0',
+        'scikit-surgerycore<0.6.0',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
     ],
