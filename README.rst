@@ -7,8 +7,8 @@ Basic Augmented Reality Demo.
    :target: https://github.com/UCL/scikit-surgerybard
    :alt: Logo
 
-.. image:: https://travis-ci.com/UCL/scikit-surgerybard.svg?branch=master
-   :target: https://travis-ci.com/github/UCL/scikit-surgerybard
+.. image:: https://github.com/UCL/scikit-surgerybard/workflows/.github/workflows/ci.yml/badge.svg 
+   :target: https://github.com/UCL/scikit-surgerybard/actions
    :alt: Travis CI test status
 
 .. image:: https://coveralls.io/repos/github/UCL/scikit-surgerybard/badge.svg?branch=master&service=github
@@ -21,7 +21,7 @@ Basic Augmented Reality Demo.
 
 
 
-Author: Stephen Thompson
+Authors: Matt Clarkson, Mian Ahmad, Stephen Thompson
 
 Basic Augmented Reality Demo. is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 

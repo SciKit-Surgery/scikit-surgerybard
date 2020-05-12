@@ -25,6 +25,8 @@ class BARDOverlayApp(OverlayBaseApp):
         """overrides the default constructor to add some member variables
         which wee need for the aruco tag detection"""
 
+        self._speech_int = None
+
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
          outdir, dims, interaction,
@@ -110,7 +112,6 @@ class BARDOverlayApp(OverlayBaseApp):
         configure_interaction(interaction, self.vtk_overlay_window,
                               self._pointer_writer, bard_visualisation)
 
-        self._speech_int = None
         if interaction.get('speech', False):
             self._speech_int = configure_speech_interaction(
                 speech_config, bard_visualisation)
