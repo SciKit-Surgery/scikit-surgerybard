@@ -55,7 +55,7 @@ class BARDOverlayApp(OverlayBaseApp):
         }
         self._reference_register = Registration2D3D(self.model_reference_tags,
                                                     mtx33d, dist15d, 
-                                                    buffer_size = 1)
+                                                    buffer_size = 3)
 
         self._pointer_register = Registration2D3D(self.pointer_reference_tags,
                                                     mtx33d, dist15d,
