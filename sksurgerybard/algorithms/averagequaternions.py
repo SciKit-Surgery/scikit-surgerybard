@@ -91,11 +91,11 @@ def average_quaternions(quaternions):
     # scale
     mat_a = (1.0/ samples)*mat_a
     # compute eigenvalues and -vectors
-    eigenValues, eigenVectors = numpy.linalg.eig(mat_a)
+    eigen_values, eigen_vectors = numpy.linalg.eig(mat_a)
     # Sort by largest eigenvalue
-    eigenVectors = eigenVectors[:, eigenValues.argsort()[::-1]]
+    eigen_vectors = eigen_vectors[:, eigen_values.argsort()[::-1]]
     # return the real part of the largest eigenvector (has only real part)
-    return numpy.real(eigenVectors[:, 0].A1)
+    return numpy.real(eigen_vectors[:, 0].A1)
 
 
 def weighted_average_quaternions(quaternions, weights):
@@ -106,7 +106,7 @@ def weighted_average_quaternions(quaternions, weights):
         to average in the rows.
         The quaternions are arranged as (w,x,y,z), with w being the scalar
 
-    :params weights: The weight vector w must be of the same length as 
+    :params weights: The weight vector w must be of the same length as
         the number of rows in the
 
     :returns: the average quaternion of the input. Note that the signs
@@ -116,21 +116,21 @@ def weighted_average_quaternions(quaternions, weights):
     # Number of quaternions to average
     samples = quaternions.shape[0]
     mat_a = npm.zeros(shape=(4, 4))
-    weightSum = 0
+    weight_sum = 0
 
     for i in range(0, samples):
         quat = quaternions[i, :]
         mat_a = weights[i] * numpy.outer(quat, quat) + mat_a
-        weightSum += weights[i]
+        weight_sum += weights[i]
 
     # scale
-    mat_a = (1.0/weightSum) * mat_a
+    mat_a = (1.0/weight_sum) * mat_a
 
     # compute eigenvalues and -vectors
-    eigenValues, eigenVectors = numpy.linalg.eig(mat_a)
+    eigen_values, eigen_vectors = numpy.linalg.eig(mat_a)
 
     # Sort by largest eigenvalue
-    eigenVectors = eigenVectors[:,eigenValues.argsort()[::-1]]
+    eigen_vectors = eigen_vectors[:, eigen_values.argsort()[::-1]]
 
     # return the real part of the largest eigenvector (has only real part)
-    return numpy.real(eigenVectors[:, 0].A1)
+    return numpy.real(eigen_vectors[:, 0].A1)

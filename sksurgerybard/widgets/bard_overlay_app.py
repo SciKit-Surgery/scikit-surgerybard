@@ -43,12 +43,12 @@ class BARDOverlayApp(OverlayBaseApp):
 
 
         self._reference_register = Registration2D3D(np.array(ref_data),
-                                                    mtx33d, dist15d, 
-                                                    buffer_size = 3)
+                                                    mtx33d, dist15d,
+                                                    buffer_size=3)
 
         self._pointer_register = Registration2D3D(np.array(pointer_ref),
-                                                    mtx33d, dist15d,
-                                                    buffer_size = 1)
+                                                  mtx33d, dist15d,
+                                                  buffer_size=1)
         # call the constructor for the base class
         dims = None
 
@@ -143,7 +143,7 @@ class BARDOverlayApp(OverlayBaseApp):
         if marker_corners and ids[0] != 0:
             success, modelreference2camera = \
                 self._reference_register.get_matrix(
-                ids, marker_corners)
+                    ids, marker_corners)
 
             if success:
                 self._tm.add("modelreference2camera", modelreference2camera)
@@ -154,7 +154,7 @@ class BARDOverlayApp(OverlayBaseApp):
         if marker_corners and ids[0] != 0:
             success, pointerref2camera = \
                 self._pointer_register.get_matrix(
-                ids, marker_corners)
+                    ids, marker_corners)
             if success:
                 self._tm.add("pointerref2camera", pointerref2camera)
                 ptrref2modelref = self._tm.get("pointerref2modelreference")
