@@ -41,23 +41,12 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._tm.add("model2modelreference", modelreference2model)
 
-        self.model_reference_tags = None
-        if ref_data is not None:
-            self.model_reference_tags = np.array(ref_data)
 
-        self.pointer_reference_tags = None
-        if pointer_ref is not None:
-            self.pointer_reference_tags = np.array(pointer_ref)
-
-        self.camera = {
-            'projection_mat' : mtx33d,
-            'distortion' : dist15d
-        }
-        self._reference_register = Registration2D3D(self.model_reference_tags,
+        self._reference_register = Registration2D3D(np.array(ref_data),
                                                     mtx33d, dist15d, 
                                                     buffer_size = 3)
 
-        self._pointer_register = Registration2D3D(self.pointer_reference_tags,
+        self._pointer_register = Registration2D3D(np.array(pointer_ref),
                                                     mtx33d, dist15d,
                                                     buffer_size = 1)
         # call the constructor for the base class
@@ -151,30 +140,28 @@ class BARDOverlayApp(OverlayBaseApp):
         # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
-        if self.model_reference_tags is not None:
-            if marker_corners and ids[0] != 0:
-                success, modelreference2camera = \
-                    self._reference_register.get_matrix(
-                    ids, marker_corners)
+        if marker_corners and ids[0] != 0:
+            success, modelreference2camera = \
+                self._reference_register.get_matrix(
+                ids, marker_corners)
 
-                if success:
-                    self._tm.add("modelreference2camera", modelreference2camera)
+            if success:
+                self._tm.add("modelreference2camera", modelreference2camera)
 
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        if self.pointer_reference_tags is not None:
-            if marker_corners and ids[0] != 0:
-                success, pointerref2camera = \
-                    self._pointer_register.get_matrix(
-                    ids, marker_corners)
-                if success:
-                    self._tm.add("pointerref2camera", pointerref2camera)
-                    ptrref2modelref = self._tm.get("pointerref2modelreference")
-                    actors = self._get_pointer_actors()
-                    matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-                    for actor in actors:
-                        actor.SetUserMatrix(matrix)
+        if marker_corners and ids[0] != 0:
+            success, pointerref2camera = \
+                self._pointer_register.get_matrix(
+                ids, marker_corners)
+            if success:
+                self._tm.add("pointerref2camera", pointerref2camera)
+                ptrref2modelref = self._tm.get("pointerref2modelreference")
+                actors = self._get_pointer_actors()
+                matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
+                for actor in actors:
+                    actor.SetUserMatrix(matrix)
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()
