@@ -170,7 +170,7 @@ def test_next_target():
                             None, None, None, None,
                             bard_vis.next_target)
 
-    set_state = [True, False, True, False, False, True, False]
+    set_state = [True, False, False, False, False, True, False]
     expected_state = [True, False, False, False, False, False, True]
     _check_state_transition(actors, set_state, expected_state,
                             None, None, None, None,
