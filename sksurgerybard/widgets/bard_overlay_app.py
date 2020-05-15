@@ -15,6 +15,8 @@ from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
                 configure_interaction, configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
+from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
+
 
 class BARDOverlayApp(OverlayBaseApp):
     """Inherits from OverlayBaseApp, and adds methods to
@@ -39,19 +41,14 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._tm.add("model2modelreference", modelreference2model)
 
-        self.model_reference_tags = None
-        if ref_data is not None:
-            self.model_reference_tags = np.array(ref_data)
 
-        self.pointer_reference_tags = None
-        if pointer_ref is not None:
-            self.pointer_reference_tags = np.array(pointer_ref)
+        self._reference_register = Registration2D3D(np.array(ref_data),
+                                                    mtx33d, dist15d,
+                                                    buffer_size=3)
 
-        self.camera = {
-            'projection_mat' : mtx33d,
-            'distortion' : dist15d
-        }
-
+        self._pointer_register = Registration2D3D(np.array(pointer_ref),
+                                                  mtx33d, dist15d,
+                                                  buffer_size=1)
         # call the constructor for the base class
         dims = None
 
@@ -143,61 +140,28 @@ class BARDOverlayApp(OverlayBaseApp):
         # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
-        if self.model_reference_tags is not None:
-            if marker_corners and ids[0] != 0:
-                success, modelreference2camera = self.register(
-                    ids, marker_corners, self.model_reference_tags)
+        if marker_corners and ids[0] != 0:
+            success, modelreference2camera = \
+                self._reference_register.get_matrix(
+                    ids, marker_corners)
 
-                if success:
-                    self._tm.add("modelreference2camera", modelreference2camera)
+            if success:
+                self._tm.add("modelreference2camera", modelreference2camera)
 
         camera2modelreference = self._tm.get("camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        if self.pointer_reference_tags is not None:
-            if marker_corners and ids[0] != 0:
-                success, pointerref2camera = self.register(
-                    ids, marker_corners, self.pointer_reference_tags)
-                if success:
-                    self._tm.add("pointerref2camera", pointerref2camera)
-                    ptrref2modelref = self._tm.get("pointerref2modelreference")
-                    actors = self._get_pointer_actors()
-                    matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-                    for actor in actors:
-                        actor.SetUserMatrix(matrix)
-
-    def register(self, ids, tags, ref_file):
-        """Internal method for doing registration"""
-
-        points3d = []
-        points2d = []
-        count = 0
-        output_matrix = np.identity(4)
-
-        for _, value in enumerate(ref_file):
-            for j, value1 in enumerate(ids):
-                if value[0] == value1[0]:
-                    count += 1
-                    points3d.extend(value[4:])
-                    points2d.extend(tags[j])
-
-        if count == 0:
-            return False, output_matrix
-
-        points3d = np.array(points3d).reshape((count*4), 3)
-        points2d = np.array(points2d).reshape((count*4), 2)
-
-        _, rvec1, tvec1 = cv2.solvePnP(points3d, points2d,
-                                       self.camera.get('projection_mat'),
-                                       self.camera.get('distortion'))
-
-        rotation_matrix, _ = cv2.Rodrigues(rvec1)
-        for i in range(3):
-            for j in range(3):
-                output_matrix[i, j] = rotation_matrix[i, j]
-            output_matrix[i, 3] = tvec1[i, 0]
-
-        return True, output_matrix
+        if marker_corners and ids[0] != 0:
+            success, pointerref2camera = \
+                self._pointer_register.get_matrix(
+                    ids, marker_corners)
+            if success:
+                self._tm.add("pointerref2camera", pointerref2camera)
+                ptrref2modelref = self._tm.get("pointerref2modelreference")
+                actors = self._get_pointer_actors()
+                matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
+                for actor in actors:
+                    actor.SetUserMatrix(matrix)
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()
