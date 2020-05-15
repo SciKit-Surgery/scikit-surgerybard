@@ -89,13 +89,21 @@ class BardVisualisation():
         no_of_actors = len(self._target_anatomy_actors)
         if no_of_actors > 0:
             found_next_target = False
+
+            first_vis_index = 0
             for index, actor in enumerate(self._target_anatomy_actors):
-                if not actor.GetVisibility():
-                    actor.SetVisibility(True)
-                    self._target_anatomy_actors[
-                        (index -1)%no_of_actors].SetVisibility(False)
-                    found_next_target = True
-                    break
+                if actor.GetVisibility():
+                    first_vis_index = index
+
+
+            for index, actor in enumerate(self._target_anatomy_actors):
+                if index > first_vis_index:
+                    if not actor.GetVisibility():
+                        actor.SetVisibility(True)
+                        self._target_anatomy_actors[
+                            (index -1)%no_of_actors].SetVisibility(False)
+                        found_next_target = True
+                        break
 
             if not found_next_target:
                 for actor in self._target_anatomy_actors:
