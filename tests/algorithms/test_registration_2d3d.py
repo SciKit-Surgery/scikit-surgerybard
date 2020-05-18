@@ -93,3 +93,83 @@ def test_rolling_mean_four_values():
 
     assert np.allclose(expected_answer1, mean_buffer.getmean(), rtol=1e-05,
                        atol=1e-10)
+
+
+def test_rolling_rotation_no_buffer():
+    """
+    Try doing a rolling rotation mean with zero buffer.
+    """
+    with pytest.raises(ValueError):
+        _ = reg.RollingMeanRotation(buffer_size=0)
+
+
+def test_rolling_rot_returns_nan():
+    """
+    Tests for rolling mean rotation class.
+    """
+
+    mean_buffer = reg.RollingMeanRotation(buffer_size=5)
+
+    assert np.isnan(mean_buffer.getmean()).all
+
+
+def test_rolling_rot_single_value():
+    """
+    Test rolling mean rotation returns vector value for single entry
+    """
+
+    rvec = np.array([0.0, -math.pi/2.0, 0.0])
+    expected_quaternion = np.array([math.cos(math.pi/4.0), 0.0,
+                                    -1.0 * math.sin(math.pi/4.0), 0.0])
+
+    mean_buffer = reg.RollingMeanRotation(buffer_size=5)
+
+    mean_buffer.pop(rvec)
+
+    assert np.allclose(expected_quaternion, mean_buffer.getmean(),
+                       rtol=1e-05, atol=1e-10)
+
+
+def test_r_rot_sgl_value_sgl_buff():
+    """
+    Test rolling mean rotation returns vector value for single entry
+    """
+
+    rvec = np.array([0.0, 0.0, -math.pi/2.0])
+    expected_quaternion = np.array([math.cos(math.pi/4.0), 0.0, 0.0,
+                                    -1.0 * math.sin(math.pi/4.0)])
+
+    mean_buffer = reg.RollingMeanRotation(buffer_size=1)
+
+    mean_buffer.pop(rvec)
+
+    assert np.allclose(expected_quaternion, mean_buffer.getmean(),
+                       rtol=1e-05, atol=1e-10)
+
+
+def test_rolling_rot_four_values():
+    """
+    Test rolling mean returns vector value for single entry
+    """
+    rvec0 = [0.0, 0.0, 0.0]
+    rvec1 = [np.NaN, np.NaN, np.NaN]
+    rvec2 = [0.0, 0.0, -math.pi/2.0]
+    rvec3 = [0.0, math.pi/3.0, 0.0]
+
+    expected_answer0 = [math.cos(math.pi/4.0), 0.0, 0.0,
+                        -1.0 * math.sin(math.pi/4.0)]
+    #the next ones more of a regression test, I haven't independently
+    #calculated this answer.
+    expected_answer1 = [-0.87602709, 0.0, -0.27843404, 0.39376519]
+
+    mean_buffer = reg.RollingMeanRotation(buffer_size=3)
+    mean_buffer.pop(rvec0)
+    mean_buffer.pop(rvec1)
+    mean_buffer.pop(rvec2)
+    assert np.allclose(expected_answer0, mean_buffer.getmean(), rtol=1e-05,
+                       atol=1e-6)
+
+    mean_buffer.pop(rvec3)
+
+    assert np.allclose(expected_answer1, mean_buffer.getmean(), rtol=1e-05,
+                       atol=1e-10)

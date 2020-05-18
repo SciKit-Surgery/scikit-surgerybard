@@ -19,6 +19,9 @@ def _rvec_to_quaternion(rvec):
     rvec_rs = np.reshape(rvec, (1, 3))
     angle = np.linalg.norm(rvec_rs)
 
+    if not angle > 0.0:
+        return np.zeros(4)
+
     rvec_norm = rvec_rs / angle
 
     quaternion = np.full(4, np.NaN)
