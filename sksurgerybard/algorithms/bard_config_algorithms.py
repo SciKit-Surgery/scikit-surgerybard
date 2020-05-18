@@ -137,14 +137,13 @@ def configure_interaction(interaction_config, vtk_window, pointer_writer,
     """
     if interaction_config.get('keyboard', False):
         vtk_window.AddObserver("KeyPressEvent",
-                               BardKBEvent(pointer_writer))
+                               BardKBEvent(pointer_writer, bard_visualisation))
 
     if interaction_config.get('footswitch', False):
         max_delay = interaction_config.get('maximum delay', 0.1)
         vtk_window.AddObserver(
             "KeyPressEvent",
             BardFootSwitchEvent(max_delay, bard_visualisation))
-
 
     if interaction_config.get('mouse', False):
         vtk_window.AddObserver("LeftButtonPressEvent",
