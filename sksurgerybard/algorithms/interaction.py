@@ -9,12 +9,19 @@ class BardKBEvent:
     """
     Handles keyboard events for bard
     """
-    def __init__(self, pointer_writer):
+    def __init__(self, pointer_writer, visualisation_control):
         self._pointer_writer = pointer_writer
+        self._visualisation_control = visualisation_control
 
     def __call__(self, event, _event_type_not_used):
         if event.GetKeySym() == 'd':
             self._pointer_writer.write_pointer_tip()
+        if event.GetKeySym() == 'b':
+            self._visualisation_control.cycle_visible_anatomy_vis()
+        if event.GetKeySym() == 'n':
+            self._visualisation_control.next_target()
+        if event.GetKeySym() == 'm':
+            self._visualisation_control.turn_on_all_targets()
 
 
 class BardFootSwitchEvent:
