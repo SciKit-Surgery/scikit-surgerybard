@@ -65,6 +65,9 @@ class RollingMean():
             on.
         :params buffer_size: the size of the rolling window.
         """
+        if buffer_size < 1:
+            raise ValueError("Buffer size must be a least 1")
+
         self._buffer = np.empty((buffer_size, vector_size), dtype=np.float64)
         self._buffer[:] = np.NaN
         self._vector_size = vector_size
