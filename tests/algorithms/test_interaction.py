@@ -80,8 +80,20 @@ def test_keyboard_event():
 
     event = _FakeKBEvent('e')
 
-    kb_event = inter.BardKBEvent(_FakePointerWriter())
     kb_event(event, None)
+
+    event = _FakeKBEvent('b')
+    with pytest.raises(CycleAnatomyEvent):
+        kb_event(event, None)
+
+    event = _FakeKBEvent('b')
+    with pytest.raises(NextTargetEvent):
+        kb_event(event, None)
+
+    event = _FakeKBEvent('b')
+    with pytest.raises(TurnOnAllEvent):
+        kb_event(event, None)
+
 
 def test_footswitch_event():
     """tests for footswitch event"""
