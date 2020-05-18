@@ -3,7 +3,7 @@
 import math
 import numpy as np
 import pytest
-import sksurgerybard.algorithms.registration_2d3d as reg
+import sksurgerybard.algorithms.tracking_smoothing as reg
 
 
 def test_rvec_to_quaterion():
@@ -29,7 +29,7 @@ def test_quaterion_to_matrix():
     quaternion = np.array([math.cos(math.pi/4.0), 0.0,
                            1.0 * math.sin(math.pi/4.0), 0.0])
 
-    rot_mat = reg._quaternion_to_matrix(quaternion) # pylint: disable=protected-access
+    rot_mat = reg.quaternion_to_matrix(quaternion)
 
     rot_mat1 = np.eye(3, dtype=np.float64)
 
