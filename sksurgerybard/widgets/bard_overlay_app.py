@@ -32,7 +32,8 @@ class BARDOverlayApp(OverlayBaseApp):
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
          outdir, dims, interaction,
-         visible_anatomy, speech_config) = configure_bard(config_file)
+         visible_anatomy, speech_config,
+         ref_smoothing, pnt_smoothing) = configure_bard(config_file)
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -44,11 +45,11 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._reference_register = Registration2D3D(np.array(ref_data),
                                                     mtx33d, dist15d,
-                                                    buffer_size=3)
+                                                    buffer_size=ref_smoothing)
 
         self._pointer_register = Registration2D3D(np.array(pointer_ref),
                                                   mtx33d, dist15d,
-                                                  buffer_size=1)
+                                                  buffer_size=pnt_smoothing)
         # call the constructor for the base class
         dims = None
 

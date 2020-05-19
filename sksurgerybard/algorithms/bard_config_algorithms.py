@@ -52,11 +52,13 @@ def configure_model_and_ref(model_config):
     models_path = None
     ref_points = None
     reference2model_file = None
+    smoothing_buffer = None
     if model_config:
         models_path = model_config.get('models_dir')
         ref_points = model_config.get('ref_file')
         reference2model_file = model_config.get('reference_to_model')
         visible_anatomy = model_config.get('visible_anatomy', 0)
+        smoothing_buffer = model_config.get('smoothing_buffer', 1)
 
     ref_data = None
     reference2model = np.identity(4)
@@ -67,7 +69,8 @@ def configure_model_and_ref(model_config):
     if reference2model_file is not None:
         reference2model = np.loadtxt(reference2model_file)
 
-    return ref_data, reference2model, models_path, visible_anatomy
+    return ref_data, reference2model, models_path, visible_anatomy, \
+                    smoothing_buffer
 
 def configure_pointer(pointer_config):
     """
@@ -75,9 +78,11 @@ def configure_pointer(pointer_config):
     """
     ref_pointer_file = None
     pointer_tip_file = None
+    smoothing_buffer = None
     if pointer_config:
         ref_pointer_file = pointer_config.get('pointer_tag_file')
         pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
+        smoothing_buffer = pointer_config.get('smoothing_buffer', 1)
 
     ref_point_data = None
     pointer_tip = None
@@ -86,7 +91,7 @@ def configure_pointer(pointer_config):
 
     if pointer_tip_file is not None:
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
-    return ref_point_data, pointer_tip
+    return ref_point_data, pointer_tip, smoothing_buffer
 
 def configure_bard(configuration_file):
     """
@@ -106,11 +111,12 @@ def configure_bard(configuration_file):
     video_source, mtx33d, dist5d, dims = configure_camera(camera_config)
 
     model_config = configuration_data.get('models')
-    ref_data, reference2model, models_path, visible_anatomy = \
+    ref_data, reference2model, models_path, visible_anatomy, ref_smoothing = \
             configure_model_and_ref(model_config)
 
     pointer_config = configuration_data.get('pointerData')
-    ref_point_data, pointer_tip = configure_pointer(pointer_config)
+    ref_point_data, pointer_tip, pnt_smoothing = \
+            configure_pointer(pointer_config)
 
     outdir = configuration_data.get('out path')
 
@@ -124,7 +130,8 @@ def configure_bard(configuration_file):
     return video_source, mtx33d, dist5d, ref_data, \
                         reference2model, ref_point_data, \
                         models_path, pointer_tip, outdir, dims, interaction, \
-                        visible_anatomy, speech_config
+                        visible_anatomy, speech_config, ref_smoothing, \
+                        pnt_smoothing
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
                           bard_visualisation):

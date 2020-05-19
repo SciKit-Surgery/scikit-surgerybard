@@ -112,6 +112,7 @@ def weighted_average_quaternions(quaternions, weights):
     :returns: the average quaternion of the input. Note that the signs
         of the output quaternion can be reversed, since q and -q
         describe the same orientation
+    :raises: ValueError if all weights are zero
     """
     # Number of quaternions to average
     samples = quaternions.shape[0]
@@ -122,6 +123,9 @@ def weighted_average_quaternions(quaternions, weights):
         quat = quaternions[i, :]
         mat_a = weights[i] * numpy.outer(quat, quat) + mat_a
         weight_sum += weights[i]
+
+    if weight_sum <= 0.0:
+        raise ValueError("At least one weight must be greater than zero")
 
     # scale
     mat_a = (1.0/weight_sum) * mat_a
