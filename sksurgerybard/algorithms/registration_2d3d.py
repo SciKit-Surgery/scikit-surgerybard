@@ -16,17 +16,23 @@ class Registration2D3D():
         """
         Initialises the registration class.
 
-        :params three_d_points: a 4 x n array of 3D points. First column
-            is point ID. Last 3 columns are 3D coordinates.
+        :params three_d_points: a 16 x n array of 3D tag coordinates.
+            First column is the tag ID. Next 3 columns are the
+            tag centre coordinates. The last 12 columns are the
+            3D coordinates of the 4 tag corners
         :params projection_matrix: a camera projection matrix
         :params distortion: a camera distortion matrix
         :params buffer_size: calculate the registration using the average
                 of the last buffer_size frames, must not be less than 1
 
-        :raises ValueError: if buffer size less than 1
+        :raises: ValueError if three_d_points is not nx16
         """
-        if buffer_size < 1:
-            raise ValueError("Buffer size cannot be less than one")
+        try:
+            if three_d_points.shape[1] != 16:
+                raise ValueError("Three_d_points should have 16 columns")
+        except AttributeError:
+            raise ValueError("Three_d_points should be an nx16 numpy array")
+
         self._three_d_points = three_d_points
         self._projection_matrix = projection_matrix
         self._distortion = distortion
