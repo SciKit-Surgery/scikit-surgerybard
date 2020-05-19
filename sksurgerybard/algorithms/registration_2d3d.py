@@ -19,7 +19,9 @@ class Registration2D3D():
         :params three_d_points: a 16 x n array of 3D tag coordinates.
             First column is the tag ID. Next 3 columns are the
             tag centre coordinates. The last 12 columns are the
-            3D coordinates of the 4 tag corners
+            3D coordinates of the 4 tag corners. If None or np.array(None)
+            will init ok, but all calls to get_matrix will return false and
+            np.identity
         :params projection_matrix: a camera projection matrix
         :params distortion: a camera distortion matrix
         :params buffer_size: calculate the registration using the average
@@ -27,11 +29,13 @@ class Registration2D3D():
 
         :raises: ValueError if three_d_points is not nx16
         """
-        try:
-            if three_d_points.shape[1] != 16:
-                raise ValueError("Three_d_points should have 16 columns")
-        except AttributeError:
-            raise ValueError("Three_d_points should be an nx16 numpy array")
+        self._no_points = False
+        if three_d_points is None or three_d_points.any() is None:
+            self._no_points = True
+            return
+
+        if three_d_points.shape[1] != 16:
+            raise ValueError("Three_d_points should have 16 columns")
 
         self._three_d_points = three_d_points
         self._projection_matrix = projection_matrix
@@ -51,7 +55,7 @@ class Registration2D3D():
         """
 
         output_matrix = np.identity(4, dtype=np.float64)
-        if self._three_d_points.any() is None:
+        if self._no_points:
             return False, output_matrix
 
         rvec, tvec = self._register(marker_ids, marker_corners)
