@@ -16,7 +16,7 @@ def run_demo(output_dir, source=0):
 
     """
     if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
 
     cap = cv2.VideoCapture(int(source))
     i = 0  # to save all the clicked images

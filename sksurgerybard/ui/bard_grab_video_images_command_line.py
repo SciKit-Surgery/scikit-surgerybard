@@ -19,7 +19,7 @@ def main(args=None):
     parser.add_argument("-o",
                         "--output",
                         required=False,
-                        default='tests/data/images_grab_from_video',
+                        default='tests/output/grabbed',
                         help="Save captured images to given directory"
                         )
 
