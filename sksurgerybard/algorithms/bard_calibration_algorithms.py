@@ -4,6 +4,7 @@
 import cv2
 import numpy as np
 
+
 def detect_chessboard_corners(image_fname, width, height, verbose):
     """
     detects chess board corners
@@ -46,7 +47,6 @@ def fill_image_and_object_arrays(images, width, height, grid_size_mm, verbose):
     """
     fills the image and object corner point arrays
     """
-
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     objp = np.zeros((width * height, 3), np.float32)
     objp[:, :2] = np.mgrid[0:width, 0:height].T.reshape(-1, 2) * grid_size_mm

@@ -45,6 +45,7 @@ def test_return_value():
     assert round(dist[0, 3], 3) == -0.008
     assert round(dist[0, 4], 3) == -0.972
 
+
 def test_fewer_images():
     """
     Tests that application raises a run time
