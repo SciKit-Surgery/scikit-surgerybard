@@ -52,6 +52,7 @@ def configure_model_and_ref(model_config):
     models_path = None
     ref_points = None
     reference2model_file = None
+    visible_anatomy = 0
     smoothing_buffer = None
     tag_width = None
     if model_config:
@@ -107,8 +108,6 @@ def configure_pointer(pointer_config):
             tag_ids = np.copy(ref_point_data[:, 0])
             ref_point_data *= scale_factor
             ref_point_data[:, 0] = tag_ids
-            print(scale_factor)
-            print(ref_point_data)
 
     if pointer_tip_file is not None:
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
