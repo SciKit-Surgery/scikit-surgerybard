@@ -63,6 +63,7 @@ setup(
         'scikit-surgerycalibration',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
+        'vtk<9',
     ],
 
     entry_points={
