@@ -53,18 +53,28 @@ def configure_model_and_ref(model_config):
     ref_points = None
     reference2model_file = None
     smoothing_buffer = None
+    tag_width = None
     if model_config:
         models_path = model_config.get('models_dir')
         ref_points = model_config.get('ref_file')
         reference2model_file = model_config.get('reference_to_model')
         visible_anatomy = model_config.get('visible_anatomy', 0)
         smoothing_buffer = model_config.get('smoothing_buffer', 1)
+        tag_width = model_config.get('tag_width', None)
 
     ref_data = None
     reference2model = np.identity(4)
 
     if ref_points is not None:
         ref_data = np.loadtxt(ref_points)
+
+        if tag_width is not None:
+            pattern_width = min(np.ptp(ref_data[:, 2::3]),
+                                np.ptp(ref_data[:, 1::3]))
+            scale_factor = tag_width/pattern_width
+            tag_ids = np.copy(ref_data[:, 0])
+            ref_data *= scale_factor
+            ref_data[:, 0] = tag_ids
 
     if reference2model_file is not None:
         reference2model = np.loadtxt(reference2model_file)
@@ -79,15 +89,26 @@ def configure_pointer(pointer_config):
     ref_pointer_file = None
     pointer_tip_file = None
     smoothing_buffer = None
+    tag_width = None
     if pointer_config:
         ref_pointer_file = pointer_config.get('pointer_tag_file')
         pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
         smoothing_buffer = pointer_config.get('smoothing_buffer', 1)
+        tag_width = pointer_config.get('tag_width', None)
 
     ref_point_data = None
     pointer_tip = None
     if ref_pointer_file is not None:
         ref_point_data = np.loadtxt(ref_pointer_file)
+        if tag_width is not None:
+            pattern_width = min(np.ptp(ref_point_data[:, 2::3]),
+                                np.ptp(ref_point_data[:, 1::3]))
+            scale_factor = tag_width/pattern_width
+            tag_ids = np.copy(ref_point_data[:, 0])
+            ref_point_data *= scale_factor
+            ref_point_data[:, 0] = tag_ids
+            print(scale_factor)
+            print(ref_point_data)
 
     if pointer_tip_file is not None:
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
