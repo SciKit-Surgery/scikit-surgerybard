@@ -42,11 +42,3 @@ and the apparent accuracy? Make some videos and discuss. Here's a couple we made
   :height: 400px
   :alt: Screenshot after registration. FRE=12mm
   :align: center
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

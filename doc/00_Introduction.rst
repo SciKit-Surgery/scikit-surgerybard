@@ -9,7 +9,7 @@ Workshop: Basic Augmented Reality Demo
 This is the Basic Augmented Reality Demo. It is forms the basis of a week long 
 workshop on surgical augmented reality as part of the Centre for Medical Image Computing's
 `Medical Imaging Summer School`_. It can also be used on its own. The demo is a module of 
-Python libraries and applications, built using `OpenCV`_, `VTK`_, and the  `SNAPPY`_ libraries.
+Python libraries and applications, built using `OpenCV`_, `VTK`_, and the  `SciKit-Surgery`_ libraries.
 
 Aims: 
 The workshop aims to introduce students to some key concepts used in image guided surgery.
@@ -32,6 +32,6 @@ After completing the workshop the student should be able to:
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
 .. _`OpenCV` : https://opencv.org/
 .. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
+.. _`SciKit-Surgery`: https://github.com/UCL/scikit-surgery/wiki
 .. _`EPSRC`: https://www.epsrc.ac.uk/
 .. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

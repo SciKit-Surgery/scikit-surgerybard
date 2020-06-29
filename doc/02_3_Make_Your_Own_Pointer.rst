@@ -78,11 +78,3 @@ different pivot calibrations and see if there is any correlation between the app
 accuracy and the RMS error value. If you press "d" now BARD should write the pointer tip position to 
 a file in pointer_position/bard_pointer_tips. You can use this functionality to locate and record the 
 fiducial marker positions in physical space.
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

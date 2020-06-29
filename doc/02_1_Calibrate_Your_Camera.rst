@@ -67,12 +67,3 @@ Repeat calibration 2,3,4 times.
   accuracy? 
 - Does the number and range of views affect the result?
 - What happens if the chessboard is upside down?
-
-
-.. _`Camera calibration with OpenCV`: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://github.com/UCL/scikit-surgery/wiki
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

@@ -17,9 +17,9 @@ Build Your Own Image Guided Surgery System
 
 3. Get B.A.R.D.
 ::
-  git clone https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard/
+  git clone https://github.com/UCL/scikit-surgerybard.git
 
-or navigate to https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard
+or navigate to https://github.com/UCL/scikit-surgerybard
 and use the download button
 
 navigate to the scikit-surgerybard directory and run
@@ -34,7 +34,7 @@ if you don't have administrative permissions.
 
 **Another method to get BARD and all its dependant packages is the following**
 ::
-  git clone https://weisslab.cs.ucl.ac.uk/WEISS/SoftwareRepositories/SNAPPY/scikit-surgerybard.git
+  git clone https://github.com/UCL/scikit-surgerybard.git
 
 Change directory to the newly created `scikit-surgerybard` by
 ::
@@ -60,11 +60,3 @@ If all goes well the prompt should be preceded by (py36).
 
 
 You should now have BARD setup with all dependancies in your computer. Continue with the next task.
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

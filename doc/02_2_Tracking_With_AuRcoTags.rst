@@ -46,11 +46,3 @@ a reference_to_model file, in this case "data/id.txt", the identity transform.
 In order to make a nice overlay we need to work out the correct value for the 
 model2reference transform. This is known as registration, which forms a key 
 component of most IGS systems.
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
