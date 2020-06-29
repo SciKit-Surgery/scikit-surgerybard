@@ -25,7 +25,8 @@ See `Camera calibration with OpenCV`_ for a more complete explanation of
 camera calibration and the physics of a pin hole camera. 
 
 Get hold of a suitably sized calibration chessboard. The should be one in the data 
-directory, or write a script to make one.
+directory (e.g. data/calibrationGrids/calibrationgrid-6mm.pdf),
+or write a script to make one.
 
 Take 5-20 pictures of chessboard using:
 ::
@@ -34,8 +35,8 @@ Take 5-20 pictures of chessboard using:
 Hit the 'c' key to capture an image. Press the 'q' key to quite the application.
 
 Take a look in the video_calib_chessboard.json file. Here we specify the
-number of internal corners (14x10), and also the size of each square (3mm).
-This matches the provided image in data/calibrationGrids/calibrationgrid-3mm.pdf.
+number of internal corners (14x10), and also the size of each square (6mm).
+This matches the provided image in data/calibrationGrids/calibrationgrid-6mm.pdf.
 
 Make sure you have printed the image at the correct scale. If you are using
 a different image, adjust the values accordingly.
