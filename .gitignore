@@ -10,3 +10,4 @@
 # PyInstaller
 build/
 dist/
+tests/output/
