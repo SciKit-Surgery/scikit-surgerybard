@@ -26,21 +26,39 @@ camera calibration and the physics of a pin hole camera.
 
 Get hold of a suitably sized calibration chessboard. The should be one in the data 
 directory, or write a script to make one.
-Take 5-20 pictures of chessboard using
+
+Take 5-20 pictures of chessboard using:
 ::
-  python bardGrabVideoImages.py -o <output_dir>
+  python bardVideoCalibration.py -c config/video_calib_chessboard.json
 
-hitting the ‘c’ key to dump a video image to the output folder. Press 'q' to quit
-the application.
+Hit the 'c' key to capture an image. Press the 'q' key to quite the application.
 
-BARD provides a camera calibration program. Try it out.
+Take a look in the video_calib_chessboard.json file. Here we specify the
+number of internal corners (14x10), and also the size of each square (3mm).
+This matches the provided image in data/calibrationGrids/calibrationgrid-3mm.pdf.
+
+Make sure you have printed the image at the correct scale. If you are using
+a different image, adjust the values accordingly.
+
+Once you have captured enough images, the calibration runs each time you
+press the 'c' key and capture a new image. The calibration results are shown
+in the terminal window.
+
+Often, in a research setting, it is best to save the data for later
+analysis. The same program can be used to save the data to a given folder.
+
+Use the '-s' option to specify a directory to save to, and the
+'-p' option to specify a filename prefix.
+
+For example:
 ::
-  python bardCameraCalibration.py  --config config/calibration_input.json
+  python bardVideoCalibration.py -c config/video_calib_chessboard.json -s tests/output -p myresults
 
-(Default values in `config/calibration_input.json` should be find for most cases but if needed the default values can be changed in config/calibration_input.json file: so -x gives the number of chessboard squares in the x direction, -y the number of chessboard squares in the y direction and -s gives the size of each chessboard square in millimetres)
+Then, each time the program recalibrates, the results will be saved to the 'tests/output' folder, with the filename prefix 'myresults'.
 
-This will find all file named .png in <output_dir>, attempt to detect chessboard corners from them, 
-and if successful use the corners to calibrate the camera.
+
+Tasks
+=====
 
 Repeat calibration 2,3,4 times.
 
@@ -51,12 +69,10 @@ Repeat calibration 2,3,4 times.
 - What happens if the chessboard is upside down?
 
 
-
-
 .. _`Camera calibration with OpenCV`: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
 .. _`OpenCV` : https://opencv.org/
 .. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
+.. _`SNAPPY`: https://github.com/UCL/scikit-surgery/wiki
 .. _`EPSRC`: https://www.epsrc.ac.uk/
 .. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
