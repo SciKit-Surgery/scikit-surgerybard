@@ -1,8 +1,9 @@
 #  -*- coding: utf-8 -*-
 """Tests for BARD pointer module"""
 import pytest
-from vtk import vtkActor
+import vtk
 import sksurgerybard.algorithms.visualisation as vis
+
 
 def test_bad_actor_types():
     """Should throw TypeError if actors are not right type"""
@@ -22,7 +23,7 @@ def test_no_model_list():
     """
     actors = []
     for _ in range(3):
-        actor = vtkActor()
+        actor = vtk.vtkActor()
         actors.append(actor)
 
     bard_vis = vis.BardVisualisation(all_actors=actors, model_list={})
@@ -33,6 +34,7 @@ def test_no_model_list():
     bard_vis.turn_on_all_targets()
     bard_vis.change_opacity(1.0)
 
+
 def test_model_list_too_big():
     """
     If model list bigger thank actor list, it will fill up from start
@@ -40,7 +42,7 @@ def test_model_list_too_big():
     """
     actors = []
     for _ in range(3):
-        actor = vtkActor()
+        actor = vtk.vtkActor()
         actors.append(actor)
 
     model_list = {
@@ -62,14 +64,13 @@ def _good_bard_vis():
     actors = []
 
     for _ in range(7):
-        actor = vtkActor()
+        actor = vtk.vtkActor()
         actors.append(actor)
 
     model_list = {
         'visible anatomy' : 1,
         'target anatomy' : 6
         }
-
 
     return vis.BardVisualisation(actors, model_list), actors
 
@@ -203,14 +204,13 @@ def test_cycle_visible_anatomy_vis():
     actors = []
 
     for _ in range(5):
-        actor = vtkActor()
+        actor = vtk.vtkActor()
         actors.append(actor)
 
     model_list = {
         'visible anatomy' : 3,
         'target anatomy' : 1
         }
-
 
     bard_vis = vis.BardVisualisation(actors, model_list)
 
@@ -239,7 +239,7 @@ def test_change_opacity():
     actors = []
 
     for _ in range(8):
-        actor = vtkActor()
+        actor = vtk.vtkActor()
         actors.append(actor)
 
     model_list = {
@@ -247,7 +247,6 @@ def test_change_opacity():
         'target anatomy' : 2,
         'reference' : 1
         }
-
 
     bard_vis = vis.BardVisualisation(actors, model_list)
 

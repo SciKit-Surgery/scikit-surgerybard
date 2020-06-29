@@ -2,8 +2,6 @@
 """Tests for BARD Camera Calibration Application"""
 
 import glob
-import pytest
-import sksurgerybard.ui.bard_camera_calibration_command_app as p
 import sksurgerybard.algorithms.bard_calibration_algorithms as bca
 
 
@@ -44,14 +42,3 @@ def test_return_value():
     assert round(dist[0, 2], 3) == 0.005
     assert round(dist[0, 3], 3) == -0.008
     assert round(dist[0, 4], 3) == -0.972
-
-
-def test_fewer_images():
-    """
-    Tests that application raises a run time
-    exception when passed too few images
-    """
-    config_data = 'config/calibration_input_test.json'
-
-    with pytest.raises(RuntimeError):
-        p.run_demo(config_data)
