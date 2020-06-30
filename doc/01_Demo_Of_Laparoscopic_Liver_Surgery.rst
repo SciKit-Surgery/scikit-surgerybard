@@ -6,7 +6,7 @@
 Demo of Laparoscopic Liver Surgery System
 ===============================================
 
-Here we demonstrate the SmartLiver IGS system.
+Here, at UCL, we demonstrate the SmartLiver IGS system.
 
 - The aim is to display CT models on top of live laparoscopic video
 - Talk overview of system components
