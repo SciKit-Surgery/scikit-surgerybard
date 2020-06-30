@@ -68,3 +68,5 @@ Repeat calibration 2,3,4 times.
   accuracy? 
 - Does the number and range of views affect the result?
 - What happens if the chessboard is upside down?
+
+.. _`Camera calibration with OpenCV`: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
