@@ -23,7 +23,11 @@ Cut and paste the rotation and translation into a CT_to_world.txt file as
 
 and edit config/reference_with_model.json to use this file instead of data/id.txt.
 
-Rerun BARD using this configuration file and see what happens. 
+Rerun BARD using this configuration file, using:
+::
+   python sksurgerybard.py --config config/reference_with_model.json
+
+and see what happens.
 
  - Is it a good registration?
  - What happens when you move the camera? 
