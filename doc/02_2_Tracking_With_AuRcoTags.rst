@@ -21,12 +21,12 @@ When you place the reference marker (data/reference.pdf) in front of the webcam 
 see the tag pattern overlaid with spherical markers. Check that the webcam width and height 
 specified in the configuration file are the same as the images you performed calibration on.
 
-The configuration file (print from config/reference_only.json) references a file data/reference.txt
+The configuration file (config/reference_only.json) references a file data/reference.txt
 that defines a list of AruCo markers and their position in 3D space on the printed 
-reference marker. For tracking, OpenCV detects the markers in the image, forming a list 
-of markers and their positions in physical and screen space. The pose of the camera 
-relative to the markers can then be estimated using OpenCV's solvePNP function, and the 
-virtual camera can be moved appropriately.
+reference marker. For tracking, OpenCV detects the markers in the image, and forms a
+list of 2D image points, and their corresponding 3D coordinates on the reference marker.
+The pose of the camera relative to the physical markers can then be estimated using
+OpenCV's `solvePNP`_ function, and the virtual camera can be moved appropriately.
 
 Now glue your reference marker to the phantom. Reference markers are commonly used in 
 image guided interventions, and may be attached to the surgical table, or in some cases 
@@ -46,3 +46,5 @@ a reference_to_model file, in this case "data/id.txt", the identity transform.
 In order to make a nice overlay we need to work out the correct value for the 
 model2reference transform. This is known as registration, which forms a key 
 component of most IGS systems.
+
+.. _`solvePNP`: https://docs.opencv.org/master/d7/d53/tutorial_py_pose.html

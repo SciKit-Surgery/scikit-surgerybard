@@ -14,7 +14,7 @@ However it is often misunderstood or abused, so
 if you learn nothing else from this demo, please learn this.
 
 Fiducial based registration uses a set of identifiable marker points that 
-can be reliably located in both the model and patient space. 
+can be reliably located in both the model (e.g. CT scan) and patient (i.e. physical) space.
 Within the data directory there are files based on a CT scan of the
 pelvis phantom. 
 ::
@@ -26,8 +26,8 @@ pelvis phantom.
 For now, have a look in the file "CT_Fiduicial_Markers.txt". This is an ordered list 
 of the positions of 4 fiducial markers that we
 have previously located in the CT scan. If we can find the corresponding points on the
-physical phantom, we can register the model to the physical world. This can be done by 
-minimising the mean distance between the two point sets, using the "Procustes" algorithm.
+physical phantom, we can register (align) the CT scan to the physical world. This can be done by
+minimising the mean distance between the two point sets, using the "Orthogonal Procustes" algorithm.
 
 Locating fiducial markers in physical space is usually done with a pointer, which 
 consists of some tracking markers attached to a tipped instrument. You may have seen some
