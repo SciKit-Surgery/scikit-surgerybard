@@ -8,9 +8,9 @@ Further Tasks
 
 Relevant papers:
 
-    1. Camera calibration: 10.1109/34.888718
-    2. Procrustes analysis (point based registration): 10.1109/TPAMI.1987.4767965
-    3. Pivot/Pointer calibration: 10.1109/TMI.2007.907327
+    1. `Camera calibration`_: 10.1109/34.888718
+    2. `Procrustes analysis (point based registration)`_: 10.1109/TPAMI.1987.4767965
+    3. `Pivot/Pointer calibration`_: 10.1109/TMI.2007.907327
 
 Coding tasks:
 
@@ -24,3 +24,7 @@ Performance evaluation:
     1. How might we assess the tracking accuracy of the pointer?
     2. Measure the accuracy of translational measurement in X/Y plane, and in Z direction?
     3. Measure error at each of the 4 fiducials?
+
+.. _`Camera calibration`: http://dx.doi.org/10.1109/34.888718
+.. _`Procrustes analysis (point based registration)`: http://dx.doi.org/10.1109/TPAMI.1987.4767965
+.. _`Pivot/Pointer calibration`: http://dx.doi.org/10.1109/TMI.2007.907327
