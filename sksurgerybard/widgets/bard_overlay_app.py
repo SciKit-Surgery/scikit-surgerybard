@@ -17,6 +17,8 @@ from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
 
+# pylint: disable=too-many-instance-attributes
+
 
 class BARDOverlayApp(OverlayBaseApp):
     """
@@ -30,6 +32,7 @@ class BARDOverlayApp(OverlayBaseApp):
         """
         self._speech_int = None
 
+        # Loads all config from file.
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip,
          outdir, dims, interaction,
@@ -57,6 +60,9 @@ class BARDOverlayApp(OverlayBaseApp):
         # call the constructor for the base class
         super().__init__(video_source, dims)
 
+        # This sets the camera calibration matrix to a matrix that was
+        # either read in from command line or from config, or a reasonable
+        # default for a 640x480 webcam.
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
         # start things off with the camera at the origin.
@@ -125,7 +131,6 @@ class BARDOverlayApp(OverlayBaseApp):
         Update the background render with a new frame and
         scan for aruco tags.
         """
-
         _, image = self.video_source.read()
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
