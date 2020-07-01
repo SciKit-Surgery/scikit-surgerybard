@@ -11,6 +11,5 @@ scikit-surgerycore
 scikit-surgeryutils
 scikit-surgeryvtk
 opencv-contrib-python
-vtk<9
 #scikit-surgeryspeech>=0.2.0 #uncomment this to use speech interface
 #PocketSphinx # uncomment this to use speech with sphinx
