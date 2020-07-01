@@ -6,12 +6,10 @@
         "grab": 33,
         "clock": 15,
         "fullscreen": false,
-	"calibration" : "data/calibration.npz"
+        "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
-
     "pointerData": {
         "pointer_tag_file": "data/pointer.txt"
     },
-
     "out path" : "pointer_positions"
 }

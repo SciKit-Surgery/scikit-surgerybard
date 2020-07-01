@@ -1,8 +1,0 @@
-{
-    "input_dir" : "tests/data/Calibration/",
-    "output_dir" : "tests/data/",
-    "width" : "14",
-    "height" : "10",
-    "grid_size_mm" : "3",
-    "verbose": "False"
-}

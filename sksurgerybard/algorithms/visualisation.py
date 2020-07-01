@@ -1,5 +1,7 @@
 # # coding=utf-8
+
 """ Visualisation algorithms used by the B.A.R.D. """
+
 
 class BardVisualisation():
     """

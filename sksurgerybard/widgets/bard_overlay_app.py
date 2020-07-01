@@ -42,7 +42,6 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._tm.add("model2modelreference", modelreference2model)
 
-
         self._reference_register = Registration2D3D(np.array(ref_data),
                                                     mtx33d, dist15d,
                                                     buffer_size=ref_smoothing)

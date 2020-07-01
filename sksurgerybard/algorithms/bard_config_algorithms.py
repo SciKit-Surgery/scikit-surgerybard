@@ -1,6 +1,9 @@
 # # coding=utf-8
+
 """ Algorithms used by the B.A.R.D. """
 
+import os
+import glob
 from sys import modules
 from threading import Thread
 import numpy as np
@@ -14,32 +17,91 @@ except ModuleNotFoundError:
     pass
 
 
-def configure_camera(camera_config):
+def get_calibration_filenames(calibration_dir):
     """
-    Configures the camera
-    """
+    Hunts for the correct file names in calibration_dir:
 
-    video_source = None
-    calibration_path = None
+    Camera intrinsics should be in: *.intrinsics.txt
+
+    Camera distortion params should be in: *.distortion.txt
+
+    :param calibration_dir: directory containing a scikit-surgerycalibration
+    format video calibration.
+    :return: intrinsics,distortion, or None,None if they are not found.
+    """
+    intrinsics_path = None
+    distortion_path = None
+
+    if calibration_dir is None:
+        print("WARNING: calibration_dir is not specified")
+        return None, None
+
+    # If calibration_dir is specified, try finding
+    # files containing intrinsics and distortion parameters.
+    if os.path.isdir(calibration_dir):
+
+        intrinsic_files = glob.glob(os.path.join(calibration_dir,
+                                                 "*.intrinsics.txt"))
+        if len(intrinsic_files) == 1:
+            intrinsics_path = intrinsic_files[0]
+            print("INFO: Retrieved intrinsics filename:"
+                  + intrinsics_path)
+
+        distortion_files = glob.glob(os.path.join(calibration_dir,
+                                                  "*.distortion.txt"))
+        if len(distortion_files) == 1:
+            distortion_path = distortion_files[0]
+            print("INFO: Retrieved distortion params filename:"
+                  + distortion_path)
+    else:
+        print("WARNING: calibration_dir is not a directory.")
+
+    return intrinsics_path, distortion_path
+
+
+def configure_camera(camera_config, calibration_dir=None):
+    """
+    Configures the camera.
+    """
+    # Specify some reasonable defaults. Webcams are typically 640x480.
+    video_source = 0
     mtx33d = np.array([1000.0, 0.0, 320.0, 0.0, 1000.0, 240.0, 0.0, 0.0, 1.0])
     mtx33d = np.reshape(mtx33d, (3, 3))
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
-    if camera_config:
-        video_source = camera_config.get('source')
-        calibration_path = camera_config.get('calibration')
+    intrinsics_path = None
+    distortion_path = None
 
-        if calibration_path:
-            calibration_data = np.load(calibration_path)
-            mtx33d = calibration_data['mtx']
-            dist5d = calibration_data['dist']
+    if calibration_dir is not None:
+        intrinsics_path, distortion_path = \
+            get_calibration_filenames(calibration_dir)
+
+    if camera_config:
+
+        video_source = camera_config.get('source')
 
         if video_source is None:
             print("WARNING, no video source in config, setting to 0")
             video_source = 0
+
+        if intrinsics_path is None or distortion_path is None:
+
+            calib_dir = camera_config.get('calibration directory')
+            if calib_dir is not None:
+                intrinsics_path, distortion_path = \
+                    get_calibration_filenames(calib_dir)
+
+    # Finally load parameters, or WARN if not specified.
+    if intrinsics_path:
+        print("INFO: Loading intrinsics from:" + intrinsics_path)
+        mtx33d = np.loadtxt(intrinsics_path)
     else:
-        print("WARNING, no camera parameters in config file ",
-              "trying some default values")
-        video_source = 0
+        print("WARNING: Didn't find intrinsics file.")
+
+    if distortion_path:
+        print("INFO: Loading distortion params from:" + distortion_path)
+        dist5d = np.loadtxt(distortion_path)
+    else:
+        print("WARNING: Didn't find distortion params file.")
 
     dims = None
     return video_source, mtx33d, dist5d, dims
@@ -83,6 +145,7 @@ def configure_model_and_ref(model_config):
     return ref_data, reference2model, models_path, visible_anatomy, \
                     smoothing_buffer
 
+
 def configure_pointer(pointer_config):
     """
     Parses the pointer configuration.
@@ -112,6 +175,7 @@ def configure_pointer(pointer_config):
     if pointer_tip_file is not None:
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
     return ref_point_data, pointer_tip, smoothing_buffer
+
 
 def configure_bard(configuration_file):
     """
@@ -143,7 +207,6 @@ def configure_bard(configuration_file):
     if outdir is None:
         outdir = './'
 
-
     interaction = configuration_data.get('interaction', {})
     speech_config = configuration_data.get('speech config', False)
 
@@ -152,6 +215,7 @@ def configure_bard(configuration_file):
                         models_path, pointer_tip, outdir, dims, interaction, \
                         visible_anatomy, speech_config, ref_smoothing, \
                         pnt_smoothing
+
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
                           bard_visualisation):
