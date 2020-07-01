@@ -50,7 +50,7 @@ move either the pointer tip or the tracking system (webcam).
 When you have a directory of pointer matrices you can run this;
 ::
   python bardPivotCalibration.py --help
-  python bardPivotCalibration.py --input pointer_position/bard_pointer_matrices
+  python bardPivotCalibration.py --input pointer_positions/bard_pointer_matrices
 
 The output of this should be list of 7 numbers. The first three are the x, y and z coordinates of the
 pointer tip relative to the tracking markers and should be copied into a file named 
@@ -65,7 +65,7 @@ Now edit config/pointer_markers.json to include the the pointer_tag_to_tip trans
 ::
     "pointerData": {
         "pointer_tag_file": "data/pointer.txt",
-		    "pointer_tag_to_tip": "data/pointer_tip.txt"
+        "pointer_tag_to_tip": "data/pointer_tip.txt"
     },
 
 Now run; 
