@@ -12,7 +12,9 @@ from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-                configure_interaction, configure_speech_interaction
+    configure_interaction
+from sksurgerybard.algorithms.bard_config_speech import \
+    configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.algorithms.registration_2d3d import Registration2D3D

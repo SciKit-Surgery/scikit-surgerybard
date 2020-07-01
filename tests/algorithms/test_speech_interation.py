@@ -13,8 +13,8 @@ try:
 except ModuleNotFoundError:
     sys.path.insert(0, 'tests/test_utilities/')
 
-from sksurgerybard.algorithms.bard_config_algorithms import \
-                configure_speech_interaction
+from sksurgerybard.algorithms.bard_config_speech import \
+    configure_speech_interaction
 
 from sksurgerybard.algorithms.speech_interaction import \
     _on_google_api_not_understand, _on_google_api_request_failure, \
@@ -85,8 +85,8 @@ def test_bardspeechinteractor(setup_qt): # pylint: disable=redefined-outer-name,
     bard_speech = configure_speech_interaction(config,
                                                _FakeVisualisationControl())
 
-    #I think the following slots should be fired by the bard_speech, but
-    #I can't make it work. So let's just run them here.
+    # I think the following slots should be fired by the bard_speech, but
+    # I can't make it work. So let's just run them here.
     with pytest.raises(NextTargetEvent):
         bard_speech._on_voice_signal('next') # pylint: disable=protected-access
     with pytest.raises(TurnOnAllEvent):
