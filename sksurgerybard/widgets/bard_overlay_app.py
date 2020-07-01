@@ -19,14 +19,15 @@ from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
 
 
 class BARDOverlayApp(OverlayBaseApp):
-    """Inherits from OverlayBaseApp, and adds methods to
-    detect aruco tags and move the model to follow."""
-
+    """
+    Inherits from OverlayBaseApp, and adds methods to
+    detect aruco tags and move the model to follow.
+    """
     def __init__(self, config_file):
-
-        """overrides the default constructor to add some member variables
-        which wee need for the aruco tag detection"""
-
+        """
+        Overrides the default constructor to add some member variables
+        which we need for the aruco tag detection.
+        """
         self._speech_int = None
 
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
@@ -34,6 +35,10 @@ class BARDOverlayApp(OverlayBaseApp):
          outdir, dims, interaction,
          visible_anatomy, speech_config,
          ref_smoothing, pnt_smoothing) = configure_bard(config_file)
+
+        self.dims = dims
+        self.mtx33d = mtx33d
+        self.dist15d = dist15d
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -50,13 +55,11 @@ class BARDOverlayApp(OverlayBaseApp):
                                                   mtx33d, dist15d,
                                                   buffer_size=pnt_smoothing)
         # call the constructor for the base class
-        dims = None
-
         super().__init__(video_source, dims)
 
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
-        #start things off with the camera at the origin.
+        # start things off with the camera at the origin.
         camera2modelreference = np.identity(4)
         self._tm.add("camera2modelreference", camera2modelreference)
         camera2modelreference = self._tm.get("camera2modelreference")
@@ -118,23 +121,30 @@ class BARDOverlayApp(OverlayBaseApp):
             self._speech_int.stop_listener()
 
     def update(self):
-        """Update the background render with a new frame and
-        scan for aruco tags"""
+        """
+        Update the background render with a new frame and
+        scan for aruco tags.
+        """
 
         _, image = self.video_source.read()
 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
+        gray = cv2.cvtColor(undistorted, cv2.COLOR_BGR2GRAY)
 
         self._aruco_detect_and_follow(gray)
 
-        self.vtk_overlay_window.set_video_image(image)
+        self.vtk_overlay_window.set_video_image(undistorted)
+
         if self._resize_flag:
-            self.vtk_overlay_window.resizeEvent(None)
+            if self.dims:
+                self.vtk_overlay_window.resize(self.dims[0], self.dims[1])
             self._resize_flag = False
+
         self.vtk_overlay_window.Render()
 
     def _aruco_detect_and_follow(self, image):
-        """Detect any aruco tags present. Based on;
+        """
+        Detect any aruco tags present. Based on;
         https://docs.opencv.org/3.4/d5/dae/tutorial_aruco_detection.html
         """
         # detect any markers

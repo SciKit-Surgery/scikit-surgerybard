@@ -1,8 +1,7 @@
 {
     "camera": {
         "source": 0,
-        "width": 640,
-        "height": 480,
+        "window size": [640, 480],
         "grab": 33,
         "clock": 15,
         "fullscreen": false,

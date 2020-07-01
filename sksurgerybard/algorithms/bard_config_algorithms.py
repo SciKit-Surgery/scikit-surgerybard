@@ -65,6 +65,7 @@ def configure_camera(camera_config, calibration_dir=None):
     """
     # Specify some reasonable defaults. Webcams are typically 640x480.
     video_source = 0
+    dims = None
     mtx33d = np.array([1000.0, 0.0, 320.0, 0.0, 1000.0, 240.0, 0.0, 0.0, 1.0])
     mtx33d = np.reshape(mtx33d, (3, 3))
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
@@ -90,6 +91,14 @@ def configure_camera(camera_config, calibration_dir=None):
                 intrinsics_path, distortion_path = \
                     get_calibration_filenames(calib_dir)
 
+        dims = camera_config.get('window size')
+        if dims is None:
+            print("WARNING: window size was not specified! "
+                  "This probably breaks the calibrated overlay!")
+        else:
+            # JSON file contains list, OpenCV requires tuple.
+            dims = (dims[0], dims[1])
+
     # Finally load parameters, or WARN if not specified.
     if intrinsics_path:
         print("INFO: Loading intrinsics from:" + intrinsics_path)
@@ -103,7 +112,6 @@ def configure_camera(camera_config, calibration_dir=None):
     else:
         print("WARNING: Didn't find distortion params file.")
 
-    dims = None
     return video_source, mtx33d, dist5d, dims
 
 
