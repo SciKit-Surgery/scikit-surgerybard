@@ -5,9 +5,10 @@ from subprocess import run, CalledProcessError
 from collections import deque
 from time import time
 
+
 class BardKBEvent:
     """
-    Handles keyboard events for bard
+    Handles keyboard events for BARD.
     """
     def __init__(self, pointer_writer, visualisation_control):
         self._pointer_writer = pointer_writer
@@ -26,7 +27,7 @@ class BardKBEvent:
 
 class BardFootSwitchEvent:
     """
-    Handles footswitch events for bard
+    Handles footswitch events for BARD.
     This is for the footswitch in our lab,
     which plugs into USB and has three buttons, that
     return ctrl-alt[5,6,7]
@@ -79,7 +80,7 @@ class BardFootSwitchEvent:
 
 class BardMouseEvent:
     """
-    handles mouse events
+    Handles mouse events for BARD.
     """
     def __init__(self, visualisation_control):
         self.screen_interaction_layout = {
@@ -88,7 +89,6 @@ class BardMouseEvent:
             }
 
         self._visualisation_control = visualisation_control
-
 
     def __call__(self, event, _event_type_not_used):
         mouse_x, mouse_y = event.GetEventPosition()

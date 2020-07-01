@@ -4,6 +4,7 @@ from os import mkdir, path
 from time import time
 from numpy import savetxt, reshape
 
+
 class BardPointerWriter():
     """
     Class to locate the pointer tip and write to file
@@ -42,7 +43,6 @@ class BardPointerWriter():
             raise TypeError("out dir does not appear to be a valid directory")
         except FileNotFoundError:
             raise FileNotFoundError("out dir is not a writeable directory")
-
 
     def write_pointer_tip(self):
         """
