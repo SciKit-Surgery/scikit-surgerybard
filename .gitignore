@@ -11,3 +11,4 @@
 build/
 dist/
 tests/output/
+pointer_positions/
