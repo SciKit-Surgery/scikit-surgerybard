@@ -10,5 +10,11 @@
     "pointerData": {
         "pointer_tag_file": "data/pointer.txt"
     },
+    "interaction": {
+        "keyboard": true,
+        "footswitch": false,
+        "maximum delay": 2.0,
+        "mouse": false
+    },
     "out path" : "pointer_positions"
 }

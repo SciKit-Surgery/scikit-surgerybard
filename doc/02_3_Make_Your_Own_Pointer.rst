@@ -43,7 +43,7 @@ BARD is tracking the markers, so we know where they are, however we're going to 
 tip of the pointer to locate the fiducial markers. We find the tip of the pointer 
 using a "pivot calibration". The tip of the pointer is held stationary whilst the 
 markers are pivoted around the tip. Pressing the "d" key whilst BARD is running will write 
-the pointer tracking matrix to the directory pointer_position/bard_pointer_matrices. Do this around 100 
+the pointer tracking matrix to the directory pointer_positions/bard_pointer_matrices. Do this around 100
 times whilst pivoting the pointer. Whilst doing this it is important that you do not 
 move either the pointer tip or the tracking system (webcam).
 
