@@ -17,7 +17,7 @@ from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes, too-many-branches
 
 
 class BARDOverlayApp(OverlayBaseApp):
