@@ -185,26 +185,26 @@ def configure_pointer(pointer_config):
     return ref_point_data, pointer_tip, smoothing_buffer
 
 
-def configure_bard(configuration_file):
+def configure_bard(configuration_file, calib_dir):
     """
     Parses the BARD configuration file, and prepares output for
     OverlayApp
 
-    :param: The configuration file
-    :return: Parameters OverlayApp
-
-    :raises:
+    :param configuration_file: The configuration file
+    :param calib_dir: Optional directory containing a previous calibration.
+    :return: lots of configured params.
     """
     configurer = ConfigurationManager(configuration_file)
 
     configuration_data = configurer.get_copy()
 
     camera_config = configuration_data.get('camera')
-    video_source, mtx33d, dist5d, dims = configure_camera(camera_config)
+    video_source, mtx33d, dist5d, dims = configure_camera(camera_config,
+                                                          calib_dir)
 
     model_config = configuration_data.get('models')
     ref_data, reference2model, models_path, visible_anatomy, ref_smoothing = \
-            configure_model_and_ref(model_config)
+        configure_model_and_ref(model_config)
 
     pointer_config = configuration_data.get('pointerData')
     ref_point_data, pointer_tip, pnt_smoothing = \
@@ -219,10 +219,10 @@ def configure_bard(configuration_file):
     speech_config = configuration_data.get('speech config', False)
 
     return video_source, mtx33d, dist5d, ref_data, \
-                        reference2model, ref_point_data, \
-                        models_path, pointer_tip, outdir, dims, interaction, \
-                        visible_anatomy, speech_config, ref_smoothing, \
-                        pnt_smoothing
+        reference2model, ref_point_data, \
+        models_path, pointer_tip, outdir, dims, interaction, \
+        visible_anatomy, speech_config, ref_smoothing, \
+        pnt_smoothing
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,

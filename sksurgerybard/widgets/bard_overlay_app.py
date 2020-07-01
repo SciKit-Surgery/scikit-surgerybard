@@ -25,7 +25,7 @@ class BARDOverlayApp(OverlayBaseApp):
     Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow.
     """
-    def __init__(self, config_file):
+    def __init__(self, config_file, calib_dir):
         """
         Overrides the default constructor to add some member variables
         which we need for the aruco tag detection.
@@ -37,7 +37,7 @@ class BARDOverlayApp(OverlayBaseApp):
          pointer_ref, models_path, pointer_tip,
          outdir, dims, interaction,
          visible_anatomy, speech_config,
-         ref_smoothing, pnt_smoothing) = configure_bard(config_file)
+         ref_smoothing, pnt_smoothing) = configure_bard(config_file, calib_dir)
 
         self.dims = dims
         self.mtx33d = mtx33d
