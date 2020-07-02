@@ -1,7 +1,9 @@
 # # coding=utf-8
+
 """ Visualisation algorithms used by the B.A.R.D. """
 
-class BardVisualisation():
+
+class BardVisualisation:
     """
     Algorithms to change visualisation. Maintains
     a lists of actors to work on.
@@ -81,7 +83,6 @@ class BardVisualisation():
                     actor.SetVisibility(True)
                     return
 
-
     def next_target(self):
         """
         turns off visibility of all targets except the next one
@@ -94,7 +95,6 @@ class BardVisualisation():
             for index, actor in enumerate(self._target_anatomy_actors):
                 if actor.GetVisibility():
                     first_vis_index = index
-
 
             for index, actor in enumerate(self._target_anatomy_actors):
                 if index > first_vis_index:
@@ -111,24 +111,22 @@ class BardVisualisation():
 
                 self._target_anatomy_actors[0].SetVisibility(True)
 
-
     def turn_on_all_targets(self):
         """
-        turns on visibility of all targets
+        Turns on visibility of all targets
         """
         for actor in self._target_anatomy_actors:
             actor.SetVisibility(True)
 
-
     def cycle_visible_anatomy_vis(self):
         """
-        cycles through different the visualisation for anatomy in
+        Cycles through different the visualisation for anatomy in
         _visible_anatomy
         """
         for actor in self._visible_anatomy_actors:
             if actor.GetProperty().GetRepresentation() < 2:
                 actor.GetProperty().SetRepresentation(
-                    (actor.GetProperty().GetRepresentation() + 1)%3)
+                    (actor.GetProperty().GetRepresentation() + 1) % 3)
             else:
                 if actor.GetVisibility():
                     actor.SetVisibility(0)

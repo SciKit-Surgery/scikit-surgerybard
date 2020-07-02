@@ -1,47 +1,111 @@
 # # coding=utf-8
+
 """ Algorithms used by the B.A.R.D. """
 
-from sys import modules
-from threading import Thread
+import os
+import glob
 import numpy as np
 from sksurgerycore.configuration.configuration_manager import \
         ConfigurationManager
 from sksurgerybard.algorithms.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
-try:
-    from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
-except ModuleNotFoundError:
-    pass
 
 
-def configure_camera(camera_config):
+def get_calibration_filenames(calibration_dir):
     """
-    Configures the camera
-    """
+    Hunts for the correct file names in calibration_dir:
 
-    video_source = None
-    calibration_path = None
+    Camera intrinsics should be in: *.intrinsics.txt
+
+    Camera distortion params should be in: *.distortion.txt
+
+    :param calibration_dir: directory containing a scikit-surgerycalibration
+    format video calibration.
+    :return: intrinsics,distortion, or None,None if they are not found.
+    """
+    intrinsics_path = None
+    distortion_path = None
+
+    if calibration_dir is None:
+        print("WARNING: calibration_dir is not specified")
+        return None, None
+
+    # If calibration_dir is specified, try finding
+    # files containing intrinsics and distortion parameters.
+    if os.path.isdir(calibration_dir):
+
+        intrinsic_files = glob.glob(os.path.join(calibration_dir,
+                                                 "*.intrinsics.txt"))
+        if len(intrinsic_files) == 1:
+            intrinsics_path = intrinsic_files[0]
+            print("INFO: Retrieved intrinsics filename:"
+                  + intrinsics_path)
+
+        distortion_files = glob.glob(os.path.join(calibration_dir,
+                                                  "*.distortion.txt"))
+        if len(distortion_files) == 1:
+            distortion_path = distortion_files[0]
+            print("INFO: Retrieved distortion params filename:"
+                  + distortion_path)
+    else:
+        print("WARNING: calibration_dir is not a directory.")
+
+    return intrinsics_path, distortion_path
+
+
+def configure_camera(camera_config, calibration_dir=None):
+    """
+    Configures the camera.
+    """
+    # Specify some reasonable defaults. Webcams are typically 640x480.
+    video_source = 0
+    dims = None
     mtx33d = np.array([1000.0, 0.0, 320.0, 0.0, 1000.0, 240.0, 0.0, 0.0, 1.0])
     mtx33d = np.reshape(mtx33d, (3, 3))
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
-    if camera_config:
-        video_source = camera_config.get('source')
-        calibration_path = camera_config.get('calibration')
+    intrinsics_path = None
+    distortion_path = None
 
-        if calibration_path:
-            calibration_data = np.load(calibration_path)
-            mtx33d = calibration_data['mtx']
-            dist5d = calibration_data['dist']
+    if calibration_dir is not None:
+        intrinsics_path, distortion_path = \
+            get_calibration_filenames(calibration_dir)
+
+    if camera_config:
+
+        video_source = camera_config.get('source')
 
         if video_source is None:
             print("WARNING, no video source in config, setting to 0")
             video_source = 0
-    else:
-        print("WARNING, no camera parameters in config file ",
-              "trying some default values")
-        video_source = 0
 
-    dims = None
+        if intrinsics_path is None or distortion_path is None:
+
+            calib_dir = camera_config.get('calibration directory')
+            if calib_dir is not None:
+                intrinsics_path, distortion_path = \
+                    get_calibration_filenames(calib_dir)
+
+        dims = camera_config.get('window size')
+        if dims is None:
+            print("WARNING: window size was not specified! "
+                  "This probably breaks the calibrated overlay!")
+        else:
+            # JSON file contains list, OpenCV requires tuple.
+            dims = (dims[0], dims[1])
+
+    # Finally load parameters, or WARN if not specified.
+    if intrinsics_path:
+        print("INFO: Loading intrinsics from:" + intrinsics_path)
+        mtx33d = np.loadtxt(intrinsics_path)
+    else:
+        print("WARNING: Didn't find intrinsics file.")
+
+    if distortion_path:
+        print("INFO: Loading distortion params from:" + distortion_path)
+        dist5d = np.loadtxt(distortion_path)
+    else:
+        print("WARNING: Didn't find distortion params file.")
+
     return video_source, mtx33d, dist5d, dims
 
 
@@ -81,7 +145,8 @@ def configure_model_and_ref(model_config):
         reference2model = np.loadtxt(reference2model_file)
 
     return ref_data, reference2model, models_path, visible_anatomy, \
-                    smoothing_buffer
+        smoothing_buffer
+
 
 def configure_pointer(pointer_config):
     """
@@ -113,26 +178,27 @@ def configure_pointer(pointer_config):
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
     return ref_point_data, pointer_tip, smoothing_buffer
 
-def configure_bard(configuration_file):
+
+def configure_bard(configuration_file, calib_dir):
     """
     Parses the BARD configuration file, and prepares output for
     OverlayApp
 
-    :param: The configuration file
-    :return: Parameters OverlayApp
-
-    :raises:
+    :param configuration_file: The configuration file
+    :param calib_dir: Optional directory containing a previous calibration.
+    :return: lots of configured params.
     """
     configurer = ConfigurationManager(configuration_file)
 
     configuration_data = configurer.get_copy()
 
     camera_config = configuration_data.get('camera')
-    video_source, mtx33d, dist5d, dims = configure_camera(camera_config)
+    video_source, mtx33d, dist5d, dims = configure_camera(camera_config,
+                                                          calib_dir)
 
     model_config = configuration_data.get('models')
     ref_data, reference2model, models_path, visible_anatomy, ref_smoothing = \
-            configure_model_and_ref(model_config)
+        configure_model_and_ref(model_config)
 
     pointer_config = configuration_data.get('pointerData')
     ref_point_data, pointer_tip, pnt_smoothing = \
@@ -143,15 +209,15 @@ def configure_bard(configuration_file):
     if outdir is None:
         outdir = './'
 
-
     interaction = configuration_data.get('interaction', {})
     speech_config = configuration_data.get('speech config', False)
 
     return video_source, mtx33d, dist5d, ref_data, \
-                        reference2model, ref_point_data, \
-                        models_path, pointer_tip, outdir, dims, interaction, \
-                        visible_anatomy, speech_config, ref_smoothing, \
-                        pnt_smoothing
+        reference2model, ref_point_data, \
+        models_path, pointer_tip, outdir, dims, interaction, \
+        visible_anatomy, speech_config, ref_smoothing, \
+        pnt_smoothing
+
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
                           bard_visualisation):
@@ -175,31 +241,3 @@ def configure_interaction(interaction_config, vtk_window, pointer_writer,
     if interaction_config.get('mouse', False):
         vtk_window.AddObserver("LeftButtonPressEvent",
                                BardMouseEvent(bard_visualisation))
-
-
-def configure_speech_interaction(speech_config, bard_visualisation):
-    """
-    Configures a BARD speech interactor, creating a thread for it to run in
-    :param: The speech configuration, which is passed to the speech
-        interaction service.
-    :param: A visualisation manager to be triggered by speech events
-    :raises: KeyError if speech not configured.
-    :raises: ModuleNotError if sksurgeryspeech is not installed.
-    :return: the speechinteractor, which needs to be stopped by the
-    calling application, with speech_int.stop_listener()
-    """
-    if not speech_config:
-        raise KeyError("Requested speech interaction without" +
-                       " speech config key")
-
-    if 'sksurgeryspeech' not in modules:
-        raise ModuleNotFoundError(
-            "Requested speech interaction without " +
-            "sksurgeryspeech installed check your setup.")
-
-    speech_int = BardSpeechInteractor(speech_config,
-                                      bard_visualisation)
-    speech_thread = Thread(target=speech_int, daemon=True)
-    speech_thread.start()
-
-    return speech_int

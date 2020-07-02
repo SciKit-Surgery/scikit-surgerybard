@@ -16,7 +16,12 @@ def main(args=None):
                         required=False,
                         default='config/config.json',
                         type=str,
-                        help="Configuration file containing the parameters")
+                        help="Configuration file containing the parameters.")
+
+    parser.add_argument("-d", "--calib_dir",
+                        required=False,
+                        type=str,
+                        help="Directory containing calibration data.")
 
     version_string = __version__
     friendly_version_string = version_string if version_string else 'unknown'
@@ -27,4 +32,4 @@ def main(args=None):
 
     args = parser.parse_args(args)
 
-    run_demo(args.config)
+    run_demo(args.config, args.calib_dir)

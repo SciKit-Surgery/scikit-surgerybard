@@ -14,7 +14,7 @@ However it is often misunderstood or abused, so
 if you learn nothing else from this demo, please learn this.
 
 Fiducial based registration uses a set of identifiable marker points that 
-can be reliably located in both the model and patient space. 
+can be reliably located in both the model (e.g. CT scan) and patient (i.e. physical) space.
 Within the data directory there are files based on a CT scan of the
 pelvis phantom. 
 ::
@@ -26,8 +26,8 @@ pelvis phantom.
 For now, have a look in the file "CT_Fiduicial_Markers.txt". This is an ordered list 
 of the positions of 4 fiducial markers that we
 have previously located in the CT scan. If we can find the corresponding points on the
-physical phantom, we can register the model to the physical world. This can be done by 
-minimising the mean distance between the two point sets, using the "Procustes" algorithm.
+physical phantom, we can register (align) the CT scan to the physical world. This can be done by
+minimising the mean distance between the two point sets, using the "Orthogonal Procustes" algorithm.
 
 Locating fiducial markers in physical space is usually done with a pointer, which 
 consists of some tracking markers attached to a tipped instrument. You may have seen some
@@ -43,14 +43,14 @@ BARD is tracking the markers, so we know where they are, however we're going to 
 tip of the pointer to locate the fiducial markers. We find the tip of the pointer 
 using a "pivot calibration". The tip of the pointer is held stationary whilst the 
 markers are pivoted around the tip. Pressing the "d" key whilst BARD is running will write 
-the pointer tracking matrix to the directory pointer_position/bard_pointer_matrices. Do this around 100 
+the pointer tracking matrix to the directory pointer_positions/bard_pointer_matrices. Do this around 100
 times whilst pivoting the pointer. Whilst doing this it is important that you do not 
 move either the pointer tip or the tracking system (webcam).
 
 When you have a directory of pointer matrices you can run this;
 ::
   python bardPivotCalibration.py --help
-  python bardPivotCalibration.py --input pointer_position/bard_pointer_matrices
+  python bardPivotCalibration.py --input pointer_positions/bard_pointer_matrices
 
 The output of this should be list of 7 numbers. The first three are the x, y and z coordinates of the
 pointer tip relative to the tracking markers and should be copied into a file named 
@@ -65,7 +65,7 @@ Now edit config/pointer_markers.json to include the the pointer_tag_to_tip trans
 ::
     "pointerData": {
         "pointer_tag_file": "data/pointer.txt",
-		    "pointer_tag_to_tip": "data/pointer_tip.txt"
+        "pointer_tag_to_tip": "data/pointer_tip.txt"
     },
 
 Now run; 
@@ -78,11 +78,3 @@ different pivot calibrations and see if there is any correlation between the app
 accuracy and the RMS error value. If you press "d" now BARD should write the pointer tip position to 
 a file in pointer_position/bard_pointer_tips. You can use this functionality to locate and record the 
 fiducial marker positions in physical space.
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

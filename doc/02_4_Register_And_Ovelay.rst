@@ -23,7 +23,11 @@ Cut and paste the rotation and translation into a CT_to_world.txt file as
 
 and edit config/reference_with_model.json to use this file instead of data/id.txt.
 
-Rerun BARD using this configuration file and see what happens. 
+Rerun BARD using this configuration file, using:
+::
+   python sksurgerybard.py --config config/reference_with_model.json
+
+and see what happens.
 
  - Is it a good registration?
  - What happens when you move the camera? 
@@ -42,11 +46,3 @@ and the apparent accuracy? Make some videos and discuss. Here's a couple we made
   :height: 400px
   :alt: Screenshot after registration. FRE=12mm
   :align: center
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss

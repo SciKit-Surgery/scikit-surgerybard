@@ -4,12 +4,12 @@
 # doc/requirements.rst
 numpy
 glob2
+vtk<9.0.0
 PySide2<=5.12.0
 scikit-surgerycalibration
 scikit-surgerycore
 scikit-surgeryutils
 scikit-surgeryvtk
 opencv-contrib-python
-vtk<9
 #scikit-surgeryspeech>=0.2.0 #uncomment this to use speech interface
 #PocketSphinx # uncomment this to use speech with sphinx

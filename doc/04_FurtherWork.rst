@@ -8,9 +8,9 @@ Further Tasks
 
 Relevant papers:
 
-    1. Camera calibration: 10.1109/34.888718
-    2. Procrustes analysis (point based registration): 10.1109/TPAMI.1987.4767965
-    3. Pivot/Pointer calibration: 10.1109/TMI.2007.907327
+    1. `Camera calibration`_: 10.1109/34.888718
+    2. `Procrustes analysis (point based registration)`_: 10.1109/TPAMI.1987.4767965
+    3. `Pivot/Pointer calibration`_: 10.1109/TMI.2007.907327
 
 Coding tasks:
 
@@ -25,9 +25,6 @@ Performance evaluation:
     2. Measure the accuracy of translational measurement in X/Y plane, and in Z direction?
     3. Measure error at each of the 4 fiducials?
 
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
+.. _`Camera calibration`: http://dx.doi.org/10.1109/34.888718
+.. _`Procrustes analysis (point based registration)`: http://dx.doi.org/10.1109/TPAMI.1987.4767965
+.. _`Pivot/Pointer calibration`: http://dx.doi.org/10.1109/TMI.2007.907327

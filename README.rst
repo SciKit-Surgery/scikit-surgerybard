@@ -23,11 +23,9 @@ Basic Augmented Reality Demo.
 
 Authors: Matt Clarkson, Mian Ahmad, Stephen Thompson
 
-Basic Augmented Reality Demo. is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
+Basic Augmented Reality Demo (BARD) is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 
-Basic Augmented Reality Demo. Python 3.6.
-
-Basic Augmented Reality Demo. is intended to guide the user through using the SNAPPY Python template to create a well written and reusable algorithm library. It is intended to aid researchers in disseminating their work. 
+The BARD is tested on Python 3.6.
 
 
 Developing

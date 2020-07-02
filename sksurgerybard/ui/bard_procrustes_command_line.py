@@ -1,6 +1,6 @@
 # coding=utf-8
 
-"""Command line processing"""
+""" CLI for Point Based Registration (Orthogonal Procrustes). """
 
 import argparse
 
@@ -9,13 +9,12 @@ from sksurgerybard.ui.bard_procrustes_app import run_procrustes
 
 
 def main(args=None):
-    """Entry point for scikit-surgerybard application"""
+
+    """ Entry point for bardProcrustes application. """
 
     parser = argparse.ArgumentParser(
         description='Basic Augmented Reality Demo - '
-                    'Orthogonal Procustes')
-
-    # ADD POSITIONAL ARGUMENTS
+                    'Orthogonal Procrustes')
 
     parser.add_argument("-f", "--fixed",
                         required=True,

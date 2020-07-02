@@ -6,7 +6,7 @@
 Demo of Laparoscopic Liver Surgery System
 ===============================================
 
-Here we demonstrate the SmartLiver IGS system.
+Here, at UCL, we demonstrate the SmartLiver IGS system.
 
 - The aim is to display CT models on top of live laparoscopic video
 - Talk overview of system components
@@ -46,13 +46,3 @@ For “Homemade System”:
    :height: 400px
    :alt: Coordinate systems for phantoms demostration system.
    :align: center
-
-
-
-
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
-.. _`OpenCV` : https://opencv.org/
-.. _`VTK` : https://vtk.org/
-.. _`SNAPPY`: https://weisslab.cs.ucl.ac.uk/WEISS/PlatformManagement/SNAPPY/wikis/home
-.. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
