@@ -70,6 +70,8 @@ setup(
         'console_scripts': [
             'bardVideoCalibration=sksurgerycalibration.ui.video_'
             'calibration_command_line:main',
+            'bardVideoCalibrationChecker=sksurgerycalibration.ui.'
+            'video_calibration_checker_command_line:main'
             'bardPivotCalibration=sksurgerycalibration.ui.pivot_'
             'calibration_command_line:main',
             'bardProcrustes=sksurgerybard.ui.bard_procrustes_command_line:main',
