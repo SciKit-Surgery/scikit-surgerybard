@@ -3,6 +3,8 @@ required sksurgeryspeech is not installed, to avoid bringing in a whole lot
 of audio dependencies. If you intend to use this add scikit-surgeryspeech to
 requirements.txt"""
 
+#pylint:disable=super-with-arguments, raise-missing-from
+
 from PySide2.QtCore import QObject, Slot, QThread
 try:
     from sksurgeryspeech.algorithms.voice_recognition_service import \
