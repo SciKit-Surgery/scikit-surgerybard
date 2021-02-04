@@ -4,6 +4,7 @@ import pytest
 import vtk
 import sksurgerybard.algorithms.visualisation as vis
 
+#pylint:disable=no-member
 
 def test_bad_actor_types():
     """Should throw TypeError if actors are not right type"""

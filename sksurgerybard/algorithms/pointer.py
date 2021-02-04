@@ -4,7 +4,7 @@ from os import mkdir, path
 from time import time
 from numpy import savetxt, reshape
 
-
+#pylint:disable=raise-missing-from
 class BardPointerWriter():
     """
     Class to locate the pointer tip and write to file

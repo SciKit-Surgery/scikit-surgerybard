@@ -2,7 +2,7 @@
 
 """ Visualisation algorithms used by the B.A.R.D. """
 
-
+#pylint:disable=raise-missing-from
 class BardVisualisation:
     """
     Algorithms to change visualisation. Maintains
