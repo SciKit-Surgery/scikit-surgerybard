@@ -22,7 +22,9 @@ jobs:
       - name: Run tox on ubuntu using xvfb
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          sudo apt-get install xvfb
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          sudo apt-get install xvfb libxkbcommon-x11-0
           sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
           export DISPLAY=":1"
           export LD_LIBRARY_PATH=$pythonLocation"/lib/python3.6/site-packages/PySide2/Qt/plugins/platfoms"
