@@ -7,7 +7,7 @@ glob2
 vtk<=9.0.1
 PySide2<5.15.0
 scikit-surgerycalibration
-scikit-surgerycore
+scikit-surgerycore>=0.6.8
 scikit-surgeryutils
 scikit-surgeryvtk
 opencv-contrib-python
