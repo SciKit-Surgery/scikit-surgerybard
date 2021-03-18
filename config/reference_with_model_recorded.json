@@ -12,5 +12,8 @@
 	    "ref_file": "data/reference.txt",
 	    "reference_to_model" : "data/id.txt",
 	    "tag_width": 49.5
+    },
+    "pointerData": {
+        "pointer_tag_file": "data/pointer.txt"
     }
 }
