@@ -31,7 +31,7 @@ jobs:
           coverage report -m
 
       - name: Linting on ubuntu
-	if: startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           pylint --rcfile=tests/pylintrc sksurgerybard
 
