@@ -3,7 +3,7 @@
 import numpy as np
 import cv2
 
-from sksurgerybard.algorithms.tracking_smoothing import RollingMean, \
+from sksurgerycore.algorithms.tracking_smoothing import RollingMean, \
                 RollingMeanRotation, quaternion_to_matrix
 
 class Registration2D3D():
