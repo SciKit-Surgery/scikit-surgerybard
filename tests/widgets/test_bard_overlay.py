@@ -9,7 +9,7 @@ def test_valid_config():
     """
     Loads a valid config file, and checks that we have retrieved the calibration
     """
-    file_name = 'config/reference_with_model.json'
+    file_name = 'config/reference_with_model_recorded.json'
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
     _bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
