@@ -25,6 +25,7 @@ jobs:
           sudo apt-get install xvfb
           sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
           export DISPLAY=":1"
+          export LD_LIBRARY_PATH=$pythonLocation"/lib/python3.6/site-packages/PySide2/Qt/plugins/platfoms"
           xvfb-run tox
 
       - name: Run tox on windows/mac
