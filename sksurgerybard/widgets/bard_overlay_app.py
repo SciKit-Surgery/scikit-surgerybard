@@ -48,9 +48,13 @@ class BARDOverlayApp(OverlayBaseApp):
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
 
-        self._tm = TransformManager()
+        self.transform_manager = TransformManager()
 
-        self._tm.add("model2modelreference", modelreference2model)
+        self.transform_manager.add("model2modelreference", modelreference2model)
+
+        if pointer_ref is not None:
+            self.transform_manager.add("pointerref2camera",
+                                       np.eye(4, dtype = np.float64))
 
         self._reference_register = Registration2D3D(np.array(ref_data),
                                                     mtx33d, dist15d,
@@ -69,14 +73,17 @@ class BARDOverlayApp(OverlayBaseApp):
 
         # start things off with the camera at the origin.
         camera2modelreference = np.identity(4)
-        self._tm.add("camera2modelreference", camera2modelreference)
-        camera2modelreference = self._tm.get("camera2modelreference")
+        self.transform_manager.add("camera2modelreference",
+                                   camera2modelreference)
+        camera2modelreference = self.transform_manager.get(
+                        "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
 
-        self._pointer_writer = BardPointerWriter(self._tm, outdir, pointer_tip)
+        self._pointer_writer = BardPointerWriter(
+                        self.transform_manager, outdir, pointer_tip)
         self._resize_flag = True
 
         if models_path:
@@ -163,9 +170,11 @@ class BARDOverlayApp(OverlayBaseApp):
                     ids, marker_corners)
 
             if success:
-                self._tm.add("modelreference2camera", modelreference2camera)
+                self.transform_manager.add("modelreference2camera",
+                                           modelreference2camera)
 
-        camera2modelreference = self._tm.get("camera2modelreference")
+        camera2modelreference = self.transform_manager.get(
+                        "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
         if marker_corners and ids[0] != 0:
@@ -173,8 +182,10 @@ class BARDOverlayApp(OverlayBaseApp):
                 self._pointer_register.get_matrix(
                     ids, marker_corners)
             if success:
-                self._tm.add("pointerref2camera", pointerref2camera)
-                ptrref2modelref = self._tm.get("pointerref2modelreference")
+                self.transform_manager.add("pointerref2camera",
+                                           pointerref2camera)
+                ptrref2modelref = self.transform_manager.get(
+                                "pointerref2modelreference")
                 actors = self._get_pointer_actors()
                 matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
                 for actor in actors:

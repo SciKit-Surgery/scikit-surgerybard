@@ -2,6 +2,7 @@
 
 """ Tests for BARD configuration module. """
 
+import numpy as np
 import sksurgerybard.widgets.bard_overlay_app as boa
 
 
@@ -13,24 +14,47 @@ def test_valid_config():
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
     bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("camera2modelreference"),
+            np.eye(4, dtype = np.float64))
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("pointerref2modelreference"),
+            np.eye(4, dtype = np.float64))
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("pointerref2camera"),
+            np.eye(4, dtype = np.float64))
+
     bard_overlay.update()
 
-    #we'll have 3 actors, reference, anatomy and pointer. 
-    #anatomy user matrix should be the model to world (id)
-    #pointer we can do a regression test on 
-    #then we need to check the camera matrix
-    for actor in bard_overlay._get_all_actors():
-        print ("Actor: ", actor)
-        print ("Actor user matrix: ", actor.GetUserMatrix())
+    cam2model_regression = np.array([
+        [-8.49903319e-01, -4.55891672e-01, 2.64248240e-01, -1.11041174e+02],
+        [ 5.21028991e-01, -6.52170453e-01, 5.50638258e-01, -6.18580459e+01],
+        [-7.86965016e-02, 6.05670276e-01, 7.91814610e-01, -2.34291209e+02],
+        [ 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
 
-    pointer_matrix = bard_overlay._get_pointer_actors()[0].GetUserMatrix()
-    #should be
-    #0.316965 0.865154 0.38864 -58.0441
-    #-0.948385 0.293418 0.120297 17.3221
-    #-0.00995824 -0.406711 0.913503 13.9976
-    #0 0 0 1
-    print ("Pointer matrix", pointer_matrix)
-    print(bard_overlay._model_list)
+    assert np.allclose(
+            bard_overlay.transform_manager.get("camera2modelreference"),
+            cam2model_regression)
 
-    print ("Camera to model", bard_overlay._tm.get("camera2modelreference"))
-    print ("pointer to camera", bard_overlay._tm.get("pointerref2camera"))
+    pointer2camera_regression = np.array([
+        [-7.62741796e-01, -5.50411473e-01, -3.39517544e-01, -2.33266947e+01],
+        [ 4.67975716e-01, -8.32107967e-01, 2.97649225e-01, 7.45812954e+01],
+        [-4.46344801e-01, 6.81435391e-02, 8.92262728e-01, 2.54202707e+02],
+        [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("pointerref2camera"),
+            pointer2camera_regression)
+
+    pointer2model_regression = np.array([
+        [3.16964724e-01, 8.65154440e-01, 3.88640140e-01, -5.80441124e+01],
+        [-9.48385047e-01, 2.93418335e-01, 1.20297481e-01, 1.73220884e+01],
+        [-9.95824277e-03, -4.06710555e-01, 9.13502796e-01, 1.39976113e+01],
+        [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+
+    assert np.allclose(
+         bard_overlay.transform_manager.get("pointerref2modelreference"),
+                        pointer2model_regression)
