@@ -63,6 +63,7 @@ setup(
         'scikit-surgerycalibration',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
+        'scikit-surgeryarucotracker>=0.2.2',
         'vtk<=9.0.1',
     ],
 

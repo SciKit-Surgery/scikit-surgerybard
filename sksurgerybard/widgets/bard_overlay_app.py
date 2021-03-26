@@ -8,11 +8,14 @@ import cv2
 import cv2.aruco as aruco
 
 from sksurgerycore.transforms.transform_manager import TransformManager
+from sksurgerycore.configuration.configuration_manager import \
+        ConfigurationManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-    configure_interaction
+    configure_interaction, configure_camera
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
@@ -21,6 +24,52 @@ from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
 
 # pylint: disable=too-many-instance-attributes, too-many-branches
 
+def setup_tracker(config_file):
+    """
+    BARD Internal function to configure an ArUco tracker
+    and return a tracker object. Could be modified to set
+    up another sksurgery tracker (e.g. nditracker)
+    """
+    configurer = ConfigurationManager(config_file)
+
+    configuration = configurer.get_copy()
+    tracker_config = {}
+    rigid_bodies = []
+    model_config = configuration.get('models', None)
+    if model_config is not None:
+        ref_filename = model_config.get('ref_file', None)
+        if ref_filename is None:
+            raise ValueError("Model configuration does not include ref_file")
+
+        rigid_bodies.append({
+                'name' : 'reference',
+                'filename' : ref_filename,
+                'aruco dictionary' : 'DICT_ARUCO_ORIGINAL'
+                })
+
+    pointer_config = configuration.get('pointerData', None)
+    if pointer_config is not None:
+        pointer_filename = pointer_config.get('pointer_tag_file', None)
+        if pointer_filename is None:
+            raise ValueError("Pointer config does not include pointer_tag_file")
+
+        rigid_bodies.append({
+                'name' : 'pointer',
+                'filename' : pointer_filename,
+                'aruco dictionary' : 'DICT_ARUCO_ORIGINAL'
+                })
+
+    tracker_config['rigid bodies'] = rigid_bodies
+
+    camera_config = configuration.get('camera', None)
+    if camera_config is not None:
+        _video_source, mtx33d, dist5d, _dims = configure_camera(camera_config)
+        tracker_config['video source'] = 'none'
+        tracker_config['camera projection'] = mtx33d
+        tracker_config['camera distortion'] = dist5d
+        tracker_config['aruco dictionary'] = 'DICT_4X4_50'
+
+    return ArUcoTracker(tracker_config)
 
 class BARDOverlayApp(OverlayBaseApp):
     """
@@ -44,6 +93,9 @@ class BARDOverlayApp(OverlayBaseApp):
         self.dims = dims
         self.mtx33d = mtx33d
         self.dist15d = dist15d
+
+        self.tracker = setup_tracker(config_file)
+        self.tracker.start_tracking()
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.
                                                         DICT_ARUCO_ORIGINAL)
@@ -145,6 +197,8 @@ class BARDOverlayApp(OverlayBaseApp):
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
         gray = cv2.cvtColor(undistorted, cv2.COLOR_BGR2GRAY)
 
+        self._update_tracking(image)
+
         self._aruco_detect_and_follow(gray)
 
         self.vtk_overlay_window.set_video_image(undistorted)
@@ -156,11 +210,37 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.vtk_overlay_window.Render()
 
+    def _update_tracking(self, image):
+        """
+        Internal method to update the transform manager with
+        upto date versions of the required transforms. Image
+        is only used if we're using an ArUcoTracker
+        """
+        tracking = []
+        if isinstance(self.tracker, ArUcoTracker):
+            print ("Using an SKSArUco Tracker")
+            _port_handles, _timestamps, _framenumbers, tracking, _quality = \
+                        self.tracker.get_frame(image)
+        else:
+            _port_handles, _timestamps, _framenumbers, tracking, _quality = \
+                        self.tracker.get_frame()
+
+        print ("Reference tracking = \n", tracking[0])
+        vector = np.transpose(np.array([0,0,100.0,1.0], dtype = np.float64))
+        print (np.matmul(tracking[0] , vector))
+
+    def _update_overlay_window(self):
+        """
+        Internal method to update the overlay window with
+        latest pose estimates
+        """
+
     def _aruco_detect_and_follow(self, image):
         """
         Detect any aruco tags present. Based on;
         https://docs.opencv.org/3.4/d5/dae/tutorial_aruco_detection.html
         """
+
         # detect any markers
         marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
 
@@ -168,6 +248,10 @@ class BARDOverlayApp(OverlayBaseApp):
             success, modelreference2camera = \
                 self._reference_register.get_matrix(
                     ids, marker_corners)
+
+            print ("BARD Modelref2camera = \n", modelreference2camera )
+            vector = np.transpose(np.array([0,0,100.0,1.0], dtype = np.float64))
+            print (np.matmul(modelreference2camera , vector))
 
             if success:
                 self.transform_manager.add("modelreference2camera",
