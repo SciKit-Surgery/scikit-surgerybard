@@ -11,9 +11,12 @@
         "models_dir": "data/PelvisPhantom/",
 	    "ref_file": "data/reference.txt",
 	    "reference_to_model" : "data/id.txt",
-	    "tag_width": 49.5
+	    "tag_width": 49.5,
+	    "smoothing_buffer" : 3
     },
     "pointerData": {
-        "pointer_tag_file": "data/pointer.txt"
+        "pointer_tag_file": "data/pointer.txt",
+	"smoothing_buffer" : 3
     }
+
 }

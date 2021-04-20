@@ -68,6 +68,7 @@ def setup_tracker(config_file):
         tracker_config['camera projection'] = mtx33d
         tracker_config['camera distortion'] = dist5d
         tracker_config['aruco dictionary'] = 'DICT_4X4_50'
+        tracker_config['smoothing buffer'] = 3
 
     return ArUcoTracker(tracker_config)
 
@@ -196,6 +197,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
         gray = cv2.cvtColor(undistorted, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         self._update_tracking(image)
 
@@ -226,6 +228,7 @@ class BARDOverlayApp(OverlayBaseApp):
                         self.tracker.get_frame()
 
         print ("Reference tracking = \n", tracking[0])
+        print ("pointer tracking = \n", tracking[1])
         vector = np.transpose(np.array([0,0,100.0,1.0], dtype = np.float64))
         print (np.matmul(tracking[0] , vector))
 
@@ -270,6 +273,7 @@ class BARDOverlayApp(OverlayBaseApp):
                                            pointerref2camera)
                 ptrref2modelref = self.transform_manager.get(
                                 "pointerref2modelreference")
+                print ("BARD pointerref2camera = \n", pointerref2camera )
                 actors = self._get_pointer_actors()
                 matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
                 for actor in actors:
