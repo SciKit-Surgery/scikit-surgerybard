@@ -20,7 +20,6 @@ from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
-from sksurgerybard.algorithms.registration_2d3d import Registration2D3D
 
 # pylint: disable=too-many-instance-attributes, too-many-branches
 
@@ -86,10 +85,9 @@ class BARDOverlayApp(OverlayBaseApp):
 
         # Loads all config from file.
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
-         pointer_ref, models_path, pointer_tip,
-         outdir, dims, interaction,
-         visible_anatomy, speech_config,
-         ref_smoothing, pnt_smoothing) = configure_bard(config_file, calib_dir)
+         pointer_ref, models_path, pointer_tip, outdir, dims, interaction,
+         visible_anatomy,
+         speech_config) = configure_bard(config_file, calib_dir)
 
         self.dims = dims
         self.mtx33d = mtx33d
@@ -109,13 +107,6 @@ class BARDOverlayApp(OverlayBaseApp):
             self.transform_manager.add("pointerref2camera",
                                        np.eye(4, dtype = np.float64))
 
-        self._reference_register = Registration2D3D(np.array(ref_data),
-                                                    mtx33d, dist15d,
-                                                    buffer_size=ref_smoothing)
-
-        self._pointer_register = Registration2D3D(np.array(pointer_ref),
-                                                  mtx33d, dist15d,
-                                                  buffer_size=pnt_smoothing)
         # call the constructor for the base class
         super().__init__(video_source, dims)
 
@@ -196,12 +187,9 @@ class BARDOverlayApp(OverlayBaseApp):
         _, image = self.video_source.read()
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
-        gray = cv2.cvtColor(undistorted, cv2.COLOR_BGR2GRAY)
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         self._update_tracking(image)
-
-        self._aruco_detect_and_follow(gray)
+        self._update_overlay_window()
 
         self.vtk_overlay_window.set_video_image(undistorted)
 
@@ -220,64 +208,49 @@ class BARDOverlayApp(OverlayBaseApp):
         """
         tracking = []
         if isinstance(self.tracker, ArUcoTracker):
-            print ("Using an SKSArUco Tracker")
-            _port_handles, _timestamps, _framenumbers, tracking, _quality = \
+            port_handles, _timestamps, _framenumbers, tracking, quality = \
                         self.tracker.get_frame(image)
         else:
-            _port_handles, _timestamps, _framenumbers, tracking, _quality = \
+            port_handles, _timestamps, _framenumbers, tracking, quality = \
                         self.tracker.get_frame()
 
-        print ("Reference tracking = \n", tracking[0])
-        print ("pointer tracking = \n", tracking[1])
-        vector = np.transpose(np.array([0,0,100.0,1.0], dtype = np.float64))
-        print (np.matmul(tracking[0] , vector))
+        try:
+            reference_index = port_handles.index('reference')
+            if ((not np.isnan(quality[reference_index])) and
+                quality[reference_index] > 0.2):
+                modelreference2camera = tracking[reference_index]
+                self.transform_manager.add("modelreference2camera",
+                                           modelreference2camera)
+        except ValueError:
+            pass
+
+
+        try:
+            pointer_index = port_handles.index('pointer')
+            if ((not np.isnan(quality[pointer_index])) and
+                quality[pointer_index] > 0.2):
+                pointerref2camera = tracking[pointer_index]
+                self.transform_manager.add("pointerref2camera",
+                                           pointerref2camera)
+        except ValueError:
+            pass
+
 
     def _update_overlay_window(self):
         """
         Internal method to update the overlay window with
         latest pose estimates
         """
-
-    def _aruco_detect_and_follow(self, image):
-        """
-        Detect any aruco tags present. Based on;
-        https://docs.opencv.org/3.4/d5/dae/tutorial_aruco_detection.html
-        """
-
-        # detect any markers
-        marker_corners, ids, _ = aruco.detectMarkers(image, self.dictionary)
-
-        if marker_corners and ids[0] != 0:
-            success, modelreference2camera = \
-                self._reference_register.get_matrix(
-                    ids, marker_corners)
-
-            print ("BARD Modelref2camera = \n", modelreference2camera )
-            vector = np.transpose(np.array([0,0,100.0,1.0], dtype = np.float64))
-            print (np.matmul(modelreference2camera , vector))
-
-            if success:
-                self.transform_manager.add("modelreference2camera",
-                                           modelreference2camera)
-
         camera2modelreference = self.transform_manager.get(
                         "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
 
-        if marker_corners and ids[0] != 0:
-            success, pointerref2camera = \
-                self._pointer_register.get_matrix(
-                    ids, marker_corners)
-            if success:
-                self.transform_manager.add("pointerref2camera",
-                                           pointerref2camera)
-                ptrref2modelref = self.transform_manager.get(
+        ptrref2modelref = self.transform_manager.get(
                                 "pointerref2modelreference")
-                print ("BARD pointerref2camera = \n", pointerref2camera )
-                actors = self._get_pointer_actors()
-                matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-                for actor in actors:
-                    actor.SetUserMatrix(matrix)
+        actors = self._get_pointer_actors()
+        matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
+        for actor in actors:
+            actor.SetUserMatrix(matrix)
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()

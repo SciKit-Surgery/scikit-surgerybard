@@ -117,14 +117,12 @@ def configure_model_and_ref(model_config):
     ref_points = None
     reference2model_file = None
     visible_anatomy = 0
-    smoothing_buffer = None
     tag_width = None
     if model_config:
         models_path = model_config.get('models_dir')
         ref_points = model_config.get('ref_file')
         reference2model_file = model_config.get('reference_to_model')
         visible_anatomy = model_config.get('visible_anatomy', 0)
-        smoothing_buffer = model_config.get('smoothing_buffer', 1)
         tag_width = model_config.get('tag_width', None)
 
     ref_data = None
@@ -144,8 +142,7 @@ def configure_model_and_ref(model_config):
     if reference2model_file is not None:
         reference2model = np.loadtxt(reference2model_file)
 
-    return ref_data, reference2model, models_path, visible_anatomy, \
-        smoothing_buffer
+    return ref_data, reference2model, models_path, visible_anatomy
 
 
 def configure_pointer(pointer_config):
@@ -154,12 +151,10 @@ def configure_pointer(pointer_config):
     """
     ref_pointer_file = None
     pointer_tip_file = None
-    smoothing_buffer = None
     tag_width = None
     if pointer_config:
         ref_pointer_file = pointer_config.get('pointer_tag_file')
         pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
-        smoothing_buffer = pointer_config.get('smoothing_buffer', 1)
         tag_width = pointer_config.get('tag_width', None)
 
     ref_point_data = None
@@ -176,7 +171,7 @@ def configure_pointer(pointer_config):
 
     if pointer_tip_file is not None:
         pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
-    return ref_point_data, pointer_tip, smoothing_buffer
+    return ref_point_data, pointer_tip
 
 
 def configure_bard(configuration_file, calib_dir):
@@ -197,11 +192,11 @@ def configure_bard(configuration_file, calib_dir):
                                                           calib_dir)
 
     model_config = configuration_data.get('models')
-    ref_data, reference2model, models_path, visible_anatomy, ref_smoothing = \
+    ref_data, reference2model, models_path, visible_anatomy = \
         configure_model_and_ref(model_config)
 
     pointer_config = configuration_data.get('pointerData')
-    ref_point_data, pointer_tip, pnt_smoothing = \
+    ref_point_data, pointer_tip = \
             configure_pointer(pointer_config)
 
     outdir = configuration_data.get('out path')
@@ -215,8 +210,7 @@ def configure_bard(configuration_file, calib_dir):
     return video_source, mtx33d, dist5d, ref_data, \
         reference2model, ref_point_data, \
         models_path, pointer_tip, outdir, dims, interaction, \
-        visible_anatomy, speech_config, ref_smoothing, \
-        pnt_smoothing
+        visible_anatomy, speech_config
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,

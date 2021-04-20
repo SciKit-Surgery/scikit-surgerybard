@@ -15,7 +15,6 @@ def test_valid_config():
     (_, mtx33d, dist15d, _, _,
      _, _, _,
      _, _, _,
-     _, _,
      _, _) = bca.configure_bard(file_name, None)
 
     # Just a test to check we have loaded the calibration.
