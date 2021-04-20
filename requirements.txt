@@ -4,7 +4,6 @@
 # doc/requirements.rst
 numpy
 glob2
-vtk<=9.0.1
 PySide2<5.15.0
 scikit-surgerycalibration
 scikit-surgerycore>=0.6.8
