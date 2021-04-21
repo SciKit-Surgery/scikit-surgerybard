@@ -99,3 +99,37 @@ def test_valid_config():
     assert np.allclose(
          bard_overlay.transform_manager.get("pointerref2modelreference"),
                         pointer2model_regression)
+
+def test_with_no_pointer():
+    """Should work OK when we have no pointer data"""
+    file_name = 'config/reference_no_pointer_recorded.json'
+    calib_dir = 'data/calibration/matts_mbp_640_x_480/'
+
+    bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("camera2modelreference"),
+            np.eye(4, dtype = np.float64))
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("pointerref2modelreference"),
+            np.eye(4, dtype = np.float64))
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("pointerref2camera"),
+            np.eye(4, dtype = np.float64))
+
+    bard_overlay.update()
+
+    cam2model_regression = np.array([
+       [-0.85007277,  0.51807849, -0.09471516, -8.06235428e+01],
+       [-0.46167221, -0.64647658,  0.60739345, 5.07177658e+01],
+       [ 0.25344635,  0.56005599,  0.78873458, 2.50268387e+02],
+       [ 0.0000e+00, 0.00000e+00, 0.00000e+00, 1.00000000e+00]],
+       dtype=np.float32)
+
+    assert np.allclose(
+            bard_overlay.transform_manager.get("modelreference2camera"),
+            cam2model_regression)
+
+

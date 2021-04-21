@@ -1,0 +1,18 @@
+{
+    "camera": {
+        "source": "data/multipattern.avi",
+        "window size": [640, 480],
+        "grab": 33,
+        "clock": 15,
+        "fullscreen": false,
+        "calibration directory": "data/calibration/matts_mbp_640_x_480"
+    },
+    "models": {
+        "models_dir": "data/PelvisPhantom/",
+	    "ref_file": "data/reference.txt",
+	    "reference_to_model" : "data/id.txt",
+	    "tag_width": 49.5,
+	    "smoothing_buffer" : 3
+    },
+
+}

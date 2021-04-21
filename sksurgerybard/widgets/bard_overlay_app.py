@@ -203,7 +203,7 @@ class BARDOverlayApp(OverlayBaseApp):
     def _update_tracking(self, image):
         """
         Internal method to update the transform manager with
-        upto date versions of the required transforms. Image
+        up to date versions of the required transforms. Image
         is only used if we're using an ArUcoTracker
         """
         tracking = []
