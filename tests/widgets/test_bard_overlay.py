@@ -111,7 +111,7 @@ def test_with_no_pointer():
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),
             np.eye(4, dtype = np.float64))
-    
+
     with pytest.raises(ValueError):
         bard_overlay.transform_manager.get("pointerref2modelreference")
 
@@ -130,7 +130,7 @@ def test_with_no_pointer():
     assert np.allclose(
             bard_overlay.transform_manager.get("modelreference2camera"),
             cam2model_regression)
-    
+
     with pytest.raises(ValueError):
         bard_overlay.transform_manager.get("pointerref2camera")
 
@@ -153,5 +153,3 @@ def test_with_camera_only():
         bard_overlay.transform_manager.get("pointerref2camera")
 
     bard_overlay.update()
-
-

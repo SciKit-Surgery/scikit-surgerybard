@@ -244,7 +244,7 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self.transform_manager.get(
                         "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
-        
+
         actors = self._get_pointer_actors()
         if len(actors) > 0:
             ptrref2modelref = self.transform_manager.get(
