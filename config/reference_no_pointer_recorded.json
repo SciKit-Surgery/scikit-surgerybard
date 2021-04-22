@@ -13,6 +13,5 @@
 	    "reference_to_model" : "data/id.txt",
 	    "tag_width": 49.5,
 	    "smoothing_buffer" : 3
-    },
-
+    }
 }

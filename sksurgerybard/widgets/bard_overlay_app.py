@@ -244,13 +244,14 @@ class BARDOverlayApp(OverlayBaseApp):
         camera2modelreference = self.transform_manager.get(
                         "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
-
-        ptrref2modelref = self.transform_manager.get(
-                                "pointerref2modelreference")
+        
         actors = self._get_pointer_actors()
-        matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
-        for actor in actors:
-            actor.SetUserMatrix(matrix)
+        if len(actors) > 0:
+            ptrref2modelref = self.transform_manager.get(
+                                    "pointerref2modelreference")
+            matrix = create_vtk_matrix_from_numpy(ptrref2modelref)
+            for actor in actors:
+                actor.SetUserMatrix(matrix)
 
     def _get_pointer_actors(self):
         actors = self._get_all_actors()

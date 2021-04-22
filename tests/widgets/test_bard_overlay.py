@@ -3,6 +3,7 @@
 """ Tests for BARD configuration module. """
 
 import numpy as np
+import pytest
 import sksurgerybard.widgets.bard_overlay_app as boa
 
 
@@ -110,14 +111,12 @@ def test_with_no_pointer():
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),
             np.eye(4, dtype = np.float64))
+    
+    with pytest.raises(ValueError):
+        bard_overlay.transform_manager.get("pointerref2modelreference")
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2modelreference"),
-            np.eye(4, dtype = np.float64))
-
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2camera"),
-            np.eye(4, dtype = np.float64))
+    with pytest.raises(ValueError):
+        bard_overlay.transform_manager.get("pointerref2camera")
 
     bard_overlay.update()
 
@@ -131,6 +130,9 @@ def test_with_no_pointer():
     assert np.allclose(
             bard_overlay.transform_manager.get("modelreference2camera"),
             cam2model_regression)
+    
+    with pytest.raises(ValueError):
+        bard_overlay.transform_manager.get("pointerref2camera")
 
 
 def test_with_camera_only():
@@ -144,13 +146,11 @@ def test_with_camera_only():
             bard_overlay.transform_manager.get("camera2modelreference"),
             np.eye(4, dtype = np.float64))
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2modelreference"),
-            np.eye(4, dtype = np.float64))
+    with pytest.raises(ValueError):
+        bard_overlay.transform_manager.get("pointerref2modelreference")
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2camera"),
-            np.eye(4, dtype = np.float64))
+    with pytest.raises(ValueError):
+        bard_overlay.transform_manager.get("pointerref2camera")
 
     bard_overlay.update()
 
