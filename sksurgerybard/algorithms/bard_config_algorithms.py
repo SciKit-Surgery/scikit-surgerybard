@@ -14,41 +14,34 @@ from sksurgerybard.algorithms.interaction import BardKBEvent, \
 def get_calibration_filenames(calibration_dir):
     """
     Hunts for the correct file names in calibration_dir:
-
     Camera intrinsics should be in: *.intrinsics.txt
-
     Camera distortion params should be in: *.distortion.txt
 
     :param calibration_dir: directory containing a scikit-surgerycalibration
-    format video calibration.
-    :return: intrinsics,distortion, or None,None if they are not found.
+        format video calibration.
+    
+    :return: intrinsics,distortion.
+    
+    :raises FileNotFoundError: If the number of either file is not 1
     """
     intrinsics_path = None
     distortion_path = None
 
-    if calibration_dir is None:
-        print("WARNING: calibration_dir is not specified")
-        return None, None
-
-    # If calibration_dir is specified, try finding
-    # files containing intrinsics and distortion parameters.
     if os.path.isdir(calibration_dir):
 
         intrinsic_files = glob.glob(os.path.join(calibration_dir,
                                                  "*.intrinsics.txt"))
         if len(intrinsic_files) == 1:
             intrinsics_path = intrinsic_files[0]
-            print("INFO: Retrieved intrinsics filename:"
-                  + intrinsics_path)
 
         distortion_files = glob.glob(os.path.join(calibration_dir,
                                                   "*.distortion.txt"))
         if len(distortion_files) == 1:
             distortion_path = distortion_files[0]
-            print("INFO: Retrieved distortion params filename:"
-                  + distortion_path)
-    else:
-        print("WARNING: calibration_dir is not a directory.")
+
+    if intrinsics_path is None or distortion_path is None:
+        raise FileNotFoundError("Failed to find exactly one instance of" +
+            "*.intrinsics.txt or *.distortion.txt in ", calibration_dir)
 
     return intrinsics_path, distortion_path
 
@@ -56,6 +49,11 @@ def get_calibration_filenames(calibration_dir):
 def configure_camera(camera_config, calibration_dir=None):
     """
     Configures the camera.
+    :param camera_config: dictionary containing optional paremeters
+        source (default 0), window size (default delegates to
+        cv2.CAP_PROP_FRAME_WIDTH and calibration directory
+    :param calibration_dir: optional, overrides dictionary value
+
     """
     # Specify some reasonable defaults. Webcams are typically 640x480.
     video_source = 0
@@ -187,7 +185,7 @@ def configure_bard(configuration_file, calib_dir):
 
     configuration_data = configurer.get_copy()
 
-    camera_config = configuration_data.get('camera')
+    camera_config = configuration_data.get('camera', None)
     video_source, mtx33d, dist5d, dims = configure_camera(camera_config,
                                                           calib_dir)
 
