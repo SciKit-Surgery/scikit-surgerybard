@@ -1,7 +1,7 @@
 /*
-This is an example configuration file for SciKit-SurgeryBARD post 
-v0.1.0. It is not valid json, to use it you can first need to remove 
-comments with something like https://pypi.org/project/JSON_minify/ 
+This is an example configuration file for SciKit-SurgeryBARD post
+v0.1.0. It is not valid json, to use it you can first need to remove
+comments with something like https://pypi.org/project/JSON_minify/
 */
 
 /*
@@ -13,7 +13,7 @@ camera, tracker, models, pointer, and interaction.
     /* Camera dictionary defines the parameters for the video source
     that forms the back ground of the augmented reality */
     "camera": {
-	/* source defines an opencv video soure, integer or filename, 
+	/* source defines an opencv video soure, integer or filename,
 	defaults to 0 */
         "source": 0, 
 	/* window size defines the size of the video image to use. If 
@@ -29,6 +29,35 @@ camera, tracker, models, pointer, and interaction.
 	use the -d command line argument*/
         "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
+    "tracker" : {
+	"type" : "sksaruco",
+	/* BARD allows source as synomym of video source*/
+	"source" : 0,
+	"calibration directory": "data/calibration/matts_mbp_640_x_480",
+	rigid_bodies : [ {
+		'name' : 'reference',
+                'filename' : "data/reference_for_small_liver.txt"
+                'aruco dictionary' : 'DICT_ARUCO_ORIGINAL'
+		},
+		{
+			'name' : 'pointer',
+			'filename' : 'data/pointer.txt',
+                	'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+		}]
+    }
+
+
+	
+	
+	
+	"video source" : 0,
+	"calibraion" : "somefile.txt",
+	"camera projection" : some matrix,
+	"camera distortion" : a distortion vector
+
+
+
+
     "models": {
         "models_dir": "data/models",
         "ref_file": "data/reference_for_small_liver.txt",

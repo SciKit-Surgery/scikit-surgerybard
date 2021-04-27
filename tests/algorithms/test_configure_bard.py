@@ -39,3 +39,73 @@ def test_get_calibration_filenames():
         'data/calibration/matts_mbp_640_x_480/calib.intrinsics.txt'
     assert dist == \
         'data/calibration/matts_mbp_640_x_480/calib.distortion.txt'
+
+
+def test_replace_calib_dir():
+    """
+    Tests that replace_calibration_dir works as intended
+    """
+    #empty configuration
+    config_in = None
+    calibration_dir = None
+    config_out = bca.replace_calibration_dir(config_in, calibration_dir)
+    assert config_out is None
+
+    #non empty configuration
+    config_in = 'test config'
+    calibration_dir = None
+    config_out = bca.replace_calibration_dir(config_in, calibration_dir)
+    assert config_out == config_in
+
+    #empty config, non empty calib_dir
+    config_in = None
+    calibration_dir = 'test_string'
+    config_out = bca.replace_calibration_dir(config_in, calibration_dir)
+    assert config_out is not None
+    camera_config = config_out.get('camera', None)
+    assert camera_config is not None
+    assert camera_config.get('calibration directory', None) == 'test_string'
+
+    #with tracker config using a different camera
+    config_in = {
+                    'camera' : {
+                                'source' : 1,
+                                'calibration directory' : 'overwrite this',
+                                'other property' : 'do not overwrite'
+                                },
+                    'tracker' :
+                                {
+                                  'type' : 'sksaruco',
+                                  'video source': 0,
+                                  'calibration directory' : 'do not overwrite'
+                                }
+                }
+    calibration_dir = 'test_string'
+    config_out = bca.replace_calibration_dir(config_in, calibration_dir)
+    camera_config = config_out.get('camera', None)
+    assert camera_config.get('calibration directory', None) == 'test_string'
+    assert camera_config.get('other property', None) == 'do not overwrite'
+    tracker_config = config_out.get('tracker', None)
+    assert tracker_config.get('calibration directory', None) == \
+                    'do not overwrite'
+
+    #with tracker config using the same camera
+    config_in = {
+                    'camera' : {
+                                'source' : 1,
+                                'calibration directory' : 'overwrite this',
+                                },
+                    'tracker' :
+                                {
+                                  'type' : 'sksaruco',
+                                  'video source': 1,
+                                  'calibration directory' : 'overwrite this'
+                                }
+                }
+    calibration_dir = 'test_string'
+    config_out = bca.replace_calibration_dir(config_in, calibration_dir)
+    camera_config = config_out.get('camera', None)
+    assert camera_config.get('calibration directory', None) == 'test_string'
+    tracker_config = config_out.get('tracker', None)
+    assert tracker_config.get('calibration directory', None) == \
+                    'test_string'

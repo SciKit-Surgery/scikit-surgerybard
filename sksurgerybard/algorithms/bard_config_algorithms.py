@@ -19,9 +19,9 @@ def get_calibration_filenames(calibration_dir):
 
     :param calibration_dir: directory containing a scikit-surgerycalibration
         format video calibration.
-    
+
     :return: intrinsics,distortion.
-    
+
     :raises FileNotFoundError: If the number of either file is not 1
     """
     intrinsics_path = None
@@ -45,6 +45,35 @@ def get_calibration_filenames(calibration_dir):
 
     return intrinsics_path, distortion_path
 
+
+def replace_calibration_dir(config, calibration_dir):
+    """
+    Replaces 'camera.calibration directory' with the content of
+    calibration_dir. Checks if we're using an ArUco tracker and if the
+    sources are the same also overwrites calibration in the tracker config.
+    """
+    if calibration_dir is None:
+        return config
+
+    if config is None:
+        config = {}
+
+    if 'camera' not in config:
+        config['camera'] = {}
+
+    camera_config = config.get('camera')
+    camera_config['calibration directory'] = calibration_dir
+
+    tracker_config = config.get('tracker', None)
+    if tracker_config is not None:
+        if tracker_config.get('type', 'notaruco') == 'sksaruco':
+            if tracker_config.get('video source', 0) == \
+                        camera_config.get('source', 0):
+                tracker_config['calibration directory'] = calibration_dir
+        config['tracker'] = tracker_config
+
+    config['camera'] = camera_config
+    return config
 
 def configure_camera(camera_config, calibration_dir=None):
     """
