@@ -62,6 +62,7 @@ def replace_calibration_dir(config, calibration_dir):
         config['camera'] = {}
 
     camera_config = config.get('camera')
+
     camera_config['calibration directory'] = calibration_dir
 
     tracker_config = config.get('tracker', None)
@@ -75,10 +76,11 @@ def replace_calibration_dir(config, calibration_dir):
     config['camera'] = camera_config
     return config
 
-def configure_camera(camera_config, calibration_dir=None):
+def configure_camera(config):
     """
     Configures the camera.
-    :param camera_config: dictionary containing optional paremeters
+    :param config: dictionary containing BARD configuration
+        parameters optional parameters in camera.
         source (default 0), window size (default delegates to
         cv2.CAP_PROP_FRAME_WIDTH and calibration directory
     :param calibration_dir: optional, overrides dictionary value
@@ -93,26 +95,20 @@ def configure_camera(camera_config, calibration_dir=None):
     intrinsics_path = None
     distortion_path = None
 
-    if calibration_dir is not None:
-        intrinsics_path, distortion_path = \
-            get_calibration_filenames(calibration_dir)
+    if config is None:
+        return video_source, mtx33d, dist5d, dims
 
-    if camera_config:
+    camera_config = config.get('camera', None)
+    if camera_config is not None:
 
-        video_source = camera_config.get('source')
+        video_source = camera_config.get('source', 0)
 
-        if video_source is None:
-            print("WARNING, no video source in config, setting to 0")
-            video_source = 0
+        calib_dir = camera_config.get('calibration directory', None)
+        if calib_dir is not None:
+            intrinsics_path, distortion_path = \
+                get_calibration_filenames(calib_dir)
 
-        if intrinsics_path is None or distortion_path is None:
-
-            calib_dir = camera_config.get('calibration directory')
-            if calib_dir is not None:
-                intrinsics_path, distortion_path = \
-                    get_calibration_filenames(calib_dir)
-
-        dims = camera_config.get('window size')
+        dims = camera_config.get('window size', None)
         if dims is None:
             print("WARNING: window size was not specified! "
                   "This probably breaks the calibrated overlay!")
@@ -121,13 +117,13 @@ def configure_camera(camera_config, calibration_dir=None):
             dims = (dims[0], dims[1])
 
     # Finally load parameters, or WARN if not specified.
-    if intrinsics_path:
+    if intrinsics_path is not None:
         print("INFO: Loading intrinsics from:" + intrinsics_path)
         mtx33d = np.loadtxt(intrinsics_path)
     else:
         print("WARNING: Didn't find intrinsics file.")
 
-    if distortion_path:
+    if distortion_path is not None:
         print("INFO: Loading distortion params from:" + distortion_path)
         dist5d = np.loadtxt(distortion_path)
     else:
@@ -213,10 +209,10 @@ def configure_bard(configuration_file, calib_dir):
     configurer = ConfigurationManager(configuration_file)
 
     configuration_data = configurer.get_copy()
+    configuration_data = replace_calibration_dir (configuration_data,
+                    calib_dir)
 
-    camera_config = configuration_data.get('camera', None)
-    video_source, mtx33d, dist5d, dims = configure_camera(camera_config,
-                                                          calib_dir)
+    video_source, mtx33d, dist5d, dims = configure_camera(configuration_data)
 
     model_config = configuration_data.get('models')
     ref_data, reference2model, models_path, visible_anatomy = \
