@@ -2,6 +2,7 @@
 
 """ Tests for BARD configuration module. """
 
+from os.path import join
 import numpy as np
 import pytest
 import sksurgerybard.algorithms.bard_config_algorithms as bca
@@ -36,9 +37,9 @@ def test_get_calibration_filenames():
     intrins, dist = bca.get_calibration_filenames(calib_dir)
 
     assert intrins == \
-        'data/calibration/matts_mbp_640_x_480/calib.intrinsics.txt'
+        join(calib_dir, 'calib.intrinsics.txt')
     assert dist == \
-        'data/calibration/matts_mbp_640_x_480/calib.distortion.txt'
+        join(calib_dir, 'calib.distortion.txt')
 
 
 def test_replace_calib_dir():
