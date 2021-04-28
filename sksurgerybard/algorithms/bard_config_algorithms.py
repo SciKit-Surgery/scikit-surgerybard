@@ -87,8 +87,9 @@ def configure_camera(config):
     # Specify some reasonable defaults. Webcams are typically 640x480.
     video_source = 0
     dims = None
-    mtx33d = np.array([1000.0, 0.0, 320.0, 0.0, 1000.0, 240.0, 0.0, 0.0, 1.0])
-    mtx33d = np.reshape(mtx33d, (3, 3))
+    mtx33d = np.array([[1000.0, 0.0, 320.0],
+                       [0.0, 1000.0, 240.0],
+                       [0.0, 0.0, 1.0]])
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
     intrinsics_path = None
     distortion_path = None
@@ -202,10 +203,11 @@ def configure_bard(configuration_data):
 
     :param configuration_data: The configuration dictionary
     :param calib_dir: Optional directory containing a previous calibration.
-    :return: lots of configured params.
-    """
 
-    video_source, mtx33d, dist5d, dims = configure_camera(configuration_data)
+    :return: lots of configured params.
+
+    :raises: AttributeError if configuration_data doesn't have get method
+    """
 
     model_config = configuration_data.get('models')
     ref_data, reference2model, models_path, visible_anatomy = \
@@ -223,9 +225,9 @@ def configure_bard(configuration_data):
     interaction = configuration_data.get('interaction', {})
     speech_config = configuration_data.get('speech config', False)
 
-    return video_source, mtx33d, dist5d, ref_data, \
+    return ref_data, \
         reference2model, ref_point_data, \
-        models_path, pointer_tip, outdir, dims, interaction, \
+        models_path, pointer_tip, outdir, interaction, \
         visible_anatomy, speech_config
 
 
