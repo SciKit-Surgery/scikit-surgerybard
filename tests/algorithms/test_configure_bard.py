@@ -12,12 +12,24 @@ def test_valid_config():
     """
     Loads a valid config file, and checks that we have retrieved the calibration
     """
-    file_name = 'config/reference_with_model.json'
+    config = {
+        "camera": {
+        "source": 0,
+        "window size": [640, 480],
+        "calibration directory": "data/calibration/matts_mbp_640_x_480"
+        },
+        "models": {
+            "models_dir": "data/PelvisPhantom/",
+            "ref_file": "data/reference.txt",
+            "reference_to_model" : "data/id.txt",
+            "tag_width": 49.5
+        }
+    }
 
     (_, mtx33d, dist15d, _, _,
      _, _, _,
      _, _, _,
-     _, _) = bca.configure_bard(file_name, None)
+     _, _) = bca.configure_bard(config, None)
 
     # Just a test to check we have loaded the calibration.
     assert mtx33d is not None

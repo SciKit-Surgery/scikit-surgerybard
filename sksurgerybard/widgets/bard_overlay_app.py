@@ -23,15 +23,12 @@ from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 # pylint: disable=too-many-instance-attributes, too-many-branches
 
-def setup_tracker(config_file, calib_dir = None):
+def setup_tracker(configuration, calib_dir = None):
     """
     BARD Internal function to configure an ArUco tracker
     and return a tracker object. Could be modified to set
     up another sksurgery tracker (e.g. nditracker)
     """
-    configurer = ConfigurationManager(config_file)
-
-    configuration = configurer.get_copy()
     tracker_config = {}
     rigid_bodies = []
     model_config = configuration.get('models', None)
@@ -61,7 +58,7 @@ def setup_tracker(config_file, calib_dir = None):
     tracker_config['rigid bodies'] = rigid_bodies
 
     _video_source, mtx33d, dist5d, _dims, _, _, _, _, _, _, _, _, _, \
-                    = configure_bard(config_file, calib_dir)
+                    = configure_bard(configuration, calib_dir)
     tracker_config['video source'] = 'none'
     tracker_config['camera projection'] = mtx33d
     tracker_config['camera distortion'] = dist5d
@@ -81,18 +78,20 @@ class BARDOverlayApp(OverlayBaseApp):
         which we need for the aruco tag detection.
         """
         self._speech_int = None
+        configurer = ConfigurationManager(config_file)
+        configuration = configurer.get_copy()
 
         # Loads all config from file.
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip, outdir, dims, interaction,
          visible_anatomy,
-         speech_config) = configure_bard(config_file, calib_dir)
+         speech_config) = configure_bard(configuration, calib_dir)
 
         self.dims = dims
         self.mtx33d = mtx33d
         self.dist15d = dist15d
 
-        self.tracker = setup_tracker(config_file)
+        self.tracker = setup_tracker(configuration)
         self.tracker.start_tracking()
 
         self.dictionary = aruco.getPredefinedDictionary(aruco.

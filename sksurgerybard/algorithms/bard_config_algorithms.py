@@ -5,8 +5,6 @@
 import os
 import glob
 import numpy as np
-from sksurgerycore.configuration.configuration_manager import \
-        ConfigurationManager
 from sksurgerybard.algorithms.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
 
@@ -197,18 +195,16 @@ def configure_pointer(pointer_config):
     return ref_point_data, pointer_tip
 
 
-def configure_bard(configuration_file, calib_dir):
+def configure_bard(configuration_data, calib_dir):
     """
-    Parses the BARD configuration file, and prepares output for
+    Parses the BARD configuration, and prepares output for
     OverlayApp
 
-    :param configuration_file: The configuration file
+    :param configuration_data: The configuration dictionary
     :param calib_dir: Optional directory containing a previous calibration.
     :return: lots of configured params.
     """
-    configurer = ConfigurationManager(configuration_file)
 
-    configuration_data = configurer.get_copy()
     configuration_data = replace_calibration_dir (configuration_data,
                     calib_dir)
 
