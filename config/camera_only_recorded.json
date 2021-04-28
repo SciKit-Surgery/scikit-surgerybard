@@ -1,8 +1,0 @@
-{
-    "camera": {
-        "source": "data/multipattern.avi",
-        "width": 640,
-        "height": 480,
-	"calibration" : "data/calibration.npz"
-    }
-}
