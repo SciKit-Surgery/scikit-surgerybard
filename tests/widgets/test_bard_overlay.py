@@ -2,19 +2,41 @@
 
 """ Tests for BARD configuration module. """
 
+import copy
 import numpy as np
 import pytest
 import sksurgerybard.widgets.bard_overlay_app as boa
+
+
+config = {
+    "camera": {
+        "source": "data/multipattern.avi",
+        "window size": [640, 480],
+        "calibration directory": "data/calibration/matts_mbp_640_x_480"
+    },
+    "models": {
+        "models_dir": "data/PelvisPhantom/",
+            "ref_file": "data/reference.txt",
+            "reference_to_model" : "data/id.txt",
+            "tag_width": 49.5,
+            "smoothing_buffer" : 3
+    },
+    "pointerData": {
+        "pointer_tag_file": "data/pointer.txt",
+        "pointer_tag_to_tip": "data/pointer_tip.txt",
+        "smoothing_buffer" : 3
+    }
+
+}
 
 
 def test_valid_config():
     """
     Loads a valid config file, and checks that we have retrieved the calibration
     """
-    file_name = 'config/reference_with_model_recorded.json'
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
-    bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
+    bard_overlay = boa.BARDOverlayApp(config, calib_dir)
 
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),
@@ -103,10 +125,12 @@ def test_valid_config():
 
 def test_with_no_pointer():
     """Should work OK when we have no pointer data"""
-    file_name = 'config/reference_no_pointer_recorded.json'
+    config_no_pointer = copy.deepcopy(config)
+    del config_no_pointer['pointerData']
+    assert config_no_pointer.get('pointerData', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
-    bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
+    bard_overlay = boa.BARDOverlayApp(config_no_pointer, calib_dir)
 
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),
@@ -137,10 +161,14 @@ def test_with_no_pointer():
 
 def test_with_camera_only():
     """Should work OK when we have no pointer data"""
-    file_name = 'config/camera_only_recorded.json'
+    config_camera_only = copy.deepcopy(config)
+    del config_camera_only['pointerData']
+    del config_camera_only['models']
+    assert config_camera_only.get('pointerData', None) is None
+    assert config_camera_only.get('models', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
-    bard_overlay = boa.BARDOverlayApp(file_name, calib_dir)
+    bard_overlay = boa.BARDOverlayApp(config_camera_only, calib_dir)
 
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),

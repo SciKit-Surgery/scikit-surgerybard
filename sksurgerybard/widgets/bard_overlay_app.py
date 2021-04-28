@@ -8,8 +8,6 @@ import cv2
 import cv2.aruco as aruco
 
 from sksurgerycore.transforms.transform_manager import TransformManager
-from sksurgerycore.configuration.configuration_manager import \
-        ConfigurationManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
@@ -29,14 +27,12 @@ class BARDOverlayApp(OverlayBaseApp):
     Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow.
     """
-    def __init__(self, config_file, calib_dir):
+    def __init__(self, configuration, calib_dir):
         """
         Overrides the default constructor to add some member variables
         which we need for the aruco tag detection.
         """
         self._speech_int = None
-        configurer = ConfigurationManager(config_file)
-        configuration = configurer.get_copy()
         configuration = replace_calibration_dir(configuration, calib_dir)
 
         # Loads all config from file.
