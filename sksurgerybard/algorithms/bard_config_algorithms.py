@@ -195,7 +195,7 @@ def configure_pointer(pointer_config):
     return ref_point_data, pointer_tip
 
 
-def configure_bard(configuration_data, calib_dir):
+def configure_bard(configuration_data):
     """
     Parses the BARD configuration, and prepares output for
     OverlayApp
@@ -204,9 +204,6 @@ def configure_bard(configuration_data, calib_dir):
     :param calib_dir: Optional directory containing a previous calibration.
     :return: lots of configured params.
     """
-
-    configuration_data = replace_calibration_dir (configuration_data,
-                    calib_dir)
 
     video_source, mtx33d, dist5d, dims = configure_camera(configuration_data)
 

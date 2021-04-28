@@ -15,7 +15,7 @@ from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-    configure_interaction
+    configure_interaction, replace_calibration_dir
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
@@ -23,7 +23,7 @@ from sksurgerybard.algorithms.pointer import BardPointerWriter
 
 # pylint: disable=too-many-instance-attributes, too-many-branches
 
-def setup_tracker(configuration, calib_dir = None):
+def setup_tracker(configuration):
     """
     BARD Internal function to configure an ArUco tracker
     and return a tracker object. Could be modified to set
@@ -58,7 +58,7 @@ def setup_tracker(configuration, calib_dir = None):
     tracker_config['rigid bodies'] = rigid_bodies
 
     _video_source, mtx33d, dist5d, _dims, _, _, _, _, _, _, _, _, _, \
-                    = configure_bard(configuration, calib_dir)
+                    = configure_bard(configuration)
     tracker_config['video source'] = 'none'
     tracker_config['camera projection'] = mtx33d
     tracker_config['camera distortion'] = dist5d
@@ -80,12 +80,13 @@ class BARDOverlayApp(OverlayBaseApp):
         self._speech_int = None
         configurer = ConfigurationManager(config_file)
         configuration = configurer.get_copy()
+        configuration = replace_calibration_dir(configuration, calib_dir)
 
         # Loads all config from file.
         (video_source, mtx33d, dist15d, ref_data, modelreference2model,
          pointer_ref, models_path, pointer_tip, outdir, dims, interaction,
          visible_anatomy,
-         speech_config) = configure_bard(configuration, calib_dir)
+         speech_config) = configure_bard(configuration)
 
         self.dims = dims
         self.mtx33d = mtx33d

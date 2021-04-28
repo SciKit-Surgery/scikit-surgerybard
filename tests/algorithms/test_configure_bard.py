@@ -29,7 +29,7 @@ def test_valid_config():
     (_, mtx33d, dist15d, _, _,
      _, _, _,
      _, _, _,
-     _, _) = bca.configure_bard(config, None)
+     _, _) = bca.configure_bard(config)
 
     # Just a test to check we have loaded the calibration.
     assert mtx33d is not None
