@@ -5,7 +5,6 @@
 import os
 import numpy as np
 import cv2
-import cv2.aruco as aruco
 
 from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
@@ -49,9 +48,6 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.tracker = setup_tracker(configuration)
         self.tracker.start_tracking()
-
-        self.dictionary = aruco.getPredefinedDictionary(aruco.
-                                                        DICT_ARUCO_ORIGINAL)
 
         self.transform_manager = TransformManager()
 
@@ -135,8 +131,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
     def update(self):
         """
-        Update the background render with a new frame and
-        scan for aruco tags.
+        Update the background render with a new frame
         """
         _, image = self.video_source.read()
 
@@ -161,7 +156,8 @@ class BARDOverlayApp(OverlayBaseApp):
         is only used if we're using an ArUcoTracker
         """
         tracking = []
-        if isinstance(self.tracker, ArUcoTracker):
+        if (isinstance(self.tracker, ArUcoTracker) and
+                        self.tracker._capture is None): # pylint: disable=protected-access
             port_handles, _timestamps, _framenumbers, tracking, quality = \
                         self.tracker.get_frame(image)
         else:

@@ -14,6 +14,9 @@ config = {
         "window size": [640, 480],
         "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
+    "tracker": {
+            "type" : "sksaruco"
+            },
     "models": {
         "models_dir": "data/PelvisPhantom/",
             "ref_file": "data/reference.txt",
