@@ -15,7 +15,14 @@ config = {
         "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
     "tracker": {
-            "type" : "sksaruco"
+            "type" : "sksaruco", 
+            "rigid_bodies" : [
+                    {
+                        'name' : 'reference',
+                        'filename' : "data/reference.txt",
+                        'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                        'tag_width': 49.5
+                        }]
             },
     "models": {
         "models_dir": "data/PelvisPhantom/",

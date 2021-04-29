@@ -62,7 +62,7 @@ setup(
         'scikit-surgerycalibration',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
-        'scikit-surgeryarucotracker>=0.2.3',
+        'scikit-surgeryarucotracker>=0.2.4',
     ],
 
     entry_points={
