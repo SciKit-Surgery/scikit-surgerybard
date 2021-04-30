@@ -15,7 +15,7 @@ config = {
         "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
     "tracker": {
-            "type" : "sksaruco", 
+            "type" : "sksaruco",
             "rigid_bodies" : [
                     {
                         'name' : 'reference',
