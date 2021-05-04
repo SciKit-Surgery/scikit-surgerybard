@@ -60,9 +60,12 @@ class BARDOverlayApp(OverlayBaseApp):
         # default for a 640x480 webcam.
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
-        camera2modelreference = self.transform_manager.get(
-                        "camera2modelreference")
-        self.vtk_overlay_window.set_camera_pose(camera2modelreference)
+        try:
+            camera2modelreference = self.transform_manager.get(
+                            "camera2modelreference")
+            self.vtk_overlay_window.set_camera_pose(camera2modelreference)
+        except ValueError:
+            pass
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
@@ -168,9 +171,12 @@ class BARDOverlayApp(OverlayBaseApp):
         Internal method to update the overlay window with
         latest pose estimates
         """
-        camera2modelreference = self.transform_manager.get(
-                        "camera2modelreference")
-        self.vtk_overlay_window.set_camera_pose(camera2modelreference)
+        try:
+            camera2modelreference = self.transform_manager.get(
+                            "camera2modelreference")
+            self.vtk_overlay_window.set_camera_pose(camera2modelreference)
+        except ValueError:
+            pass
 
         actors = self._get_pointer_actors()
         if len(actors) > 0:

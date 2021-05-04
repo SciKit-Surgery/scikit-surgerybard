@@ -172,6 +172,9 @@ def configure_bard(configuration_data):
     :raises: AttributeError if configuration_data doesn't have get method
     """
 
+    if configuration_data is None:
+        configuration_data = {}
+
     pointer_config = configuration_data.get('pointerData')
     ref_point_data, pointer_tip = \
             configure_pointer(pointer_config)

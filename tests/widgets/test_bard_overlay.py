@@ -223,3 +223,10 @@ def test_with_model_but_no_tracking():
 
     with pytest.raises(ValueError):
         _bard_overlay = boa.BARDOverlayApp(config_models_only)
+
+
+def test_with_no_configuration():
+    """
+    Should work with no configuration
+    """
+    boa.BARDOverlayApp(None)

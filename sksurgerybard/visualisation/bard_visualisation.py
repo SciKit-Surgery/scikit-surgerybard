@@ -9,17 +9,23 @@ def configure_model_and_ref(configuration, transform_manager):
     """
     Parses the model and reference configuration.
     """
-    model_config = configuration.get('models', None)
 
     models_path = None
     reference2model_file = None
     visible_anatomy = 0
+
+    ref_spheres = make_reference_spheres(configuration)
+
+    if configuration is None:
+        transform_manager.add("model2modelreference",
+                        np.eye(4, dtype = np.float64))
+        return ref_spheres, models_path, visible_anatomy
+
+    model_config = configuration.get('models', None)
     if model_config is not None:
         models_path = model_config.get('models_dir')
         reference2model_file = model_config.get('reference_to_model')
         visible_anatomy = model_config.get('visible_anatomy', 0)
-
-    ref_spheres = make_reference_spheres(configuration)
 
     if models_path is not None:
         try:
