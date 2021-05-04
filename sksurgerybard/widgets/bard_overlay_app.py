@@ -13,10 +13,9 @@ from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
     configure_interaction, configure_camera, replace_calibration_dir
 from sksurgerybard.visualisation.bard_visualisation import \
-                configure_model_and_ref
+                configure_model_and_ref, BardVisualisation
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
-from sksurgerybard.algorithms.visualisation import BardVisualisation
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.tracking.bard_tracking import setup_tracker
 

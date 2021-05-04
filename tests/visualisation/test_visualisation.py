@@ -2,7 +2,7 @@
 """Tests for BARD pointer module"""
 import pytest
 import vtk
-import sksurgerybard.algorithms.visualisation as vis
+import sksurgerybard.visualisation.bard_visualisation as vis
 
 #pylint:disable=no-member
 
