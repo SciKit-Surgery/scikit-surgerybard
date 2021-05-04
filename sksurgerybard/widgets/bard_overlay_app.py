@@ -19,14 +19,12 @@ from sksurgerybard.algorithms.bard_config_speech import \
 from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.tracking.bard_tracking import setup_tracker
 
-# pylint: disable=too-many-instance-attributes, too-many-branches
-
 class BARDOverlayApp(OverlayBaseApp):
     """
     Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow.
     """
-    def __init__(self, configuration, calib_dir):
+    def __init__(self, configuration, calib_dir = None):
         """
         Overrides the default constructor to add some member variables
         which we need for the aruco tag detection.

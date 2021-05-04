@@ -186,7 +186,7 @@ def test_with_no_pointer():
 
 
 def test_with_camera_only():
-    """Should work OK when we have no pointer data"""
+    """Should work OK when we have no pointer or model data"""
     config_camera_only = copy.deepcopy(config)
     del config_camera_only['pointerData']
     del config_camera_only['models']
@@ -208,3 +208,18 @@ def test_with_camera_only():
         bard_overlay.transform_manager.get("pointerref2camera")
 
     bard_overlay.update()
+
+
+def test_with_model_but_no_tracking():
+    """
+    Should throw a value error is config contains model data but
+    no means of tracking the models
+    """
+    config_models_only = copy.deepcopy(config)
+    del config_models_only['pointerData']
+    del config_models_only['tracker']
+    assert config_models_only.get('pointerData', None) is None
+    assert config_models_only.get('tracker', None) is None
+
+    with pytest.raises(ValueError):
+        _bard_overlay = boa.BARDOverlayApp(config_models_only)
