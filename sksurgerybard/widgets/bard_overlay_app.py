@@ -12,7 +12,9 @@ from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-    configure_interaction, configure_camera, replace_calibration_dir
+    configure_interaction, configure_camera, replace_calibration_dir 
+from sksurgerybard.visualisation.bard_visualisation import \
+                configure_model_and_ref
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.visualisation import BardVisualisation
@@ -37,9 +39,10 @@ class BARDOverlayApp(OverlayBaseApp):
         # Loads all config from file.
         video_source, mtx33d, dist15d, dims = configure_camera(configuration)
 
-        (ref_data, modelreference2model,
-         pointer_ref, models_path, pointer_tip, outdir, interaction,
-         visible_anatomy,
+        ref_data, modelreference2model, models_path, visible_anatomy = \
+                        configure_model_and_ref(configuration)
+
+        (pointer_ref, pointer_tip, outdir, interaction,
          speech_config) = configure_bard(configuration)
 
         self.dims = dims

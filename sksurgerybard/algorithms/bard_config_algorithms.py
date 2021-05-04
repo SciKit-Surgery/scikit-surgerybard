@@ -130,43 +130,6 @@ def configure_camera(config):
 
     return video_source, mtx33d, dist5d, dims
 
-
-def configure_model_and_ref(model_config):
-    """
-    Parses the model and reference configuration.
-    """
-    models_path = None
-    ref_points = None
-    reference2model_file = None
-    visible_anatomy = 0
-    tag_width = None
-    if model_config:
-        models_path = model_config.get('models_dir')
-        ref_points = model_config.get('ref_file')
-        reference2model_file = model_config.get('reference_to_model')
-        visible_anatomy = model_config.get('visible_anatomy', 0)
-        tag_width = model_config.get('tag_width', None)
-
-    ref_data = None
-    reference2model = np.identity(4)
-
-    if ref_points is not None:
-        ref_data = np.loadtxt(ref_points)
-
-        if tag_width is not None:
-            pattern_width = min(np.ptp(ref_data[:, 2::3]),
-                                np.ptp(ref_data[:, 1::3]))
-            scale_factor = tag_width/pattern_width
-            tag_ids = np.copy(ref_data[:, 0])
-            ref_data *= scale_factor
-            ref_data[:, 0] = tag_ids
-
-    if reference2model_file is not None:
-        reference2model = np.loadtxt(reference2model_file)
-
-    return ref_data, reference2model, models_path, visible_anatomy
-
-
 def configure_pointer(pointer_config):
     """
     Parses the pointer configuration.
@@ -209,10 +172,6 @@ def configure_bard(configuration_data):
     :raises: AttributeError if configuration_data doesn't have get method
     """
 
-    model_config = configuration_data.get('models')
-    ref_data, reference2model, models_path, visible_anatomy = \
-        configure_model_and_ref(model_config)
-
     pointer_config = configuration_data.get('pointerData')
     ref_point_data, pointer_tip = \
             configure_pointer(pointer_config)
@@ -225,10 +184,9 @@ def configure_bard(configuration_data):
     interaction = configuration_data.get('interaction', {})
     speech_config = configuration_data.get('speech config', False)
 
-    return ref_data, \
-        reference2model, ref_point_data, \
-        models_path, pointer_tip, outdir, interaction, \
-        visible_anatomy, speech_config
+    return ref_point_data, \
+        pointer_tip, outdir, interaction, \
+        speech_config
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
