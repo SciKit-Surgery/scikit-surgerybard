@@ -53,7 +53,12 @@ class BARDOverlayApp(OverlayBaseApp):
                                         self.transform_manager)
 
         # call the constructor for the base class
-        super().__init__(video_source, dims)
+        try:
+            super().__init__(video_source, dims)
+        except RuntimeError:
+            raise RuntimeError("Failed to create overlay window, check you " +
+                               "have access to video source: ", video_source) \
+                                            from RuntimeError
 
         # This sets the camera calibration matrix to a matrix that was
         # either read in from command line or from config, or a reasonable

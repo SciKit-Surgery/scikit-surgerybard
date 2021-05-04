@@ -57,13 +57,11 @@ def make_reference_spheres(configuration):
 
     tracker_config = configuration.get('tracker', None)
 
-    if tracker_config is None:
+    if (tracker_config is None) or \
+            (tracker_config.get('type', None) != 'sksaruco'):
         return ref_spheres
 
-    if tracker_config.get('type', None) != 'sksaruco':
-        return ref_spheres
-
-    for rigid_body in tracker_config.get('rigid_bodies', []):
+    for rigid_body in tracker_config.get('rigid bodies', []):
         if rigid_body.get('name', None) == 'modelreference':
             ref_pointer_file = rigid_body.get('filename', None)
             tag_width = rigid_body.get('tag_width', None)
