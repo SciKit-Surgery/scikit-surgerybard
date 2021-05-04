@@ -6,13 +6,12 @@ import os
 import numpy as np
 import cv2
 
-from sksurgerycore.transforms.transform_manager import TransformManager
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
-    configure_interaction, configure_camera, replace_calibration_dir 
+    configure_interaction, configure_camera, replace_calibration_dir
 from sksurgerybard.visualisation.bard_visualisation import \
                 configure_model_and_ref
 from sksurgerybard.algorithms.bard_config_speech import \
@@ -39,9 +38,6 @@ class BARDOverlayApp(OverlayBaseApp):
         # Loads all config from file.
         video_source, mtx33d, dist15d, dims = configure_camera(configuration)
 
-        ref_data, modelreference2model, models_path, visible_anatomy = \
-                        configure_model_and_ref(configuration)
-
         (pointer_ref, pointer_tip, outdir, interaction,
          speech_config) = configure_bard(configuration)
 
@@ -49,16 +45,15 @@ class BARDOverlayApp(OverlayBaseApp):
         self.mtx33d = mtx33d
         self.dist15d = dist15d
 
-        self.tracker = setup_tracker(configuration)
+        self.tracker, self.transform_manager = setup_tracker(configuration)
         self.tracker.start_tracking()
 
-        self.transform_manager = TransformManager()
+        self.transform_manager.add("tracker2camera",
+                        np.eye(4, dtype = np.float64))
 
-        self.transform_manager.add("model2modelreference", modelreference2model)
-
-        if pointer_ref is not None:
-            self.transform_manager.add("pointerref2camera",
-                                       np.eye(4, dtype = np.float64))
+        ref_spheres, models_path, visible_anatomy = \
+                        configure_model_and_ref(configuration,
+                                        self.transform_manager)
 
         # call the constructor for the base class
         super().__init__(video_source, dims)
@@ -68,10 +63,6 @@ class BARDOverlayApp(OverlayBaseApp):
         # default for a 640x480 webcam.
         self.vtk_overlay_window.set_camera_matrix(mtx33d)
 
-        # start things off with the camera at the origin.
-        camera2modelreference = np.identity(4)
-        self.transform_manager.add("camera2modelreference",
-                                   camera2modelreference)
         camera2modelreference = self.transform_manager.get(
                         "camera2modelreference")
         self.vtk_overlay_window.set_camera_pose(camera2modelreference)
@@ -86,7 +77,9 @@ class BARDOverlayApp(OverlayBaseApp):
         if models_path:
             self.add_vtk_models_from_dir(models_path)
 
-        matrix = create_vtk_matrix_from_numpy(modelreference2model)
+        matrix = create_vtk_matrix_from_numpy(
+                        self.transform_manager.get('modelreference2model'))
+
         self._model_list = {'visible anatomy' : 0,
                             'target anatomy' : 0,
                             'reference' : 0,
@@ -100,10 +93,8 @@ class BARDOverlayApp(OverlayBaseApp):
                 self._model_list['target anatomy'] = \
                                 self._model_list.get('target anatomy') + 1
 
-        if ref_data is not None:
-            model_reference_spheres = VTKSphereModel(
-                ref_data[:, 1:4], radius=5.0)
-            self.vtk_overlay_window.add_vtk_actor(model_reference_spheres.actor)
+        if ref_spheres is not None:
+            self.vtk_overlay_window.add_vtk_actor(ref_spheres.actor)
             self._model_list['reference'] = 1
 
         if pointer_ref is not None:
@@ -159,35 +150,21 @@ class BARDOverlayApp(OverlayBaseApp):
         is only used if we're using an ArUcoTracker
         """
         tracking = []
-        if (isinstance(self.tracker, ArUcoTracker) and
-                        self.tracker._capture is None): # pylint: disable=protected-access
+        if (isinstance(self.tracker, ArUcoTracker) and not
+                        self.tracker.has_capture()):
             port_handles, _timestamps, _framenumbers, tracking, quality = \
                         self.tracker.get_frame(image)
         else:
             port_handles, _timestamps, _framenumbers, tracking, quality = \
                         self.tracker.get_frame()
 
-        try:
-            reference_index = port_handles.index('reference')
-            if ((not np.isnan(quality[reference_index])) and
-                quality[reference_index] > 0.2):
-                modelreference2camera = tracking[reference_index]
-                self.transform_manager.add("modelreference2camera",
-                                           modelreference2camera)
-        except ValueError:
-            pass
-
-
-        try:
-            pointer_index = port_handles.index('pointer')
-            if ((not np.isnan(quality[pointer_index])) and
-                quality[pointer_index] > 0.2):
-                pointerref2camera = tracking[pointer_index]
-                self.transform_manager.add("pointerref2camera",
-                                           pointerref2camera)
-        except ValueError:
-            pass
-
+        for index, port_handle in enumerate(port_handles):
+            if ((not np.isnan(quality[index])) and quality[index] > 0.2):
+                try:
+                    self.transform_manager.add(port_handle + '2tracker',
+                                    tracking[index])
+                except ValueError:
+                    pass
 
     def _update_overlay_window(self):
         """

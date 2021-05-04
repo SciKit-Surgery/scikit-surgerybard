@@ -16,25 +16,27 @@ config = {
     },
     "tracker": {
             "type" : "sksaruco",
-            "rigid_bodies" : [
-                    {
-                        'name' : 'reference',
-                        'filename' : "data/reference.txt",
-                        'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
-                        'tag_width': 49.5
-                        }]
+            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+            'smoothing buffer' : 3,
+            "rigid bodies" : [
+                        {
+                            'name' : 'modelreference',
+                            'filename' : "data/reference.txt",
+                            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                            'tag_width': 49.5,
+                        },
+                        {
+                            'name' : 'pointerref',
+                            'filename' : 'data/pointer.txt',
+                        }
+                    ]
             },
     "models": {
         "models_dir": "data/PelvisPhantom/",
-            "ref_file": "data/reference.txt",
             "reference_to_model" : "data/id.txt",
-            "tag_width": 49.5,
-            "smoothing_buffer" : 3
     },
     "pointerData": {
-        "pointer_tag_file": "data/pointer.txt",
         "pointer_tag_to_tip": "data/pointer_tip.txt",
-        "smoothing_buffer" : 3
     }
 
 }
@@ -137,6 +139,20 @@ def test_with_no_pointer():
     """Should work OK when we have no pointer data"""
     config_no_pointer = copy.deepcopy(config)
     del config_no_pointer['pointerData']
+    config_no_pointer['tracker'] = {
+            "type" : "sksaruco",
+            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+            'smoothing buffer' : 3,
+            "rigid bodies" : [
+                        {
+                            'name' : 'modelreference',
+                            'filename' : "data/reference.txt",
+                            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                            'tag_width': 49.5,
+                        }
+                    ]
+            }
+
     assert config_no_pointer.get('pointerData', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
@@ -174,6 +190,7 @@ def test_with_camera_only():
     config_camera_only = copy.deepcopy(config)
     del config_camera_only['pointerData']
     del config_camera_only['models']
+    del config_camera_only['tracker']
     assert config_camera_only.get('pointerData', None) is None
     assert config_camera_only.get('models', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'

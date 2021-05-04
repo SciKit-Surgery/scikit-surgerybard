@@ -12,16 +12,16 @@ def test_setup_tracker():
 
     #if no configuration should return a default ArUcoTracker
     config = None
-    tracker = btrk.setup_tracker(config)
+    tracker, _transform_manager = btrk.setup_tracker(config)
     assert isinstance(tracker, ArUcoTracker)
 
     #if no tracker section in config, should return a default ArUcoTracker
     config = {}
-    tracker = btrk.setup_tracker(config)
+    tracker, _transform_manager = btrk.setup_tracker(config)
     assert isinstance(tracker, ArUcoTracker)
 
     #throw a value error if tracker is not aruco
     config = { 'tracker' : { 'type' : 'notaruco' }}
 
     with pytest.raises(ValueError):
-        tracker = btrk.setup_tracker(config)
+        tracker, _transform_manager = btrk.setup_tracker(config)
