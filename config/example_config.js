@@ -45,25 +45,33 @@ camera, tracker, models, pointer, and interaction.
 	   this defaults to the same as in the camera settings */
 	"calibration directory": "data/calibration/matts_mbp_640_x_480",
 	rigid_bodies : [ {
-			'name' : 'reference',
-                	'filename' : "data/reference_for_small_liver.txt"
-                	'aruco dictionary' : 'DICT_ARUCO_ORIGINAL'
+			"name" : "modelreference",
+                	"filename" : "data/reference_for_small_liver.txt"
+                	"aruco dictionary" : "DICT_ARUCO_ORIGINAL"
 			},
 			{
-			'name' : 'pointer',
-			'filename' : 'data/pointer.txt',
-                	'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+			"name" : "pointerref",
+			"filename" : "data/pointer.txt",
+                	"aruco dictionary" : "DICT_ARUCO_ORIGINAL"
 			}]
     },
 	
     "models": {
+	/* A directory containing anatomy models. */
         "models_dir": "data/models",
-	"port handle": 'reference',
+	/* The rigid transform from the model reference to the models */
         "reference_to_model": "data/reference_to_model.txt",
+	/* The number of anatomy elements that are visible in through the 
+	   video, i.e. the liver surface is visible, but the veins etc. are 
+	   not. The file names in in models_dir must be set so that 
+	   the visible anatomy is loaded first
+	*/
         "visible_anatomy": 1
     },
     "pointer": {
-	"port handle": 'pointer',
+	/* A file defining the location of the pointer tip 
+ 	   relative to the pointer reference
+	*/
         "pointer_tag_to_tip": "data/pointer_tip.txt"
     },
     "interaction": {

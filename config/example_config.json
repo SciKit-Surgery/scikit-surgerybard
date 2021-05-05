@@ -1,0 +1,37 @@
+{
+    "camera": {
+        "source": 0, 
+        "window size": [640, 480],
+        "calibration directory": "data/calibration/matts_mbp_640_x_480"
+    },
+    "tracker" : {
+	"type" : "sksaruco",
+	"source" : 0,
+	"calibration directory": "data/calibration/matts_mbp_640_x_480",
+	rigid_bodies : [ {
+			"name" : "modelreference",
+                	"filename" : "data/reference_for_small_liver.txt",
+                	"aruco dictionary" : "DICT_ARUCO_ORIGINAL"
+			},
+			{
+			"name" : "pointerref",
+			"filename" : "data/pointer.txt",
+                	"aruco dictionary" : "DICT_ARUCO_ORIGINAL"
+			}]
+    },
+	
+    "models": {
+        "models_dir": "data/models",
+        "reference_to_model": "data/reference_to_model.txt",
+        "visible_anatomy": 1
+    },
+    "pointer": {
+        "pointer_tag_to_tip": "data/pointer_tip.txt"
+    },
+    "interaction": {
+        "keyboard": true,
+        "footswitch": true,
+        "maximum delay": 2.0,
+        "mouse": true
+    }
+}
