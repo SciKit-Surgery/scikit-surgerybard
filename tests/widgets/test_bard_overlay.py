@@ -35,7 +35,7 @@ config = {
         "models_dir": "data/PelvisPhantom/",
             "reference_to_model" : "data/id.txt",
     },
-    "pointerData": {
+    "pointer": {
         "pointer_tag_to_tip": "data/pointer_tip.txt",
     }
 
@@ -138,7 +138,7 @@ def test_valid_config():
 def test_with_no_pointer():
     """Should work OK when we have no pointer data"""
     config_no_pointer = copy.deepcopy(config)
-    del config_no_pointer['pointerData']
+    del config_no_pointer['pointer']
     config_no_pointer['tracker'] = {
             "type" : "sksaruco",
             'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
@@ -153,7 +153,7 @@ def test_with_no_pointer():
                     ]
             }
 
-    assert config_no_pointer.get('pointerData', None) is None
+    assert config_no_pointer.get('pointer', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
     bard_overlay = boa.BARDOverlayApp(config_no_pointer, calib_dir)
@@ -188,10 +188,10 @@ def test_with_no_pointer():
 def test_with_camera_only():
     """Should work OK when we have no pointer or model data"""
     config_camera_only = copy.deepcopy(config)
-    del config_camera_only['pointerData']
+    del config_camera_only['pointer']
     del config_camera_only['models']
     del config_camera_only['tracker']
-    assert config_camera_only.get('pointerData', None) is None
+    assert config_camera_only.get('pointer', None) is None
     assert config_camera_only.get('models', None) is None
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
@@ -210,15 +210,29 @@ def test_with_camera_only():
     bard_overlay.update()
 
 
-def test_with_model_but_no_tracking():
+def test_with_model_no_tracking():
     """
     Should throw a value error is config contains model data but
     no means of tracking the models
     """
     config_models_only = copy.deepcopy(config)
-    del config_models_only['pointerData']
+    del config_models_only['pointer']
     del config_models_only['tracker']
-    assert config_models_only.get('pointerData', None) is None
+    assert config_models_only.get('pointer', None) is None
+    assert config_models_only.get('tracker', None) is None
+
+    with pytest.raises(ValueError):
+        _bard_overlay = boa.BARDOverlayApp(config_models_only)
+
+
+def test_with_pointer_no_tracking():
+    """
+    Should throw a value error is config contains pointer data but
+    no means of tracking the pointer
+    """
+    config_models_only = copy.deepcopy(config)
+    del config_models_only['tracker']
+    del config_models_only['models']
     assert config_models_only.get('tracker', None) is None
 
     with pytest.raises(ValueError):

@@ -7,13 +7,12 @@ import numpy as np
 import cv2
 
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
-from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
     configure_interaction, configure_camera, replace_calibration_dir
 from sksurgerybard.visualisation.bard_visualisation import \
-                configure_model_and_ref, BardVisualisation
+                configure_model_and_ref, BardVisualisation, configure_pointer
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.pointer import BardPointerWriter
@@ -35,8 +34,7 @@ class BARDOverlayApp(OverlayBaseApp):
         # Loads all config from file.
         video_source, mtx33d, dist15d, dims = configure_camera(configuration)
 
-        (pointer_ref, pointer_tip, outdir, interaction,
-         speech_config) = configure_bard(configuration)
+        (outdir, interaction, speech_config) = configure_bard(configuration)
 
         self.dims = dims
         self.mtx33d = mtx33d
@@ -51,6 +49,8 @@ class BARDOverlayApp(OverlayBaseApp):
         ref_spheres, models_path, visible_anatomy = \
                         configure_model_and_ref(configuration,
                                         self.transform_manager)
+        pointer_spheres, pointer_tip_sphere, pointer_tip = \
+                        configure_pointer(configuration, self.transform_manager)
 
         # call the constructor for the base class
         try:
@@ -102,15 +102,12 @@ class BARDOverlayApp(OverlayBaseApp):
             self.vtk_overlay_window.add_vtk_actor(ref_spheres.actor)
             self._model_list['reference'] = 1
 
-        if pointer_ref is not None:
-            pointer_reference_spheres = VTKSphereModel(
-                pointer_ref[:, 1:4], radius=5.0)
+        if pointer_spheres is not None:
             self.vtk_overlay_window.add_vtk_actor(
-                pointer_reference_spheres.actor)
+                pointer_spheres.actor)
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
-        if pointer_tip is not None:
-            pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
+        if pointer_tip_sphere is not None:
             self.vtk_overlay_window.add_vtk_actor(pointer_tip_sphere.actor)
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 

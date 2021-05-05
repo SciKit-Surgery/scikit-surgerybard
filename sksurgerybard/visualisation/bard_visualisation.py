@@ -14,7 +14,7 @@ def configure_model_and_ref(configuration, transform_manager):
     reference2model_file = None
     visible_anatomy = 0
 
-    ref_spheres = make_reference_spheres(configuration)
+    ref_spheres = make_marker_spheres(configuration, 'modelreference')
 
     if configuration is None:
         transform_manager.add("model2modelreference",
@@ -46,7 +46,46 @@ def configure_model_and_ref(configuration, transform_manager):
     return ref_spheres, models_path, visible_anatomy
 
 
-def make_reference_spheres(configuration):
+def configure_pointer(configuration, transform_manager):
+    """
+    Configures the visualisation for the pointer pattern and pointer
+    tip.
+
+    :raises ValueError if transform_manager does not have pointerref
+    """
+    pointer_tip = None
+    pointer_spheres = None
+    pointer_tip_sphere = None
+
+    if configuration is None:
+        return pointer_spheres, pointer_tip_sphere, pointer_tip
+
+    pointer_config = configuration.get('pointer', None)
+
+    if pointer_config is None:
+        return pointer_spheres, pointer_tip_sphere, pointer_tip
+
+    try:
+        transform_manager.get('pointerref2camera')
+
+    except ValueError:
+        raise ValueError('pointer is set in configuration, however ' +
+                         'there is no pointerref defined in ' +
+                         'tracker rigid bodies') from ValueError
+
+
+    pointer_spheres = make_marker_spheres(configuration, 'pointerref')
+
+    pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
+
+    if pointer_tip_file is not None:
+        pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
+        pointer_tip_sphere = VTKSphereModel(pointer_tip, radius=3.0)
+
+    return pointer_spheres, pointer_tip_sphere, pointer_tip
+
+
+def make_marker_spheres(configuration, marker_name):
     """Reads in the tracking configuration and creates a
     representation for trackingi, currently only set up for
     sksarucotrackers"""
@@ -62,7 +101,7 @@ def make_reference_spheres(configuration):
         return ref_spheres
 
     for rigid_body in tracker_config.get('rigid bodies', []):
-        if rigid_body.get('name', None) == 'modelreference':
+        if rigid_body.get('name', None) == marker_name:
             ref_pointer_file = rigid_body.get('filename', None)
             tag_width = rigid_body.get('tag_width', None)
             ref_point_data = np.loadtxt(ref_pointer_file)

@@ -14,7 +14,6 @@ def main(args=None):
 
     parser.add_argument("-c", "--config",
                         required=False,
-                        default='config/config.json',
                         type=str,
                         help="Configuration file containing the parameters.")
 

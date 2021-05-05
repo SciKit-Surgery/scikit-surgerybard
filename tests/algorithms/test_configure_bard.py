@@ -26,10 +26,10 @@ def test_valid_config():
         }
     }
 
-    _, _, _, _, _ = bca.configure_bard(config)
+    _, _, _ = bca.configure_bard(config)
 
     config = None
-    _, _, _, _, _ = bca.configure_bard(config)
+    _, _, _ = bca.configure_bard(config)
 
 
 def test_configure_camera():

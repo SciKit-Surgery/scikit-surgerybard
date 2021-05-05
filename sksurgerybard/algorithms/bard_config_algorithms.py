@@ -130,35 +130,6 @@ def configure_camera(config):
 
     return video_source, mtx33d, dist5d, dims
 
-def configure_pointer(pointer_config):
-    """
-    Parses the pointer configuration.
-    """
-    ref_pointer_file = None
-    pointer_tip_file = None
-    tag_width = None
-    if pointer_config:
-        ref_pointer_file = pointer_config.get('pointer_tag_file')
-        pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
-        tag_width = pointer_config.get('tag_width', None)
-
-    ref_point_data = None
-    pointer_tip = None
-    if ref_pointer_file is not None:
-        ref_point_data = np.loadtxt(ref_pointer_file)
-        if tag_width is not None:
-            pattern_width = min(np.ptp(ref_point_data[:, 2::3]),
-                                np.ptp(ref_point_data[:, 1::3]))
-            scale_factor = tag_width/pattern_width
-            tag_ids = np.copy(ref_point_data[:, 0])
-            ref_point_data *= scale_factor
-            ref_point_data[:, 0] = tag_ids
-
-    if pointer_tip_file is not None:
-        pointer_tip = np.reshape(np.loadtxt(pointer_tip_file), (1, 3))
-    return ref_point_data, pointer_tip
-
-
 def configure_bard(configuration_data):
     """
     Parses the BARD configuration, and prepares output for
@@ -175,10 +146,6 @@ def configure_bard(configuration_data):
     if configuration_data is None:
         configuration_data = {}
 
-    pointer_config = configuration_data.get('pointerData')
-    ref_point_data, pointer_tip = \
-            configure_pointer(pointer_config)
-
     outdir = configuration_data.get('out path')
 
     if outdir is None:
@@ -187,9 +154,7 @@ def configure_bard(configuration_data):
     interaction = configuration_data.get('interaction', {})
     speech_config = configuration_data.get('speech config', False)
 
-    return ref_point_data, \
-        pointer_tip, outdir, interaction, \
-        speech_config
+    return outdir, interaction, speech_config
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
