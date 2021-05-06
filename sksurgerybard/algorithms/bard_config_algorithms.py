@@ -5,7 +5,7 @@
 import os
 import glob
 import numpy as np
-from sksurgerybard.algorithms.interaction import BardKBEvent, \
+from sksurgerybard.interaction.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
 
 

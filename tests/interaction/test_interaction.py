@@ -1,8 +1,8 @@
 #  -*- coding: utf-8 -*-
-"""Tests for BARD interation  module"""
+"""Tests for BARD interaction  module"""
 from time import sleep
 import pytest
-import sksurgerybard.algorithms.interaction as inter
+import sksurgerybard.interaction.interaction as inter
 
 class WritePointerEvent(Exception):#pylint: disable=missing-class-docstring
     pass

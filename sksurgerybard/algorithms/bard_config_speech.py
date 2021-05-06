@@ -6,7 +6,8 @@ from sys import modules
 from threading import Thread
 
 try:
-    from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor
+    from sksurgerybard.interaction.speech_interaction \
+                    import BardSpeechInteractor
 except ModuleNotFoundError:
     pass
 
