@@ -48,7 +48,7 @@ def replace_calibration_dir(config, calibration_dir):
     """
     Replaces 'camera.calibration directory' with the content of
     calibration_dir. Checks if we're using an ArUco tracker and if the
-    sources are the same removes any calibration information from the 
+    sources are the same removes any calibration information from the
     tracker config, so that tracker camera parameters will be set
     by sksurgerybard.tracking.setup_tracker function
     """

@@ -18,7 +18,7 @@ def setup_tracker(configuration):
 
     :raises ValueError: for unsupported tracker types
     """
-    video_source, mtx33d, dist5d, _dims = \
+    _video_source, mtx33d, dist5d, _dims = \
         configure_camera(configuration)
     default_tracker_config = {}
     default_tracker_config['video source'] = 'none'
@@ -55,6 +55,8 @@ def setup_aruco_tracker_camera(configuration):
     Compares the settings in bard_camera_config with those
     in the tracker configuration. If the source is the same
     it overwrites the tracker config parameters
+
+    :raises: KeyError if multiple keys are defined for the same property
     """
     assert configuration is not None
     tracker_config = configuration.get('tracker', None)
@@ -69,7 +71,7 @@ def setup_aruco_tracker_camera(configuration):
     tracker_config.pop('source', None)
     tracker_config['video source'] = tracker_video_source
 
-    camera_video_source, mtx33d, dist5d, _dims = \
+    _camera_video_source, mtx33d, dist5d, _dims = \
         configure_camera(configuration)
 
     tracker_calib_dir = tracker_config.get('calibration directory', None)
@@ -97,6 +99,3 @@ def setup_aruco_tracker_camera(configuration):
         tracker_config['camera distortion'] = dist5d
 
     return tracker_config
-
-
-
