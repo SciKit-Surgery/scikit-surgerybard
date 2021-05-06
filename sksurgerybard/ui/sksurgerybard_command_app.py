@@ -14,9 +14,11 @@ def run_demo(config_file, calib_dir):
     """ Prints command line args, and launches main screen."""
 
     app = QApplication([])
-
-    configurer = ConfigurationManager(config_file)
-    configuration = configurer.get_copy()
+    
+    configuration = None
+    if config_file is not None:
+        configurer = ConfigurationManager(config_file)
+        configuration = configurer.get_copy()
 
     viewer = BARDOverlayApp(configuration, calib_dir)
 
