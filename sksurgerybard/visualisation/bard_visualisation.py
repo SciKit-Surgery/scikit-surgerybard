@@ -7,7 +7,14 @@ from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
 
 def configure_model_and_ref(configuration, transform_manager):
     """
-    Parses the model and reference configuration.
+    Parses the model and reference configuration, returning
+    the models path and the number of visible anatomies.
+    Also returns a representation of the tracking marker.
+
+    :raises AttributeError: if transform_manager does not implement
+        add or get methods
+    :raises ValueError: if transform_manager has not been instatiated
+        with modelreference2camera and model anatomy is present
     """
 
     models_path = None
@@ -60,6 +67,8 @@ def configure_pointer(configuration, transform_manager):
     if configuration is None:
         return pointer_spheres, pointer_tip_sphere, pointer_tip
 
+    pointer_spheres = make_marker_spheres(configuration, 'pointerref')
+
     pointer_config = configuration.get('pointer', None)
 
     if pointer_config is None:
@@ -73,8 +82,6 @@ def configure_pointer(configuration, transform_manager):
                          'there is no pointerref defined in ' +
                          'tracker rigid bodies') from ValueError
 
-
-    pointer_spheres = make_marker_spheres(configuration, 'pointerref')
 
     pointer_tip_file = pointer_config.get('pointer_tag_to_tip')
 
@@ -111,8 +118,7 @@ def make_marker_spheres(configuration, marker_name):
                 scale_factor = tag_width/pattern_width
                 ref_point_data *= scale_factor
 
-                ref_spheres = VTKSphereModel(ref_point_data[:, 1:4], radius=5.0)
-
+            ref_spheres = VTKSphereModel(ref_point_data[:, 1:4], radius=5.0)
 
     return ref_spheres
 
