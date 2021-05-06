@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-"""Tests for BARD interation  module"""
+"""Tests for BARD interaction  module"""
 from time import sleep
 import sys
 import pytest
@@ -9,14 +9,15 @@ from PySide2.QtWidgets import QApplication
 
 try:
     #we do this because bard_config_algorithms doesn't throw module not found
-    from sksurgerybard.algorithms.speech_interaction import BardSpeechInteractor #pylint: disable=unused-import
+    from sksurgerybard.interaction.speech_interaction \
+                    import BardSpeechInteractor #pylint: disable=unused-import
 except ModuleNotFoundError:
     sys.path.insert(0, 'tests/test_utilities/')
 
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 
-from sksurgerybard.algorithms.speech_interaction import \
+from sksurgerybard.interaction.speech_interaction import \
     _on_google_api_not_understand, _on_google_api_request_failure, \
     _on_start_processing_request, _on_start_listen
 

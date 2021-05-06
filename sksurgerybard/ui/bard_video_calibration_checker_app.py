@@ -8,7 +8,7 @@ from sksurgerycore.configuration.configuration_manager import \
     ConfigurationManager
 import sksurgeryimage.calibration.chessboard_point_detector as cpd
 from sksurgerybard.algorithms.bard_config_algorithms import \
-    configure_camera
+    configure_camera, replace_calibration_dir
 
 
 # pylint: disable=too-many-branches
@@ -28,6 +28,7 @@ def run_video_calibration_checker(config_file, calib_dir):
 
     configurer = ConfigurationManager(config_file)
     configuration = configurer.get_copy()
+    configuration = replace_calibration_dir(configuration, calib_dir)
 
     source = configuration.get("source", 1)
     corners = configuration.get("corners")
@@ -42,7 +43,7 @@ def run_video_calibration_checker(config_file, calib_dir):
     if window_size is None:
         raise ValueError("You must specify the window size.")
 
-    _, intrinsics, distortion, _ = configure_camera(configuration, calib_dir)
+    _, intrinsics, distortion, _ = configure_camera(configuration)
     if intrinsics is None:
         raise ValueError("Couldn't load intrinsic parameters")
     if distortion is None:

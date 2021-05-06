@@ -4,6 +4,8 @@
 
 import sys
 from PySide2.QtWidgets import QApplication
+from sksurgerycore.configuration.configuration_manager import \
+        ConfigurationManager
 from sksurgerybard.widgets.bard_overlay_app import BARDOverlayApp
 
 
@@ -13,7 +15,12 @@ def run_demo(config_file, calib_dir):
 
     app = QApplication([])
 
-    viewer = BARDOverlayApp(config_file, calib_dir)
+    configuration = None
+    if config_file is not None:
+        configurer = ConfigurationManager(config_file)
+        configuration = configurer.get_copy()
+
+    viewer = BARDOverlayApp(configuration, calib_dir)
 
     viewer.start()
 

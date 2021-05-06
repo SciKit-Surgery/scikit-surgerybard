@@ -2,9 +2,106 @@
 """Tests for BARD pointer module"""
 import pytest
 import vtk
-import sksurgerybard.algorithms.visualisation as vis
+import numpy as np
+from sksurgerycore.transforms.transform_manager import TransformManager
+import sksurgerybard.visualisation.bard_visualisation as vis
 
 #pylint:disable=no-member
+
+def test_configure_model_and_ref():
+    """Tests for model and ref configuration"""
+    config = None
+    transform_manager = None
+    with pytest.raises(AttributeError):
+        vis.configure_model_and_ref(config, transform_manager)
+
+    transform_manager = TransformManager()
+
+    ref_spheres, models_path, visible_anatomy = \
+                    vis.configure_model_and_ref(config, transform_manager)
+
+    assert ref_spheres is None
+    assert models_path is None
+    assert visible_anatomy == 0
+
+    config = {
+                    "tracker": {
+                    "type" : "sksaruco",
+                    'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                    'smoothing buffer' : 3,
+                    "rigid bodies" : [
+                        {
+                            'name' : 'modelreference',
+                            'filename' : "data/reference.txt",
+                            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                            'tag_width': 49.5,
+                        },
+                        {
+                            'name' : 'pointerref',
+                            'filename' : 'data/pointer.txt',
+                        }
+                    ]
+            }
+         }
+
+    ref_spheres, models_path, visible_anatomy = \
+                    vis.configure_model_and_ref(config, transform_manager)
+
+    bounds = np.array(ref_spheres.actor.GetBounds())
+    expected_bounds = np.array([2.3, 47.2, 2.3, 64.7, -5.0 , 5.0])
+    assert np.allclose(bounds, expected_bounds, atol = 1e-2)
+    assert models_path is None
+    assert visible_anatomy == 0
+
+
+def test_configure_pointer():
+    """Tests for pointer configuration"""
+    config = None
+    transform_manager = None
+    pointer_spheres, pointer_tip_sphere, pointer_tip = \
+                    vis.configure_pointer(config, transform_manager)
+    assert pointer_spheres is None
+    assert pointer_tip_sphere is None
+    assert pointer_tip is None
+
+    transform_manager = TransformManager()
+
+    pointer_spheres, pointer_tip_sphere, pointer_tip = \
+                    vis.configure_pointer(config, transform_manager)
+
+    assert pointer_spheres is None
+    assert pointer_tip_sphere is None
+    assert pointer_tip is None
+
+    config = {
+                    "tracker": {
+                    "type" : "sksaruco",
+                    'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                    'smoothing buffer' : 3,
+                    "rigid bodies" : [
+                        {
+                            'name' : 'modelreference',
+                            'filename' : "data/reference.txt",
+                            'aruco dictionary' : 'DICT_ARUCO_ORIGINAL',
+                            'tag_width': 49.5,
+                        },
+                        {
+                            'name' : 'pointerref',
+                            'filename' : 'data/pointer.txt',
+                        }
+                    ]
+            }
+         }
+
+    pointer_spheres, pointer_tip_sphere, pointer_tip = \
+                    vis.configure_pointer(config, transform_manager)
+
+    bounds = np.array(pointer_spheres.actor.GetBounds())
+    expected_bounds = np.array([-22.45, 22.45, -13.7, 13.7, -5.0 , 5.0])
+    assert np.allclose(bounds, expected_bounds, atol = 1e-2)
+    assert pointer_tip_sphere is None
+    assert pointer_tip is None
+
 
 def test_bad_actor_types():
     """Should throw TypeError if actors are not right type"""

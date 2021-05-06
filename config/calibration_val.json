@@ -2,16 +2,27 @@
     "camera": {
         "source": 0,
         "window size": [640, 480],
-        "grab": 33,
-        "clock": 15,
-        "fullscreen": false,
         "calibration directory": "data/calibration/matts_mbp_640_x_480"
     },
-    "models": {
-	    "ref_file": "data/CameraCalibrationTesting/validation_ref.txt"
+
+    "tracker": {
+            "type" : "sksaruco",
+	    "rigid bodies" : [
+                        {
+                            "name" : "modelreference",
+                            "filename" : "data/CameraCalibrationTesting/validation_ref.txt",
+                            "aruco dictionary" : "DICT_ARUCO_ORIGINAL"
+                        },
+                        {
+                            "name" : "pointerref",
+                            "filename" : "data/pointer.txt",
+                            "aruco dictionary" : "DICT_ARUCO_ORIGINAL"
+                        }
+	    ]
     },
-    "pointerData": {
-        "pointer_tag_file": "data/pointer.txt",
+    "models": {
+    },
+    "pointer": {
         "pointer_tag_to_tip": "data/pointer_tip.txt"
     }
 }
