@@ -142,32 +142,6 @@ def configure_camera(config):
 
     return video_source, mtx33d, dist5d, dims
 
-def configure_bard(configuration_data):
-    """
-    Parses the BARD configuration, and prepares output for
-    OverlayApp
-
-    :param configuration_data: The configuration dictionary
-    :param calib_dir: Optional directory containing a previous calibration.
-
-    :return: lots of configured params.
-
-    :raises: AttributeError if configuration_data doesn't have get method
-    """
-
-    if configuration_data is None:
-        configuration_data = {}
-
-    outdir = configuration_data.get('out path')
-
-    if outdir is None:
-        outdir = './'
-
-    interaction = configuration_data.get('interaction', {})
-    speech_config = configuration_data.get('speech config', False)
-
-    return outdir, interaction, speech_config
-
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
                           bard_visualisation):

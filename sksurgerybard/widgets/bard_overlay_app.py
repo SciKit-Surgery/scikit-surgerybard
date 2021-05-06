@@ -9,7 +9,7 @@ import cv2
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
 from sksurgeryutils.common_overlay_apps import OverlayBaseApp
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
-from sksurgerybard.algorithms.bard_config_algorithms import configure_bard, \
+from sksurgerybard.algorithms.bard_config_algorithms import \
     configure_interaction, configure_camera, replace_calibration_dir
 from sksurgerybard.visualisation.bard_visualisation import \
                 configure_model_and_ref, BardVisualisation, configure_pointer
@@ -23,18 +23,21 @@ class BARDOverlayApp(OverlayBaseApp):
     Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow.
     """
-    def __init__(self, configuration, calib_dir = None):
+    def __init__(self, configuration = None, calib_dir = None):
         """
         Overrides the default constructor to add some member variables
         which we need for the aruco tag detection.
         """
         self._speech_int = None
+        if configuration is None:
+            configuration = {}
+
         configuration = replace_calibration_dir(configuration, calib_dir)
 
         # Loads all config from file.
         video_source, mtx33d, dist15d, dims = configure_camera(configuration)
 
-        (outdir, interaction, speech_config) = configure_bard(configuration)
+        outdir = configuration.get('out path', './')
 
         self.dims = dims
         self.mtx33d = mtx33d
@@ -114,9 +117,11 @@ class BARDOverlayApp(OverlayBaseApp):
         bard_visualisation = BardVisualisation(self._get_all_actors(),
                                                self._model_list)
 
+        interaction = configuration.get('interaction', {})
         configure_interaction(interaction, self.vtk_overlay_window,
                               self._pointer_writer, bard_visualisation)
 
+        speech_config = configuration.get('speech config', False)
         if interaction.get('speech', False):
             self._speech_int = configure_speech_interaction(
                 speech_config, bard_visualisation)

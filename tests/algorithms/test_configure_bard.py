@@ -8,30 +8,6 @@ import pytest
 import sksurgerybard.algorithms.bard_config_algorithms as bca
 
 
-def test_valid_config():
-    """
-    config, and checks that we have retrieved the calibration
-    """
-    config = {
-        "camera": {
-        "source": 0,
-        "window size": [640, 480],
-        "calibration directory": "data/calibration/matts_mbp_640_x_480"
-        },
-        "models": {
-            "models_dir": "data/PelvisPhantom/",
-            "ref_file": "data/reference.txt",
-            "reference_to_model" : "data/id.txt",
-            "tag_width": 49.5
-        }
-    }
-
-    _, _, _ = bca.configure_bard(config)
-
-    config = None
-    _, _, _ = bca.configure_bard(config)
-
-
 def test_configure_camera():
     """Tests for the camera configuration"""
     config = {
