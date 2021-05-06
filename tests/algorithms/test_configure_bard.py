@@ -150,5 +150,4 @@ def test_replace_calib_dir():
     camera_config = config_out.get('camera', None)
     assert camera_config.get('calibration directory', None) == 'test_string'
     tracker_config = config_out.get('tracker', None)
-    assert tracker_config.get('calibration directory', None) == \
-                    'test_string'
+    assert tracker_config.get('calibration directory', None) is None

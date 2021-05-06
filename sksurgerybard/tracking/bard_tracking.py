@@ -18,7 +18,7 @@ def setup_tracker(configuration):
 
     :raises ValueError: for unsupported tracker types
     """
-    _video_source, mtx33d, dist5d, _dims = \
+    video_source, mtx33d, dist5d, _dims = \
         configure_camera(configuration)
     default_tracker_config = {}
     default_tracker_config['video source'] = 'none'
@@ -37,6 +37,8 @@ def setup_tracker(configuration):
     if tracker_config.get('type', 'sksaruco') != 'sksaruco':
         raise ValueError("BARD Currently only supports ArUco trackers")
 
+    tracker_config = setup_aruco_tracker_camera(configuration)
+
     rigid_bodies = tracker_config.get('rigid bodies', None)
     if rigid_bodies is not None:
         for rigid_body in rigid_bodies:
@@ -45,9 +47,56 @@ def setup_tracker(configuration):
                 transform_manager.add(name + '2tracker',
                                 np.eye(4, dtype = np.float64))
 
-    _video_source, mtx33d, dist5d, _dims = configure_camera(configuration)
-    tracker_config['video source'] = 'none'
-    tracker_config['camera projection'] = mtx33d
-    tracker_config['camera distortion'] = dist5d
-
     return ArUcoTracker(tracker_config), transform_manager
+
+
+def setup_aruco_tracker_camera(configuration):
+    """
+    Compares the settings in bard_camera_config with those
+    in the tracker configuration. If the source is the same
+    it overwrites the tracker config parameters
+    """
+    assert configuration is not None
+    tracker_config = configuration.get('tracker', None)
+    assert tracker_config is not None
+    assert tracker_config.get('type', 'sksaruco') == 'sksaruco'
+
+    if 'video source' in tracker_config and 'source' in tracker_config:
+        raise KeyError('Video source for aruco tracker defined multiple times')
+
+    tracker_video_source = tracker_config.get('video source', 'none')
+    tracker_video_source = tracker_config.get('source', tracker_video_source)
+    tracker_config.pop('source', None)
+    tracker_config['video source'] = tracker_video_source
+
+    camera_video_source, mtx33d, dist5d, _dims = \
+        configure_camera(configuration)
+
+    tracker_calib_dir = tracker_config.get('calibration directory', None)
+    if tracker_calib_dir is not None:
+        if 'calibration' in tracker_config:
+            raise KeyError('Video calibration aruco tracker defined' +
+                           ' multiple times')
+
+        if ('camera projection' in tracker_config or
+                    'camera distortion' in tracker_config):
+            raise KeyError('Video calibration aruco tracker defined' +
+                           ' multiple times')
+
+        tracker_cam_config = { 'camera' : {
+                               'calibration directory' : tracker_calib_dir }
+                             }
+        _, mtx33d, dist5d, _ = configure_camera(tracker_cam_config)
+
+
+    mtx33d = tracker_config.get('camera projection', mtx33d)
+    dist5d = tracker_config.get('camera distortion', dist5d)
+
+    if 'calibration' not in tracker_config:
+        tracker_config['camera projection'] = mtx33d
+        tracker_config['camera distortion'] = dist5d
+
+    return tracker_config
+
+
+
