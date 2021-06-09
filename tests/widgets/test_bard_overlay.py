@@ -41,6 +41,52 @@ config = {
 
 }
 
+def _matrices_equivalent(mat_a, mat_b, cube_length = 500.0, tolerance = 5.0):
+    """
+    Helper function to check the equivalence of 2 matrices.
+    Because the 3x3 rotation and the 1X3 translation can
+    have very different magnitudes we want something
+    a bit more nuances than just np.allclose for the
+    whole matrix.
+    np.allclose worked OK until opencv-contrib-python > 4.5.1
+    see Issue #69
+
+    Rather than comparing matrices let's look at what happens when we
+    apply them to point cooridinates. If we define an operating cube,
+    with the camera at the centre of the plane defined by the
+    x and y axes and z = 0, by testing the differences at the
+    extremities of that cube we can say that BARD is accurate to
+    within x mm over a volume of side length x mm. By default 5.0 mm and
+    500 mm.
+
+    This isn't very accurate but mainly seems to be due to
+    instability in opencv-contrib-python. If you wanted more
+    accuracy for a given application you could version
+    lock opencv-contrib-python
+    """
+    cube_points = np.array(
+                    [[-cube_length/2.0, -cube_length/2.0, cube_length, 1.],
+                     [-cube_length/2.0, cube_length/2.0, cube_length, 1.],
+                     [cube_length/2.0, cube_length/2.0, cube_length, 1.],
+                     [cube_length/2.0, -cube_length/2.0, cube_length, 1.],
+                     [-cube_length/2.0, -cube_length/2.0, 0., 1.],
+                     [-cube_length/2.0, cube_length/2.0, 0., 1.],
+                     [cube_length/2.0, cube_length/2.0, 0., 1.],
+                     [cube_length/2.0, -cube_length/2.0, 0., 1.]],
+                    dtype = np.float32)
+
+    trans_a = np.matmul(mat_a, cube_points.transpose())
+    trans_b = np.matmul(mat_b, cube_points.transpose())
+
+    equivalent = np.allclose(trans_a, trans_b, rtol = 0.0, atol = tolerance)
+
+    if not equivalent:
+        print ("trans a: " , trans_a.transpose())
+        print ("trans b: " , trans_b.transpose())
+        print ("diff: " , trans_a.transpose() - trans_b.transpose())
+
+    return equivalent
+
 
 def test_valid_config():
     """
@@ -71,9 +117,8 @@ def test_valid_config():
        [ 0.0000e+00, 0.00000e+00, 0.00000e+00, 1.00000000e+00]],
        dtype=np.float32)
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("modelreference2camera"),
-            cam2model_regression)
+    assert _matrices_equivalent(cam2model_regression,
+                    bard_overlay.transform_manager.get("modelreference2camera"))
 
     pointer2camera_regression = np.array([
         [-7.73764273e-01, -5.63721201e-01, -2.88976095e-01, -2.36736050e+01],
@@ -82,9 +127,8 @@ def test_valid_config():
         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]],
         dtype=np.float32)
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2camera"),
-            pointer2camera_regression)
+    assert _matrices_equivalent(pointer2camera_regression,
+                    bard_overlay.transform_manager.get("pointerref2camera"))
 
     pointer2model_regression = np.array([
         [ 3.33984650e-01,  8.89101495e-01,  3.12974096e-01, -5.75688438e+01],
@@ -93,9 +137,8 @@ def test_valid_config():
         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]],
         dtype=np.float32)
 
-    assert np.allclose(
-         bard_overlay.transform_manager.get("pointerref2modelreference"),
-                        pointer2model_regression)
+    assert _matrices_equivalent(pointer2model_regression,
+                bard_overlay.transform_manager.get("pointerref2modelreference"))
 
     #skip 5 frames
     for _ in range(5):
@@ -108,9 +151,8 @@ def test_valid_config():
         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]],
         dtype=np.float32)
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("modelreference2camera"),
-            cam2model_regression, rtol = 1e-5)
+    assert _matrices_equivalent(cam2model_regression,
+                    bard_overlay.transform_manager.get("modelreference2camera"))
 
     pointer2camera_regression = np.array([
         [-7.79677038e-01, -5.68897180e-01, -2.61648075e-01, -2.46573302e+01],
@@ -119,9 +161,8 @@ def test_valid_config():
         [ 0.00000000e+00,  0.00000000e+00, 0.00000000e+00,  1.00000000e+00]],
         dtype=np.float32)
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("pointerref2camera"),
-            pointer2camera_regression)
+    assert _matrices_equivalent(pointer2camera_regression,
+                    bard_overlay.transform_manager.get("pointerref2camera"))
 
     pointer2model_regression = np.array([
         [3.40810874e-01,  8.93456607e-01,  2.92546132e-01, -5.68496465e+01],
@@ -130,10 +171,9 @@ def test_valid_config():
         [0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]],
         dtype=np.float32)
 
+    assert _matrices_equivalent(pointer2model_regression,
+                bard_overlay.transform_manager.get("pointerref2modelreference"))
 
-    assert np.allclose(
-         bard_overlay.transform_manager.get("pointerref2modelreference"),
-                        pointer2model_regression)
 
 def test_with_no_pointer():
     """Should work OK when we have no pointer data"""
@@ -177,9 +217,8 @@ def test_with_no_pointer():
        [ 0.0000e+00, 0.00000e+00, 0.00000e+00, 1.00000000e+00]],
        dtype=np.float32)
 
-    assert np.allclose(
-            bard_overlay.transform_manager.get("modelreference2camera"),
-            cam2model_regression)
+    assert _matrices_equivalent(cam2model_regression,
+                    bard_overlay.transform_manager.get("modelreference2camera"))
 
     with pytest.raises(ValueError):
         bard_overlay.transform_manager.get("pointerref2camera")
