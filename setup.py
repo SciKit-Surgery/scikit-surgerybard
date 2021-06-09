@@ -59,7 +59,7 @@ setup(
         'PySide2<5.15.0',
         'opencv-contrib-python',
         'scikit-surgerycore>=0.6.8',
-        'scikit-surgerycalibration',
+        'scikit-surgerycalibration>=0.1.9',
         'scikit-surgeryutils',
         'scikit-surgeryvtk',
         'scikit-surgeryarucotracker>=0.2.4',
