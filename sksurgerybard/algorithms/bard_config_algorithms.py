@@ -2,8 +2,6 @@
 
 """ Algorithms used by the B.A.R.D. """
 
-import os
-import glob
 import numpy as np
 from sksurgerycalibration.video.video_calibration_params import \
         MonoCalibrationParams

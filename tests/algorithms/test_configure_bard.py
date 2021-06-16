@@ -2,7 +2,6 @@
 
 """ Tests for BARD configuration module. """
 
-from os.path import join
 import numpy as np
 import pytest
 import sksurgerybard.algorithms.bard_config_algorithms as bca
@@ -34,7 +33,7 @@ def test_configure_camera():
     assert np.isclose(dist15d[0], -0.02191634)
     assert dims == (640, 480)
 
-    #what happens when the calibration data is not there 
+    #what happens when the calibration data is not there
     config['camera']['calibration directory'] = 'data'
     with pytest.raises(IOError):
         video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
