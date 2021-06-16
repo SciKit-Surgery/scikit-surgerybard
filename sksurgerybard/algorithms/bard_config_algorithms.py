@@ -2,46 +2,11 @@
 
 """ Algorithms used by the B.A.R.D. """
 
-import os
-import glob
 import numpy as np
+from sksurgerycalibration.video.video_calibration_params import \
+        MonoCalibrationParams
 from sksurgerybard.interaction.interaction import BardKBEvent, \
         BardMouseEvent, BardFootSwitchEvent
-
-
-def get_calibration_filenames(calibration_dir):
-    """
-    Hunts for the correct file names in calibration_dir:
-    Camera intrinsics should be in: *.intrinsics.txt
-    Camera distortion params should be in: *.distortion.txt
-
-    :param calibration_dir: directory containing a scikit-surgerycalibration
-        format video calibration.
-
-    :return: intrinsics,distortion.
-
-    :raises FileNotFoundError: If the number of either file is not 1
-    """
-    intrinsics_path = None
-    distortion_path = None
-
-    if os.path.isdir(calibration_dir):
-
-        intrinsic_files = glob.glob(os.path.join(calibration_dir,
-                                                 "*.intrinsics.txt"))
-        if len(intrinsic_files) == 1:
-            intrinsics_path = intrinsic_files[0]
-
-        distortion_files = glob.glob(os.path.join(calibration_dir,
-                                                  "*.distortion.txt"))
-        if len(distortion_files) == 1:
-            distortion_path = distortion_files[0]
-
-    if intrinsics_path is None or distortion_path is None:
-        raise FileNotFoundError("Failed to find exactly one instance of" +
-            "*.intrinsics.txt or *.distortion.txt in ", calibration_dir)
-
-    return intrinsics_path, distortion_path
 
 
 def replace_calibration_dir(config, calibration_dir):
@@ -103,8 +68,6 @@ def configure_camera(config):
                        [0.0, 1000.0, 240.0],
                        [0.0, 0.0, 1.0]])
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
-    intrinsics_path = None
-    distortion_path = None
 
     if config is None:
         return video_source, mtx33d, dist5d, dims
@@ -115,9 +78,13 @@ def configure_camera(config):
         video_source = camera_config.get('source', 0)
 
         calib_dir = camera_config.get('calibration directory', None)
+        calib_prefix = camera_config.get('calibration prefix', 'calib')
         if calib_dir is not None:
-            intrinsics_path, distortion_path = \
-                get_calibration_filenames(calib_dir)
+            calib_param = MonoCalibrationParams()
+            calib_param.load_data(calib_dir, calib_prefix,
+                            halt_on_ioerror = False)
+            mtx33d = calib_param.camera_matrix
+            dist5d = calib_param.dist_coeffs
 
         dims = camera_config.get('window size', None)
         if dims is None:
@@ -126,19 +93,6 @@ def configure_camera(config):
         else:
             # JSON file contains list, OpenCV requires tuple.
             dims = (dims[0], dims[1])
-
-    # Finally load parameters, or WARN if not specified.
-    if intrinsics_path is not None:
-        print("INFO: Loading intrinsics from:" + intrinsics_path)
-        mtx33d = np.loadtxt(intrinsics_path)
-    else:
-        print("WARNING: Didn't find intrinsics file.")
-
-    if distortion_path is not None:
-        print("INFO: Loading distortion params from:" + distortion_path)
-        dist5d = np.loadtxt(distortion_path)
-    else:
-        print("WARNING: Didn't find distortion params file.")
 
     return video_source, mtx33d, dist5d, dims
 

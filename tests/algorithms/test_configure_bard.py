@@ -2,7 +2,6 @@
 
 """ Tests for BARD configuration module. """
 
-from os.path import join
 import numpy as np
 import pytest
 import sksurgerybard.algorithms.bard_config_algorithms as bca
@@ -34,6 +33,12 @@ def test_configure_camera():
     assert np.isclose(dist15d[0], -0.02191634)
     assert dims == (640, 480)
 
+    #what happens when the calibration data is not there
+    config['camera']['calibration directory'] = 'data'
+    with pytest.raises(IOError):
+        video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
+
+    #what happens with no config
     config = None
     video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
     assert video_source == 0
@@ -42,22 +47,6 @@ def test_configure_camera():
     assert np.array_equal(mtx33d, r_mtx33d)
     assert np.array_equal(dist15d, np.array([0.0, 0.0, 0.0, 0.0, 0.0]))
     assert dims is None
-
-
-def test_get_calibration_filenames():
-    """Tests for get_calibration_filenames"""
-
-    calib_dir = 'data'
-    with pytest.raises(FileNotFoundError):
-        bca.get_calibration_filenames(calib_dir)
-
-    calib_dir = 'data/calibration/matts_mbp_640_x_480'
-    intrins, dist = bca.get_calibration_filenames(calib_dir)
-
-    assert intrins == \
-        join(calib_dir, 'calib.intrinsics.txt')
-    assert dist == \
-        join(calib_dir, 'calib.distortion.txt')
 
 
 def test_replace_calib_dir():
