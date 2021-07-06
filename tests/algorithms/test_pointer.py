@@ -5,7 +5,7 @@
 import pytest
 import numpy as np
 from sksurgerycore.transforms.transform_manager import TransformManager
-import sksurgerybard.algorithms.pointer as pointer
+from sksurgerybard.algorithms import pointer
 
 
 def test_write_pointer_invalid_tm():

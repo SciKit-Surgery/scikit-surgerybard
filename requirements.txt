@@ -9,7 +9,7 @@ scikit-surgerycalibration>=0.1.9
 scikit-surgerycore>=0.6.8
 scikit-surgeryutils
 scikit-surgeryvtk
-scikit-surgeryarucotracker>=0.2.4
+scikit-surgeryarucotracker>=0.2.5
 opencv-contrib-python
 #scikit-surgeryspeech>=0.2.0 #uncomment this to use speech interface
 #PocketSphinx # uncomment this to use speech with sphinx
