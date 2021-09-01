@@ -8,9 +8,9 @@
 	"type" : "sksaruco",
 	"source" : 0,
 	"calibration directory": "data/calibration/matts_mbp_640_x_480",
-	rigid_bodies : [ {
+	"rigid bodies" : [ {
 			"name" : "modelreference",
-                	"filename" : "data/reference_for_small_liver.txt",
+                        "filename" : "data/reference.txt",
                 	"aruco dictionary" : "DICT_ARUCO_ORIGINAL"
 			},
 			{
