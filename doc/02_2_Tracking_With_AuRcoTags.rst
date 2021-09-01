@@ -14,14 +14,14 @@ OpenCV.
 
 1. Try running the following, and check that the USB camera can track the reference marker
 ::
-   python sksurgerybard.py --config config/reference_only.json
+   python sksurgerybard.py --config config/example_config.json
 
 
 When you place the reference marker (data/reference.pdf) in front of the webcam you should
 see the tag pattern overlaid with spherical markers. Check that the webcam width and height 
 specified in the configuration file are the same as the images you performed calibration on.
 
-The configuration file (config/reference_only.json) references a file data/reference.txt
+The configuration file (config/example_config.json) references a file data/reference.txt
 that defines a list of AruCo markers and their position in 3D space on the printed 
 reference marker. For tracking, OpenCV detects the markers in the image, and forms a
 list of 2D image points, and their corresponding 3D coordinates on the reference marker.
