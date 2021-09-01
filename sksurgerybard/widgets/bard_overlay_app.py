@@ -166,7 +166,7 @@ class BARDOverlayApp(OverlayBaseApp):
                         self.tracker.get_frame()
 
         for index, port_handle in enumerate(port_handles):
-            if ((not np.isnan(quality[index])) and quality[index] > 0.2):
+            if (not np.isnan(quality[index])) and quality[index] > 0.2:
                 try:
                     self.transform_manager.add(port_handle + '2tracker',
                                     tracking[index])
