@@ -16,3 +16,4 @@ pyinstaller
 pytest
 tox
 vtk<=9.0.1
+versioneer
