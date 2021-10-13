@@ -75,6 +75,8 @@ jobs:
       - name: Build wheel
         run: |
           versioneer install
+          git restore --staged  sksurgerybard/_version.py
+          git update-index --assume-unchanged sksurgerybard/_version.py
           python setup.py sdist
 
       - name: Publish package if tagged release
