@@ -56,7 +56,7 @@ class BardPointerWriter():
             print("No pointer matrix available")
 
         if pointermat is not None:
-            filename = '{0:d}.txt'.format(int(time()*1e7))
+            filename = f'{int(time()*1e7)}.txt'
             savetxt(path.join(self._matoutdir, filename), pointermat)
             print("Pointer matrix written to ",
                   path.join(self._matoutdir, filename))
