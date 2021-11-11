@@ -7,7 +7,6 @@ import numpy as np
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 import sksurgerybard.tracking.bard_tracking as btrk
 
-
 def test_setup_tracker():
     """Tests for the tracker setup"""
 
@@ -100,3 +99,39 @@ def test_aruco_tracker_camera():
     #should raise value error if multiple calibration defined
     with pytest.raises(KeyError):
         btrk.setup_aruco_tracker_camera(config)
+
+
+def test_aruco_same_source():
+    """
+    Tests to check that aruco tracking gets set
+    to none if source is the same as camera
+    """
+    config = {
+              'camera' : {
+                   'source' : 0
+                   },
+              'tracker' : {
+                      'video source' : 0,
+                      'calibration directory' : \
+                            'data/calibration/matts_mbp_640_x_480'
+                            }
+              }
+
+    tracker_config = btrk.setup_aruco_tracker_camera(config)
+
+    assert tracker_config.get('video source', 1) == 'none'
+
+    config = {
+              'camera' : {
+                   'source' : 0
+                   },
+              'tracker' : {
+                      'source' : 0,
+                      'calibration directory' : \
+                            'data/calibration/matts_mbp_640_x_480'
+                            }
+              }
+
+    tracker_config = btrk.setup_aruco_tracker_camera(config)
+
+    assert tracker_config.get('video source', 1) == 'none'

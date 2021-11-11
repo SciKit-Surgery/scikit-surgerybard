@@ -100,8 +100,8 @@ def test_replace_calib_dir():
     #with tracker config using the same camera
     config_in = {
                     'camera' : {
-                                'source' : 1,
-                                'calibration directory' : 'overwrite this',
+                                  'source' : 1,
+                                  'calibration directory' : 'overwrite this',
                                 },
                     'tracker' :
                                 {
@@ -114,5 +114,3 @@ def test_replace_calib_dir():
     config_out = bca.replace_calibration_dir(config_in, calibration_dir)
     camera_config = config_out.get('camera', None)
     assert camera_config.get('calibration directory', None) == 'test_string'
-    tracker_config = config_out.get('tracker', None)
-    assert tracker_config.get('calibration directory', None) is None
