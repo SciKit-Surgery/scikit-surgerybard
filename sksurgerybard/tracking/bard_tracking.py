@@ -71,8 +71,10 @@ def setup_aruco_tracker_camera(configuration):
     tracker_config.pop('source', None)
     tracker_config['video source'] = tracker_video_source
 
-    _camera_video_source, mtx33d, dist5d, _dims = \
-        configure_camera(configuration)
+    tracker_config = _setup_aruco_single_camera(configuration, tracker_config)
+
+    mtx33d = tracker_config.get('camera projection', None)
+    dist5d = tracker_config.get('camera distortion', None)
 
     tracker_calib_dir = tracker_config.get('calibration directory', None)
     if tracker_calib_dir is not None:
@@ -90,11 +92,36 @@ def setup_aruco_tracker_camera(configuration):
                              }
         _, mtx33d, dist5d, _ = configure_camera(tracker_cam_config)
 
-
-    mtx33d = tracker_config.get('camera projection', mtx33d)
-    dist5d = tracker_config.get('camera distortion', dist5d)
-
     if 'calibration' not in tracker_config:
+        tracker_config['camera projection'] = mtx33d
+        tracker_config['camera distortion'] = dist5d
+
+    return tracker_config
+
+def _setup_aruco_single_camera(configuration, tracker_config):
+    """
+    For the case where we're using a single camera for both the
+    video overlay and for the ArUco tracker, make sure that the
+    ArUco video source is set to none and that the calibrations
+    are the same. Don't call this function directly, use
+    setup_aruco_tracker_camera instead.
+    """
+
+    camera_config = configuration.get('camera')
+    camera_video_source = camera_config.get('source', 0)
+
+    assert tracker_config.get('source', None) is None
+    tracker_video_source = tracker_config.get('video source', None)
+
+    if tracker_video_source not in (camera_video_source, 'none'):
+        return tracker_config
+
+    tracker_config['video source'] = 'none'
+
+    if 'calibration directory' in camera_config:
+        _video_source, mtx33d, dist5d, _dims = configure_camera(configuration)
+        tracker_config.pop('calibration directory', None)
+        tracker_config.pop('calibration', None)
         tracker_config['camera projection'] = mtx33d
         tracker_config['camera distortion'] = dist5d
 

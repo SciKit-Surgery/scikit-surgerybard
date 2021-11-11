@@ -12,10 +12,7 @@ from sksurgerybard.interaction.interaction import BardKBEvent, \
 def replace_calibration_dir(config, calibration_dir):
     """
     Replaces 'camera.calibration directory' with the content of
-    calibration_dir. Checks if we're using an ArUco tracker and if the
-    sources are the same removes any calibration information from the
-    tracker config, so that tracker camera parameters will be set
-    by sksurgerybard.tracking.setup_tracker function
+    calibration_dir.
     """
     if calibration_dir is None:
         return config
@@ -29,24 +26,6 @@ def replace_calibration_dir(config, calibration_dir):
     camera_config = config.get('camera')
 
     camera_config['calibration directory'] = calibration_dir
-
-    tracker_config = config.get('tracker', None)
-    if tracker_config is not None:
-        if tracker_config.get('type', 'notaruco') == 'sksaruco':
-            camera_source = camera_config.get('source', 0)
-            tracker_source = tracker_config.get('video source', 0)
-            if tracker_source == 0:
-                tracker_source = tracker_config.get('source', 0)
-
-            if tracker_source == camera_source:
-                tracker_config.pop('source', None)
-                tracker_config.pop('video source', None)
-                tracker_config.pop('calibration directory', None)
-                tracker_config.pop('calibration', None)
-                tracker_config.pop('camera projection', None)
-                tracker_config.pop('camera distortion', None)
-
-        config['tracker'] = tracker_config
 
     config['camera'] = camera_config
     return config
