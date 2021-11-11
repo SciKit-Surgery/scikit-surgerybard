@@ -120,6 +120,8 @@ def test_aruco_same_source():
     tracker_config = btrk.setup_aruco_tracker_camera(config)
 
     assert tracker_config.get('video source', 1) == 'none'
+    assert tracker_config.get('calibration directory', None) == \
+            'data/calibration/matts_mbp_640_x_480'
 
     config = {
               'camera' : {
@@ -135,3 +137,47 @@ def test_aruco_same_source():
     tracker_config = btrk.setup_aruco_tracker_camera(config)
 
     assert tracker_config.get('video source', 1) == 'none'
+    assert tracker_config.get('calibration directory', None) == \
+            'data/calibration/matts_mbp_640_x_480'
+
+
+def test_aruco_diff_source():
+    """
+    Tests that tracker bits don't get overwritten when sources are difference
+    """
+
+    config = {
+              'camera' : {
+                   'source' : 0
+                   },
+              'tracker' : {
+                      'video source' : 1,
+                      'calibration directory' : \
+                            'data/calibration/matts_mbp_640_x_480'
+                            }
+              }
+
+    tracker_config = btrk.setup_aruco_tracker_camera(config)
+
+    assert tracker_config.get('video source', 0) == 1
+    assert tracker_config.get('calibration directory', None) == \
+            'data/calibration/matts_mbp_640_x_480'
+
+    config = {
+              'camera' : {
+                   'source' : 0,
+                   'calibration directory' : \
+                            'camera calib'
+                   },
+              'tracker' : {
+                      'video source' : 1,
+                      'calibration directory' : \
+                            'data/calibration/matts_mbp_640_x_480'
+                            }
+              }
+
+    tracker_config = btrk.setup_aruco_tracker_camera(config)
+
+    assert tracker_config.get('video source', 0) == 1
+    assert tracker_config.get('calibration directory', None) == \
+            'data/calibration/matts_mbp_640_x_480'
