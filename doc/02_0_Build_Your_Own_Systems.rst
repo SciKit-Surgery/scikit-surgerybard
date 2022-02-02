@@ -17,9 +17,9 @@ Build Your Own Image Guided Surgery System
 
 3. Get B.A.R.D.
 ::
-  git clone https://github.com/UCL/scikit-surgerybard.git
+  git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
 
-or navigate to https://github.com/UCL/scikit-surgerybard
+or navigate to https://github.com/SciKit-Surgery/scikit-surgerybard
 and use the download button
 
 navigate to the scikit-surgerybard directory and run
@@ -34,7 +34,7 @@ if you don't have administrative permissions.
 
 **Another method to get BARD and all its dependant packages is the following**
 ::
-  git clone https://github.com/UCL/scikit-surgerybard.git
+  git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
 
 Change directory to the newly created `scikit-surgerybard` by
 ::
