@@ -19,7 +19,7 @@ Basic Augmented Reality Demo.
     :target: http://scikit-surgerybard.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/Video-Registration-blueviolet
+.. image:: https://img.shields.io/badge/Video-BARD-blueviolet
    :target: https://youtu.be/frviS--x5y4
    :alt: SciKit-SurgeryBARD Demonstration on YouTube
 
