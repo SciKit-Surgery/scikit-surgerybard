@@ -1,7 +1,7 @@
 Basic Augmented Reality Demo.
 ===============================
 
-.. image:: https://github.com/SciKit-Surgery/scikit-surgerybard/raw/master/project-icon.png
+.. image:: https://github.com/SciKit-Surgery/scikit-surgerybard/raw/master/sksbard_logo.png
    :height: 128px
    :width: 128px
    :target: https://github.com/SciKit-Surgery/scikit-surgerybard
@@ -18,6 +18,21 @@ Basic Augmented Reality Demo.
 .. image:: https://readthedocs.org/projects/scikit-surgerybard/badge/?version=latest
     :target: http://scikit-surgerybard.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+
+.. image:: https://img.shields.io/badge/Video-Registration-blueviolet
+   :target: https://youtu.be/frviS--x5y4
+   :alt: SciKit-SurgeryBARD Demonstration on YouTube
+
+.. image:: https://img.shields.io/badge/Cite-SciKit--Surgery-informational
+   :target: https://doi.org/10.1007/s11548-020-02180-5
+   :alt: The SciKit-Surgery paper
+
+.. image:: https://img.shields.io/twitter/follow/scikit_surgery?style=social
+   :target: https://twitter.com/scikit_surgery?ref_src=twsrc%5Etfw
+   :alt: Follow scikit_surgery on twitter
+
+
+
 
 
 
