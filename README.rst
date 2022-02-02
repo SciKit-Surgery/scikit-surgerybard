@@ -1,18 +1,18 @@
 Basic Augmented Reality Demo.
 ===============================
 
-.. image:: https://github.com/UCL/scikit-surgerybard/raw/master/project-icon.png
+.. image:: https://github.com/SciKit-Surgery/scikit-surgerybard/raw/master/project-icon.png
    :height: 128px
    :width: 128px
-   :target: https://github.com/UCL/scikit-surgerybard
+   :target: https://github.com/SciKit-Surgery/scikit-surgerybard
    :alt: Logo
 
-.. image:: https://github.com/UCL/scikit-surgerybard/workflows/.github/workflows/ci.yml/badge.svg 
-   :target: https://github.com/UCL/scikit-surgerybard/actions
+.. image:: https://github.com/SciKit-Surgery/scikit-surgerybard/workflows/.github/workflows/ci.yml/badge.svg 
+   :target: https://github.com/SciKit-Surgery/scikit-surgerybard/actions
    :alt: Travis CI test status
 
-.. image:: https://coveralls.io/repos/github/UCL/scikit-surgerybard/badge.svg?branch=master&service=github
-    :target: https://coveralls.io/github/UCL/scikit-surgerybard?branch=master
+.. image:: https://coveralls.io/repos/github/SciKit-Surgery/scikit-surgerybard/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/SciKit-Surgery/scikit-surgerybard?branch=master
     :alt: Test coverage
 
 .. image:: https://readthedocs.org/projects/scikit-surgerybard/badge/?version=latest
@@ -58,12 +58,12 @@ Supported by `Wellcome`_ and `EPSRC`_.
 
 
 .. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
-.. _`source code repository`: https://github.com/UCL/scikit-surgerybard
+.. _`source code repository`: https://github.com/SciKit-Surgery/scikit-surgerybard
 .. _`Documentation`: https://scikit-surgerybard.readthedocs.io
-.. _`SciKit-Surgery`: https://github.com/UCL/scikit-surgery/wiki
+.. _`SciKit-Surgery`: https://github.com/SciKit-Surgery/scikit-surgery/
 .. _`University College London (UCL)`: http://www.ucl.ac.uk/
 .. _`Wellcome`: https://wellcome.ac.uk/
 .. _`EPSRC`: https://www.epsrc.ac.uk/
-.. _`contributing guidelines`: https://github.com/UCL/scikit-surgerybard/blob/master/CONTRIBUTING.rst
-.. _`license file`: https://github.com/UCL/scikit-surgerybard/blob/master/LICENSE
+.. _`contributing guidelines`: https://github.com/SciKit-Surgery/scikit-surgerybard/blob/master/CONTRIBUTING.rst
+.. _`license file`: https://github.com/SciKit-Surgery/scikit-surgerybard/blob/master/LICENSE
 

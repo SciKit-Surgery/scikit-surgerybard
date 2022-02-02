@@ -32,6 +32,6 @@ After completing the workshop the student should be able to:
 .. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
 .. _`OpenCV` : https://opencv.org/
 .. _`VTK` : https://vtk.org/
-.. _`SciKit-Surgery`: https://github.com/UCL/scikit-surgery/wiki
+.. _`SciKit-Surgery`: https://github.com/SciKit-Surgery/
 .. _`EPSRC`: https://www.epsrc.ac.uk/
 .. _`Wellcome EPSRC Centre for Interventional and Surgical Sciences`: http://www.ucl.ac.uk/weiss
