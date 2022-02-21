@@ -36,8 +36,8 @@ def configure_camera(config):
     :param config: dictionary containing BARD configuration
         parameters optional parameters in camera.
         source (default 0), window size (default delegates to
-        cv2.CAP_PROP_FRAME_WIDTH and calibration directory
-    :param calibration_dir: optional, overrides dictionary value
+        cv2.CAP_PROP_FRAME_WIDTH), calibration directory and
+        roi (region of interest)
 
     """
     # Specify some reasonable defaults. Webcams are typically 640x480.
@@ -47,9 +47,10 @@ def configure_camera(config):
                        [0.0, 1000.0, 240.0],
                        [0.0, 0.0, 1.0]])
     dist5d = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    roi = None
 
     if config is None:
-        return video_source, mtx33d, dist5d, dims
+        return video_source, mtx33d, dist5d, dims, roi
 
     camera_config = config.get('camera', None)
     if camera_config is not None:
@@ -71,9 +72,18 @@ def configure_camera(config):
                   "This probably breaks the calibrated overlay!")
         else:
             # JSON file contains list, OpenCV requires tuple.
+            if len(dims) != 2:
+                raise ValueError("Invalid window size given, window size",
+                    " should be list of length 2")
             dims = (dims[0], dims[1])
 
-    return video_source, mtx33d, dist5d, dims
+        roi = camera_config.get('roi', None)
+        if roi is not None:
+            if len(roi) != 4:
+                raise ValueError("Invalid roi set. Region of interest should",
+                    " be a list of length 4. [x_start, y_start, x_end, y_end]")
+
+    return video_source, mtx33d, dist5d, dims, roi
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,

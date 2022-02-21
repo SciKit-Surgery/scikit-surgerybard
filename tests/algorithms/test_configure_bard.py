@@ -23,7 +23,7 @@ def test_configure_camera():
         }
     }
 
-    video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
+    video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
 
     # Just a test to check we have loaded the calibration.
     assert video_source == 0
@@ -32,21 +32,38 @@ def test_configure_camera():
     assert dist15d is not None
     assert np.isclose(dist15d[0], -0.02191634)
     assert dims == (640, 480)
+    assert roi is None
+
+    #with roi (incorrect)
+    config['camera']['roi'] = [10, 10, 10]
+    with pytest.raises(ValueError):
+        video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
+
+    #with roi (correct)
+    config['camera']['roi'] = [0, 10, 100, 120]
+    video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
+    assert roi == [0, 10, 100, 120]
+
+    #with incorrect window size
+    config['camera']['window size'] = [10, 10, 10]
+    with pytest.raises(ValueError):
+        video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
 
     #what happens when the calibration data is not there
     config['camera']['calibration directory'] = 'data'
     with pytest.raises(IOError):
-        video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
+        video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
 
     #what happens with no config
     config = None
-    video_source, mtx33d, dist15d, dims = bca.configure_camera(config)
+    video_source, mtx33d, dist15d, dims, roi = bca.configure_camera(config)
     assert video_source == 0
     r_mtx33d = np.array([1000.0, 0.0, 320.0, 0.0, 1000.0, 240.0, 0.0, 0.0, 1.0])
     r_mtx33d = np.reshape(mtx33d, (3, 3))
     assert np.array_equal(mtx33d, r_mtx33d)
     assert np.array_equal(dist15d, np.array([0.0, 0.0, 0.0, 0.0, 0.0]))
     assert dims is None
+
 
 
 def test_replace_calib_dir():

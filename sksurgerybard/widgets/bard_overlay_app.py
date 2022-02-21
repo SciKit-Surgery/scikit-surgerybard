@@ -35,13 +35,10 @@ class BARDOverlayApp(OverlayBaseApp):
         configuration = replace_calibration_dir(configuration, calib_dir)
 
         # Loads all config from file.
-        video_source, mtx33d, dist15d, dims = configure_camera(configuration)
+        video_source, self.mtx33d, self.dist15d, dims, self.roi = \
+                configure_camera(configuration)
 
         outdir = configuration.get('out path', './')
-
-        self.dims = dims
-        self.mtx33d = mtx33d
-        self.dist15d = dist15d
 
         self.tracker, self.transform_manager = setup_tracker(configuration)
         self.tracker.start_tracking()
@@ -71,7 +68,7 @@ class BARDOverlayApp(OverlayBaseApp):
         # This sets the camera calibration matrix to a matrix that was
         # either read in from command line or from config, or a reasonable
         # default for a 640x480 webcam.
-        self.vtk_overlay_window.set_camera_matrix(mtx33d)
+        self.vtk_overlay_window.set_camera_matrix(self.mtx33d)
 
         try:
             camera2modelreference = self.transform_manager.get(
@@ -140,6 +137,10 @@ class BARDOverlayApp(OverlayBaseApp):
         Update the background render with a new frame
         """
         _, image = self.video_source.read()
+        if self.roi is not None:
+            image = image[self.roi[0]:self.roi[2],
+                          self.roi[1]:self.roi[3],
+                          :]
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
 
@@ -149,8 +150,8 @@ class BARDOverlayApp(OverlayBaseApp):
         self.vtk_overlay_window.set_video_image(undistorted)
 
         if self._resize_flag:
-            if self.dims:
-                self.vtk_overlay_window.resize(self.dims[0], self.dims[1])
+            self.vtk_overlay_window.resize(undistorted.shape[1],
+                        undistorted.shape[0])
             self._resize_flag = False
 
         self.vtk_overlay_window.Render()
