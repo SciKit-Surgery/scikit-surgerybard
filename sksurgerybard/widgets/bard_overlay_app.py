@@ -138,8 +138,8 @@ class BARDOverlayApp(OverlayBaseApp):
         """
         _, image = self.video_source.read()
         if self.roi is not None:
-            image = image[self.roi[0]:self.roi[2],
-                          self.roi[1]:self.roi[3],
+            image = image[self.roi[1]:self.roi[3],
+                          self.roi[0]:self.roi[2],
                           :]
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
