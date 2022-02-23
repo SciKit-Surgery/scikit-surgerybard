@@ -63,6 +63,11 @@ class BARDOverlayApp(OverlayBaseApp):
                                "have access to video source: ", video_source) \
                                             from RuntimeError
 
+        #OverlayBaseApp defaults to update rate = 30, we can set it anything
+        #we like
+        update_rate = configuration.get("update rate", 30)
+        self.update_rate = update_rate
+
         # This sets the camera calibration matrix to a matrix that was
         # either read in from command line or from config, or a reasonable
         # default for a 640x480 webcam.

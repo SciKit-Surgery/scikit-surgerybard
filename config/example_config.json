@@ -1,4 +1,5 @@
 {
+    "update rate" : 30,
     "camera": {
         "source": 0, 
         "window size": [640, 480],
