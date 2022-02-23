@@ -18,7 +18,7 @@ def setup_tracker(configuration):
 
     :raises ValueError: for unsupported tracker types
     """
-    _video_source, mtx33d, dist5d, _dims = \
+    _video_source, mtx33d, dist5d, _dims, _roi = \
         configure_camera(configuration)
     default_tracker_config = {}
     default_tracker_config['video source'] = 'none'
@@ -90,7 +90,7 @@ def setup_aruco_tracker_camera(configuration):
         tracker_cam_config = { 'camera' : {
                                'calibration directory' : tracker_calib_dir }
                              }
-        _, mtx33d, dist5d, _ = configure_camera(tracker_cam_config)
+        _, mtx33d, dist5d, _, _ = configure_camera(tracker_cam_config)
 
     if 'calibration' not in tracker_config:
         tracker_config['camera projection'] = mtx33d
@@ -119,7 +119,8 @@ def _setup_aruco_single_camera(configuration, tracker_config):
     tracker_config['video source'] = 'none'
 
     if 'calibration directory' in camera_config:
-        _video_source, mtx33d, dist5d, _dims = configure_camera(configuration)
+        _video_source, mtx33d, dist5d, _dims, _roi = \
+                configure_camera(configuration)
         tracker_config.pop('calibration directory', None)
         tracker_config.pop('calibration', None)
         tracker_config['camera projection'] = mtx33d

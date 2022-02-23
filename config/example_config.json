@@ -1,9 +1,10 @@
 {
-    "update rate" : 30,
+    "update rate" : 15,
     "camera": {
         "source": 0, 
         "window size": [640, 480],
-        "calibration directory": "data/calibration/matts_mbp_640_x_480"
+        "calibration directory": "data/calibration/matts_mbp_640_x_480",
+        "roi": [0, 0, 640, 480]
     },
     "tracker" : {
 	"type" : "sksaruco",
