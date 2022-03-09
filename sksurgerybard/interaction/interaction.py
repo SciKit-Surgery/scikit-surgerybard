@@ -4,15 +4,20 @@ from platform import system
 from subprocess import run, CalledProcessError
 from collections import deque
 from time import time
+import numpy as np
+
+import sksurgerycore.transforms.matrix as sksmat
 
 
 class BardKBEvent:
     """
     Handles keyboard events for BARD.
     """
-    def __init__(self, pointer_writer, visualisation_control):
+    def __init__(self, pointer_writer, visualisation_control,
+            bard_widget):
         self._pointer_writer = pointer_writer
         self._visualisation_control = visualisation_control
+        self._bard_widget = bard_widget
 
     def __call__(self, event, _event_type_not_used):
         if event.GetKeySym() == 'd':
@@ -23,6 +28,14 @@ class BardKBEvent:
             self._visualisation_control.next_target()
         if event.GetKeySym() == 'm':
             self._visualisation_control.turn_on_all_targets()
+        if event.GetKeySym() == '4':
+            increment = sksmat.construct_rigid_transformation(np.eye(3), 
+                    np.array([10.0,0.0,0.0]))
+            m2ref = self._bard_widget.transform_manager.get('modelreference2model')
+            print(m2ref)
+            m2ref = np.matmul(m2ref , increment)
+            self._bard_widget.transform_manager.add('modelreference2model', m2ref)
+            self._bard_widget.position_model_actors(m2ref)
 
 
 class BardFootSwitchEvent:

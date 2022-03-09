@@ -87,8 +87,6 @@ class BARDOverlayApp(OverlayBaseApp):
         if models_path:
             self.add_vtk_models_from_dir(models_path)
 
-        matrix = create_vtk_matrix_from_numpy(
-                        self.transform_manager.get('modelreference2model'))
 
         self._model_list = {'visible anatomy' : 0,
                             'target anatomy' : 0,
@@ -96,12 +94,13 @@ class BARDOverlayApp(OverlayBaseApp):
                             'pointers' : 0}
 
         self._model_list['visible anatomy'] = visible_anatomy
-
+        
         for index, actor in enumerate(self._get_all_actors()):
-            actor.SetUserMatrix(matrix)
             if index >= visible_anatomy:
                 self._model_list['target anatomy'] = \
                                 self._model_list.get('target anatomy') + 1
+
+        self.position_model_actors()
 
         if ref_spheres is not None:
             self.vtk_overlay_window.add_vtk_actor(ref_spheres.actor)
@@ -121,7 +120,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         interaction = configuration.get('interaction', {})
         configure_interaction(interaction, self.vtk_overlay_window,
-                              self._pointer_writer, bard_visualisation)
+                              self._pointer_writer, bard_visualisation, self)
 
         speech_config = configuration.get('speech config', False)
         if interaction.get('speech', False):
@@ -131,6 +130,20 @@ class BARDOverlayApp(OverlayBaseApp):
     def __del__(self):
         if self._speech_int is not None:
             self._speech_int.stop_listener()
+
+    def position_model_actors(self, message = None):
+        """
+        Uses modelreference2model to position the target anatomy
+        """
+
+        if message is not None:
+            print(message)
+        matrix = create_vtk_matrix_from_numpy(
+                        self.transform_manager.get('modelreference2model'))
+        for index, actor in enumerate(self._get_all_actors()):
+            if index < self._model_list['visible anatomy'] + \
+                    self._model_list['target anatomy']:
+                actor.SetUserMatrix(matrix)
 
     def update(self):
         """
