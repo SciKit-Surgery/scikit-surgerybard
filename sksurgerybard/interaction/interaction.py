@@ -59,7 +59,7 @@ class BardKBEvent:
         if key in '6y':
             translation = np.array([0.0, distance * direction, 0.0])
         if key in '7u':
-            translation = np.array([0.0, 0.0, 0.0, distance * direction])
+            translation = np.array([0.0, 0.0, distance * direction])
 
         increment = sksmat.construct_rigid_transformation(rotation, translation)
         self._bard_widget.position_model_actors(increment)

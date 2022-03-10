@@ -2,6 +2,7 @@
 """Tests for BARD interaction  module"""
 from time import sleep
 import pytest
+import numpy as np
 import sksurgerybard.interaction.interaction as inter
 
 class WritePointerEvent(Exception):#pylint: disable=missing-class-docstring
@@ -18,8 +19,8 @@ class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class PositionModelEvent(Exception):#pylint: disable=missing-class-docstring
     def __init__(self, increment):
-        self.increment = increment
         super().__init__()
+        self.increment = increment
 
 
 class _FakePointerWriter:
@@ -85,7 +86,7 @@ def test_keyboard_event():
 
     kb_event = inter.BardKBEvent(_FakePointerWriter(),
                                  _FakeVisualisationControl(),
-                                 _FakeBardWidget)
+                                 _FakeBardWidget())
 
     with pytest.raises(WritePointerEvent):
         kb_event(event, None)
@@ -105,10 +106,57 @@ def test_keyboard_event():
     event = _FakeKBEvent('m')
     with pytest.raises(TurnOnAllEvent):
         kb_event(event, None)
-    
+
     event = _FakeKBEvent('5')
-    with pytest.raises(PositionModelEvent):
+    expected_increment = np.array([[1., 0., 0., 1.],
+        [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
         kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('t')
+    expected_increment = np.array([[1., 0., 0., -1.],
+        [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('6')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 1.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('y')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., -1.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('7')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 0.], [0., 0., 1., 1.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('u')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 0.], [0., 0., 1., -1.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+
+
 
 
 def test_footswitch_event():
