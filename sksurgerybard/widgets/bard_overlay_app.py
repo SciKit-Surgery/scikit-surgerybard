@@ -94,8 +94,8 @@ class BARDOverlayApp(OverlayBaseApp):
                             'pointers' : 0}
 
         self._model_list['visible anatomy'] = visible_anatomy
-        
-        for index, actor in enumerate(self._get_all_actors()):
+
+        for index, _actor in enumerate(self._get_all_actors()):
             if index >= visible_anatomy:
                 self._model_list['target anatomy'] = \
                                 self._model_list.get('target anatomy') + 1
@@ -131,15 +131,16 @@ class BARDOverlayApp(OverlayBaseApp):
         if self._speech_int is not None:
             self._speech_int.stop_listener()
 
-    def position_model_actors(self, message = None):
+    def position_model_actors(self, increment = None):
         """
         Uses modelreference2model to position the target anatomy
         """
+        np_mref2model = self.transform_manager.get('modelreference2model')
+        if increment is not None:
+            np_mref2model = np.matmul(np_mref2model, increment)
+            self.transform_manager.add('modelreference2model', np_mref2model)
 
-        if message is not None:
-            print(message)
-        matrix = create_vtk_matrix_from_numpy(
-                        self.transform_manager.get('modelreference2model'))
+        matrix = create_vtk_matrix_from_numpy(np_mref2model)
         for index, actor in enumerate(self._get_all_actors()):
             if index < self._model_list['visible anatomy'] + \
                     self._model_list['target anatomy']:

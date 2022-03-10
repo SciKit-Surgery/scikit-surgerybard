@@ -16,6 +16,11 @@ class VisibilityToggleEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
     pass
+class PositionModelEvent(Exception):#pylint: disable=missing-class-docstring
+    def __init__(self, increment):
+        self.increment = increment
+        super().__init__()
+
 
 class _FakePointerWriter:
     def write_pointer_tip(self): # pylint: disable=no-self-use
@@ -67,6 +72,11 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise ChangeOpacityEvent
 
+class _FakeBardWidget:
+    def position_model_actors(self, increment): # pylint: disable=no-self-use
+        """Raises and error so we know it's run"""
+        raise PositionModelEvent(increment)
+
 def test_keyboard_event():
     """
     KB event check
@@ -74,7 +84,8 @@ def test_keyboard_event():
     event = _FakeKBEvent('d')
 
     kb_event = inter.BardKBEvent(_FakePointerWriter(),
-                                 _FakeVisualisationControl())
+                                 _FakeVisualisationControl(),
+                                 _FakeBardWidget)
 
     with pytest.raises(WritePointerEvent):
         kb_event(event, None)
@@ -93,6 +104,10 @@ def test_keyboard_event():
 
     event = _FakeKBEvent('m')
     with pytest.raises(TurnOnAllEvent):
+        kb_event(event, None)
+    
+    event = _FakeKBEvent('5')
+    with pytest.raises(PositionModelEvent):
         kb_event(event, None)
 
 

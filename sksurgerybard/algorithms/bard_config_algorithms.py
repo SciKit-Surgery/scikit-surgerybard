@@ -97,7 +97,7 @@ def configure_interaction(interaction_config, vtk_window, pointer_writer,
     """
     if interaction_config.get('keyboard', False):
         vtk_window.AddObserver("KeyPressEvent",
-                               BardKBEvent(pointer_writer, bard_visualisation, 
+                               BardKBEvent(pointer_writer, bard_visualisation,
                                    bard_widget))
 
     if interaction_config.get('footswitch', False):
