@@ -87,7 +87,7 @@ def configure_camera(config):
 
 
 def configure_interaction(interaction_config, vtk_window, pointer_writer,
-                          bard_visualisation):
+                          bard_visualisation, bard_widget):
     """
     Configures BARD interaction events
     :param: The configuration dictionary
@@ -97,7 +97,8 @@ def configure_interaction(interaction_config, vtk_window, pointer_writer,
     """
     if interaction_config.get('keyboard', False):
         vtk_window.AddObserver("KeyPressEvent",
-                               BardKBEvent(pointer_writer, bard_visualisation))
+                               BardKBEvent(pointer_writer, bard_visualisation,
+                                   bard_widget))
 
     if interaction_config.get('footswitch', False):
         max_delay = interaction_config.get('maximum delay', 0.1)

@@ -4,25 +4,97 @@ from platform import system
 from subprocess import run, CalledProcessError
 from collections import deque
 from time import time
+import numpy as np
+
+import sksurgerycore.transforms.matrix as sksmat
 
 
 class BardKBEvent:
     """
     Handles keyboard events for BARD.
     """
-    def __init__(self, pointer_writer, visualisation_control):
+    def __init__(self, pointer_writer, visualisation_control,
+            bard_widget):
         self._pointer_writer = pointer_writer
         self._visualisation_control = visualisation_control
+        self._bard_widget = bard_widget
 
     def __call__(self, event, _event_type_not_used):
-        if event.GetKeySym() == 'd':
+        key = event.GetKeySym()
+        if key == 'd':
             self._pointer_writer.write_pointer_tip()
-        if event.GetKeySym() == 'b':
+        if key == 'b':
             self._visualisation_control.cycle_visible_anatomy_vis()
-        if event.GetKeySym() == 'n':
+        if key == 'n':
             self._visualisation_control.next_target()
-        if event.GetKeySym() == 'm':
+        if key == 'm':
             self._visualisation_control.turn_on_all_targets()
+        if key in '5t6y7u':
+            self._translate_model(key)
+        if key in '8i9o0p':
+            self._rotate_model(key)
+        if key == 's':
+            print(
+                self._bard_widget.transform_manager.get('modelreference2model'))
+
+    def _translate_model(self, key):
+        """
+        Handles model tranlations.
+
+        :param key: key code defining direction of translation
+        :raises: Value error is key not in valid range
+        """
+        if key not in ('5t6y7u'):
+            raise ValueError("Invalid key value")
+
+        distance = 1.0
+        direction = 1.0
+        if key in 'tyu':
+            direction = -1.0
+
+        translation = np.array([0.0, 0.0, 0.0])
+        rotation = np.eye(3)
+        if key in '5t':
+            translation = np.array([distance * direction, 0.0, 0.0])
+        if key in '6y':
+            translation = np.array([0.0, distance * direction, 0.0])
+        if key in '7u':
+            translation = np.array([0.0, 0.0, distance * direction])
+
+        increment = sksmat.construct_rigid_transformation(rotation, translation)
+        self._bard_widget.position_model_actors(increment)
+
+    def _rotate_model(self, key):
+        """
+        Handles model tranlations.
+
+        :param key: key code defining direction of rotation
+        :raises: Value error is key not in valid range
+        """
+        if key not in ('8i9o0p'):
+            raise ValueError("Invalid key value")
+
+        distance = 1.0
+        is_in_radians = False
+        direction = 1.0
+
+        if key in 'iop':
+            direction = -1.0
+
+        translation = np.array([0.0, 0.0, 0.0])
+        rotation = np.eye(3)
+        if key in '8i':
+            rotation = sksmat.construct_rx_matrix(distance * direction,
+                    is_in_radians)
+        if key in '9o':
+            rotation = sksmat.construct_ry_matrix(distance * direction,
+                    is_in_radians)
+        if key in '0p':
+            rotation = sksmat.construct_rz_matrix(distance * direction,
+                    is_in_radians)
+
+        increment = sksmat.construct_rigid_transformation(rotation, translation)
+        self._bard_widget.position_model_actors(increment)
 
 
 class BardFootSwitchEvent:

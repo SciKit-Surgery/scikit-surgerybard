@@ -50,6 +50,9 @@ def test_valid_config():
     calib_dir = 'data/calibration/matts_mbp_640_x_480/'
 
     bard_overlay = boa.BARDOverlayApp(config, calib_dir)
+    #a hack to get full coverage on position model actor
+    identity = np.eye(4)
+    bard_overlay.position_model_actors(identity)
 
     assert np.allclose(
             bard_overlay.transform_manager.get("camera2modelreference"),

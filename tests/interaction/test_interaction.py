@@ -1,7 +1,9 @@
 #  -*- coding: utf-8 -*-
 """Tests for BARD interaction  module"""
 from time import sleep
+import math
 import pytest
+import numpy as np
 import sksurgerybard.interaction.interaction as inter
 
 class WritePointerEvent(Exception):#pylint: disable=missing-class-docstring
@@ -16,6 +18,11 @@ class VisibilityToggleEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
     pass
+class PositionModelEvent(Exception):#pylint: disable=missing-class-docstring
+    def __init__(self, increment):
+        super().__init__()
+        self.increment = increment
+
 
 class _FakePointerWriter:
     def write_pointer_tip(self): # pylint: disable=no-self-use
@@ -67,6 +74,16 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise ChangeOpacityEvent
 
+class _FakeBardWidget:
+    def position_model_actors(self, increment): # pylint: disable=no-self-use
+        """Raises and error so we know it's run"""
+        raise PositionModelEvent(increment)
+    class transform_manager: #pylint: disable=invalid-name
+        """A fake transform manager"""
+        def get(transform_name):# pylint: disable=no-self-argument
+            """A fake get function"""
+            return transform_name
+
 def test_keyboard_event():
     """
     KB event check
@@ -74,7 +91,8 @@ def test_keyboard_event():
     event = _FakeKBEvent('d')
 
     kb_event = inter.BardKBEvent(_FakePointerWriter(),
-                                 _FakeVisualisationControl())
+                                 _FakeVisualisationControl(),
+                                 _FakeBardWidget())
 
     with pytest.raises(WritePointerEvent):
         kb_event(event, None)
@@ -95,6 +113,147 @@ def test_keyboard_event():
     with pytest.raises(TurnOnAllEvent):
         kb_event(event, None)
 
+    event = _FakeKBEvent('s')
+    kb_event(event, None)
+
+def test_keyboard_translatios():
+    """
+    Check that the translation events work
+    """
+    kb_event = inter.BardKBEvent(_FakePointerWriter(),
+                                 _FakeVisualisationControl(),
+                                 _FakeBardWidget())
+
+    event = _FakeKBEvent('5')
+    expected_increment = np.array([[1., 0., 0., 1.],
+        [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('t')
+    expected_increment = np.array([[1., 0., 0., -1.],
+        [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('6')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 1.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('y')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., -1.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('7')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 0.], [0., 0., 1., 1.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('u')
+    expected_increment = np.array([[1., 0., 0., 0.],
+        [0., 1., 0., 0.], [0., 0., 1., -1.], [0., 0., 0., 1.]])
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('u')
+    with pytest.raises(ValueError):
+        kb_event._translate_model('r') #pylint:disable = protected-access
+
+
+def test_keyboard_rotations():
+    """
+    Check that the rotations work
+    """
+    kb_event = inter.BardKBEvent(_FakePointerWriter(),
+                                 _FakeVisualisationControl(),
+                                 _FakeBardWidget())
+
+    event = _FakeKBEvent('8')
+    expected_increment = np.eye(4)
+    expected_increment[1][1]=np.cos(math.pi/180.)
+    expected_increment[1][2]=-np.sin(math.pi/180.)
+    expected_increment[2][1]=np.sin(math.pi/180.)
+    expected_increment[2][2]=np.cos(math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('i')
+    expected_increment = np.eye(4)
+    expected_increment[1][1]=np.cos(-math.pi/180.)
+    expected_increment[1][2]=-np.sin(-math.pi/180.)
+    expected_increment[2][1]=np.sin(-math.pi/180.)
+    expected_increment[2][2]=np.cos(-math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('9')
+    expected_increment = np.eye(4)
+    expected_increment[0][0]=np.cos(math.pi/180.)
+    expected_increment[0][2]=np.sin(math.pi/180.)
+    expected_increment[2][0]=-np.sin(math.pi/180.)
+    expected_increment[2][2]=np.cos(math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('o')
+    expected_increment = np.eye(4)
+    expected_increment[0][0]=np.cos(-math.pi/180.)
+    expected_increment[0][2]=np.sin(-math.pi/180.)
+    expected_increment[2][0]=-np.sin(-math.pi/180.)
+    expected_increment[2][2]=np.cos(-math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('0')
+    expected_increment = np.eye(4)
+    expected_increment[0][0]=np.cos(math.pi/180.)
+    expected_increment[0][1]=-np.sin(math.pi/180.)
+    expected_increment[1][0]=np.sin(math.pi/180.)
+    expected_increment[1][1]=np.cos(math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('p')
+    expected_increment = np.eye(4)
+    expected_increment[0][0]=np.cos(-math.pi/180.)
+    expected_increment[0][1]=-np.sin(-math.pi/180.)
+    expected_increment[1][0]=np.sin(-math.pi/180.)
+    expected_increment[1][1]=np.cos(-math.pi/180.)
+    try:
+        kb_event(event, None)
+    except PositionModelEvent as pos_model:
+        assert np.array_equal(pos_model.increment, expected_increment)
+
+    event = _FakeKBEvent('u')
+    with pytest.raises(ValueError):
+        kb_event._rotate_model('r') #pylint:disable = protected-access
 
 def test_footswitch_event():
     """tests for footswitch event"""
