@@ -16,6 +16,7 @@ from sksurgerybard.visualisation.bard_visualisation import \
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.pointer import BardPointerWriter
+from sksurgerybard.algorithms.decimation import decimate_actor
 from sksurgerybard.tracking.bard_tracking import setup_tracker
 
 class BARDOverlayApp(OverlayBaseApp):
@@ -95,7 +96,10 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._model_list['visible anatomy'] = visible_anatomy
 
-        for index, _actor in enumerate(self._get_all_actors()):
+        for actor in self._get_all_actors():
+            decimate_actor(actor, 2000)
+
+        for index, _ in enumerate(self._get_all_actors()):
             if index >= visible_anatomy:
                 self._model_list['target anatomy'] = \
                                 self._model_list.get('target anatomy') + 1
