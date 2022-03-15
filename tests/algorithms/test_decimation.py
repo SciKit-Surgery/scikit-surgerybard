@@ -12,4 +12,4 @@ def test_decimation():
     """
     sphere = VTKSphereModel(np.array([[0., 0., 0.]]), radius = 5.0)
     vertices = decimate_actor(sphere.actor, 10)
-    assert vertices <= 120
+    assert vertices < 122

@@ -24,6 +24,7 @@
 	
     "models": {
         "models_dir": "data/models",
+	"target_model_vertices": [-1],
         "reference_to_model": "data/reference_to_model.txt",
         "visible_anatomy": 1
     },
