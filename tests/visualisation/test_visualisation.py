@@ -17,7 +17,7 @@ def test_configure_model_and_ref():
 
     transform_manager = TransformManager()
 
-    ref_spheres, models_path, visible_anatomy = \
+    ref_spheres, models_path, visible_anatomy, target_vertices = \
                     vis.configure_model_and_ref(config, transform_manager)
 
     assert ref_spheres is None
@@ -44,7 +44,7 @@ def test_configure_model_and_ref():
             }
          }
 
-    ref_spheres, models_path, visible_anatomy = \
+    ref_spheres, models_path, visible_anatomy, target_vertices = \
                     vis.configure_model_and_ref(config, transform_manager)
 
     bounds = np.array(ref_spheres.actor.GetBounds())
@@ -52,6 +52,8 @@ def test_configure_model_and_ref():
     assert np.allclose(bounds, expected_bounds, atol = 1e-2)
     assert models_path is None
     assert visible_anatomy == 0
+    assert target_vertices[0] == 0
+    assert len(target_vertices) == 1
 
 
 def test_configure_pointer():

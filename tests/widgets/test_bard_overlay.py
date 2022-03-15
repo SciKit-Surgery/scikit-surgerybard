@@ -245,3 +245,28 @@ def test_with_no_configuration():
     except RuntimeError:
         print("Failed to run bard with no config, probably a failure to " +
               "open the video source")
+
+def test_with_decimation():
+    """
+    We can add target vertices to the configuration to decimate the models
+    """
+    dec_config = copy.deepcopy(config)
+    model_conf = dec_config.get("models")
+    model_conf['models_dir'] = 'data/models'
+
+    #We can set a single target value for all models
+    model_conf['target_model_vertices'] = [1000]
+    dec_config['models'] = model_conf
+    _bard_overlay = boa.BARDOverlayApp(dec_config)
+
+    #we should get a value error if there are an unequal number
+    #of target_model_vertices and models
+    model_conf['target_model_vertices'] = [1000, 100]
+    dec_config['models'] = model_conf
+    with pytest.raises(ValueError):
+        _bard_overlay = boa.BARDOverlayApp(dec_config)
+
+    #we can have a value for each model
+    model_conf['target_model_vertices'] = [1000, 100, 100]
+    dec_config['models'] = model_conf
+    _bard_overlay = boa.BARDOverlayApp(dec_config)

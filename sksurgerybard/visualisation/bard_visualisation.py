@@ -20,19 +20,23 @@ def configure_model_and_ref(configuration, transform_manager):
     models_path = None
     reference2model_file = None
     visible_anatomy = 0
+    target_vertices = [0]
 
     ref_spheres = make_marker_spheres(configuration, 'modelreference')
 
     if configuration is None:
         transform_manager.add("model2modelreference",
                         np.eye(4, dtype = np.float64))
-        return ref_spheres, models_path, visible_anatomy
+        return ref_spheres, models_path, visible_anatomy, target_vertices
 
     model_config = configuration.get('models', None)
     if model_config is not None:
         models_path = model_config.get('models_dir')
         reference2model_file = model_config.get('reference_to_model')
         visible_anatomy = model_config.get('visible_anatomy', 0)
+        #we can configure how many vertices we want our models to have,
+        #this then gets passed to a decimation filter
+        target_vertices = model_config.get('target_model_vertices', [0])
 
     if models_path is not None:
         try:
@@ -50,7 +54,7 @@ def configure_model_and_ref(configuration, transform_manager):
         transform_manager.add("model2modelreference",
                         np.eye(4, dtype = np.float64))
 
-    return ref_spheres, models_path, visible_anatomy
+    return ref_spheres, models_path, visible_anatomy, target_vertices
 
 
 def configure_pointer(configuration, transform_manager):

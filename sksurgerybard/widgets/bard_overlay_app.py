@@ -16,6 +16,7 @@ from sksurgerybard.visualisation.bard_visualisation import \
 from sksurgerybard.algorithms.bard_config_speech import \
     configure_speech_interaction
 from sksurgerybard.algorithms.pointer import BardPointerWriter
+from sksurgerybard.algorithms.decimation import decimate_actor
 from sksurgerybard.tracking.bard_tracking import setup_tracker
 
 class BARDOverlayApp(OverlayBaseApp):
@@ -46,7 +47,7 @@ class BARDOverlayApp(OverlayBaseApp):
         self.transform_manager.add("tracker2camera",
                         np.eye(4, dtype = np.float64))
 
-        ref_spheres, models_path, visible_anatomy = \
+        ref_spheres, models_path, visible_anatomy, target_vertices = \
                         configure_model_and_ref(configuration,
                                         self.transform_manager)
         pointer_spheres, pointer_tip_sphere, pointer_tip = \
@@ -95,7 +96,9 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self._model_list['visible anatomy'] = visible_anatomy
 
-        for index, _actor in enumerate(self._get_all_actors()):
+        self._decimate_actors(target_vertices)
+
+        for index, _ in enumerate(self._get_all_actors()):
             if index >= visible_anatomy:
                 self._model_list['target anatomy'] = \
                                 self._model_list.get('target anatomy') + 1
@@ -224,3 +227,25 @@ class BARDOverlayApp(OverlayBaseApp):
 
     def _get_all_actors(self):
         return self.vtk_overlay_window.foreground_renderer.GetActors()
+
+    def _decimate_actors(self, target_vertices):
+        """
+        Goes through the actors and reduces their verticy count is
+        required
+        """
+        if len(target_vertices) == 1:
+            if target_vertices[0] > 0:
+                for actor in self._get_all_actors():
+                    decimate_actor(actor, 2000)
+            return
+
+        actor_count = 0
+        for _ in self._get_all_actors():
+            actor_count += 1
+        if len(target_vertices) != actor_count:
+            raise ValueError("target_model_vertices should have one value,",
+                    " or a value for all models")
+
+        for index, actor in enumerate(self._get_all_actors()):
+            if target_vertices[index] > 0:
+                decimate_actor(actor, target_vertices[index])
