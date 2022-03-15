@@ -16,13 +16,24 @@ def decimate_actor(actor, target_vertices):
     start_points = polydata.GetNumberOfPoints()
     target_reduction = 1.0 - target_vertices/start_points
 
+    decimated = vtkPolyData()
+    #For big reductions let's try two stage, although I'm not
+    #sure this has any effect
+    if target_reduction > 0.9:
+        decimate = vtkDecimatePro()
+        decimate.SetInputData(polydata)
+        decimate.SetTargetReduction(0.9)
+        decimate.PreserveTopologyOn()
+        decimate.Update()
+        polydata.ShallowCopy(decimate.GetOutput())
+        start_points = polydata.GetNumberOfPoints()
+        target_reduction = 1.0 - target_vertices/start_points
+
     decimate = vtkDecimatePro()
     decimate.SetInputData(polydata)
     decimate.SetTargetReduction(target_reduction)
     decimate.PreserveTopologyOn()
     decimate.Update()
-
-    decimated = vtkPolyData()
     decimated.ShallowCopy(decimate.GetOutput())
 
     actor.GetMapper().SetInputData(decimated)
