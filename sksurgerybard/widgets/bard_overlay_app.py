@@ -43,6 +43,8 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.tracker, self.transform_manager = setup_tracker(configuration)
         self.tracker.start_tracking()
+        self.tracking = True # A boolean that we can manipulate to start/
+                             # stop tracking
 
         self.transform_manager.add("tracker2camera",
                         np.eye(4, dtype = np.float64))
@@ -166,7 +168,9 @@ class BARDOverlayApp(OverlayBaseApp):
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
 
-        self._update_tracking(image)
+        if self.tracking:
+            self._update_tracking(image)
+
         self._update_overlay_window()
 
         self.vtk_overlay_window.set_video_image(undistorted)
