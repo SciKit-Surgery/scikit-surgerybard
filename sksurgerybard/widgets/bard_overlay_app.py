@@ -43,8 +43,6 @@ class BARDOverlayApp(OverlayBaseApp):
 
         self.tracker, self.transform_manager = setup_tracker(configuration)
         self.tracker.start_tracking()
-        self.tracking = True # A boolean that we can manipulate to start/
-                             # stop tracking
 
         self.transform_manager.add("tracker2camera",
                         np.eye(4, dtype = np.float64))
@@ -168,8 +166,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         undistorted = cv2.undistort(image, self.mtx33d, self.dist15d)
 
-        if self.tracking:
-            self._update_tracking(image)
+        self._update_tracking(image)
 
         self._update_overlay_window()
 
@@ -191,11 +188,17 @@ class BARDOverlayApp(OverlayBaseApp):
         tracking = []
         if (isinstance(self.tracker, ArUcoTracker) and not
                         self.tracker.has_capture()):
-            port_handles, _timestamps, _framenumbers, tracking, quality = \
-                        self.tracker.get_frame(image)
+            try:
+                port_handles, _timestamps, _framenumbers, tracking, \
+                    quality = self.tracker.get_frame(image)
+            except ValueError:
+                return
         else:
-            port_handles, _timestamps, _framenumbers, tracking, quality = \
-                        self.tracker.get_frame()
+            try:
+                port_handles, _timestamps, _framenumbers, tracking, \
+                        quality = self.tracker.get_frame()
+            except ValueError:
+                return
 
         for index, port_handle in enumerate(port_handles):
             if (not np.isnan(quality[index])) and quality[index] > 0.2:
