@@ -142,6 +142,11 @@ class BARDOverlayApp(OverlayBaseApp):
         if increment is not None:
             np_mref2model = np.matmul(np_mref2model, increment)
             self.transform_manager.add('modelreference2model', np_mref2model)
+            fileout = 'bard_model2modelref.txt'
+            print(f"Writing last model to reference to {fileout}")
+            np.savetxt(fileout,
+                    self.transform_manager.get('model2modelreference'),
+                    fmt='%.4e')
 
         matrix = create_vtk_matrix_from_numpy(np_mref2model)
         for index, actor in enumerate(self._get_all_actors()):
