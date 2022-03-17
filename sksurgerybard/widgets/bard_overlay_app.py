@@ -47,9 +47,11 @@ class BARDOverlayApp(OverlayBaseApp):
         self.transform_manager.add("tracker2camera",
                         np.eye(4, dtype = np.float64))
 
-        ref_spheres, models_path, visible_anatomy, target_vertices = \
+        ref_spheres, models_path, visible_anatomy, target_vertices, \
+                model_visibilities, model_opacities, model_representations = \
                         configure_model_and_ref(configuration,
                                         self.transform_manager)
+
         pointer_spheres, pointer_tip_sphere, pointer_tip = \
                         configure_pointer(configuration, self.transform_manager)
 
