@@ -33,6 +33,11 @@ class BardKBEvent:
             self._translate_model(key)
         if key in '8i9o0p':
             self._rotate_model(key)
+        if key == 'Up':
+            self._bard_widget.tracker.stop_tracking()
+        if key == 'Down':
+            self._bard_widget.tracker.start_tracking()
+
 
     def _translate_model(self, key):
         """
