@@ -175,6 +175,29 @@ def test_model_list_too_big():
     bard_vis.change_opacity(1.0)
 
 
+def test_model_reps_wrong_length():
+    """
+    If we pass a model representations list that is a different length to
+    model actors, we should get a value error
+    """
+    actors = []
+    for _ in range(3):
+        actor = vtk.vtkActor()
+        actors.append(actor)
+
+    model_list = {
+        'visible anatomy' : 1,
+        'target anatomy' : 2
+        }
+
+    with pytest.raises(ValueError):
+        bard_vis = vis.BardVisualisation(actors, model_list,
+            model_representations = ['w', 'w', 'w', 'w'])
+
+    #try again with the right length
+    bard_vis = vis.BardVisualisation(actors, model_list,
+        model_representations = ['w', 'w', 'w'])
+
 def _good_bard_vis():
     """Helper to return a BardVisualisation object for testing"""
     actors = []
