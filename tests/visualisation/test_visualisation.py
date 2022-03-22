@@ -191,11 +191,11 @@ def test_model_reps_wrong_length():
         }
 
     with pytest.raises(ValueError):
-        bard_vis = vis.BardVisualisation(actors, model_list,
+        _bard_vis = vis.BardVisualisation(actors, model_list,
             model_representations = ['w', 'w', 'w', 'w'])
 
     #try again with the right length
-    bard_vis = vis.BardVisualisation(actors, model_list,
+    _bard_vis = vis.BardVisualisation(actors, model_list,
         model_representations = ['w', 'w', 'w'])
 
 def _good_bard_vis():

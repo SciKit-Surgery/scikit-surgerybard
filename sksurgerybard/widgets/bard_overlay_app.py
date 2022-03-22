@@ -121,9 +121,9 @@ class BARDOverlayApp(OverlayBaseApp):
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
         bard_visualisation = BardVisualisation(self._get_all_actors(),
-                                               self._model_list, 
-                                               model_visibilities, 
-                                               model_opacities, 
+                                               self._model_list,
+                                               model_visibilities,
+                                               model_opacities,
                                                model_representations)
 
         interaction = configuration.get('interaction', {})
