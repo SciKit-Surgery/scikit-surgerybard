@@ -21,13 +21,18 @@ def configure_model_and_ref(configuration, transform_manager):
     reference2model_file = None
     visible_anatomy = 0
     target_vertices = [0]
+    model_visibilities = [1]
+    model_opacities = [1.0]
+    model_representations = ['s']
+
 
     ref_spheres = make_marker_spheres(configuration, 'modelreference')
 
     if configuration is None:
         transform_manager.add("model2modelreference",
                         np.eye(4, dtype = np.float64))
-        return ref_spheres, models_path, visible_anatomy, target_vertices
+        return ref_spheres, models_path, visible_anatomy, target_vertices, \
+                model_visibilities, model_opacities, model_representations
 
     model_config = configuration.get('models', None)
     if model_config is not None:
@@ -37,6 +42,9 @@ def configure_model_and_ref(configuration, transform_manager):
         #we can configure how many vertices we want our models to have,
         #this then gets passed to a decimation filter
         target_vertices = model_config.get('target_model_vertices', [0])
+        model_visibilities = model_config.get('model_visibilities', [1])
+        model_opacities = model_config.get('model_opacities', [1.0])
+        model_representations = model_config.get('model_representations', ['s'])
 
     if models_path is not None:
         try:
@@ -54,7 +62,8 @@ def configure_model_and_ref(configuration, transform_manager):
         transform_manager.add("model2modelreference",
                         np.eye(4, dtype = np.float64))
 
-    return ref_spheres, models_path, visible_anatomy, target_vertices
+    return ref_spheres, models_path, visible_anatomy, target_vertices, \
+        model_visibilities, model_opacities, model_representations
 
 
 def configure_pointer(configuration, transform_manager):
@@ -143,13 +152,20 @@ class BardVisualisation:
     pointers are tracked pointers
 
     """
-    def __init__(self, all_actors, model_list):
+    def __init__(self, all_actors, model_list, model_visibilities= None,
+            model_opacities = None, model_representations = None):
         """
-        :params: a list of vtk actors to work on
-        :params: a dictionary defining indexes for each actor type.
-        The actors must be in order, [visible anatomy, target anatomy,
-        reference, then pointers
-        :raises: Type error is actors do not implement required methods
+        :params all_actors: a list of vtk actors to work on
+        :params model_list: a dictionary defining indexes for each actor type.
+            The actors must be in order, [visible anatomy, target anatomy,
+            reference, then pointers
+        :params model_visibilities: Starting values for the visible and
+            target anatomy. 0 for off, 1 for visible
+        :params model_opacities: Starting values for the visible and
+            target anatomy. float 0 to 1
+        :params model_representations: Starting values for the visible and
+            target anatomy. 'w' for wireframe, 's' for solid
+        :raises: Type error if actors do not implement required methods
         """
         self._all_actors = all_actors
         self._visible_anatomy_actors = []
@@ -157,16 +173,33 @@ class BardVisualisation:
         self._reference_actors = []
         self._pointer_actors = []
 
-        for actor in all_actors:
+        model_actors = model_list.get('visible anatomy', 0) + \
+                model_list.get('target anatomy', 0)
+        model_visibilities = pad_list (model_visibilities, model_actors, 1)
+        model_opacities = pad_list (model_opacities, model_actors, 1.)
+        model_representations = pad_list (model_representations,
+                model_actors, 's')
+        for index, actor in enumerate(all_actors):
             try:
-                visible = actor.GetVisibility()
-                actor.SetVisibility(visible)
+                if index < model_actors:
+                    actor.SetVisibility(model_visibilities[index])
+                    rep = 0
+                    if model_representations[index] == 'w':
+                        rep = 1
+                    if model_representations[index] == 's':
+                        rep = 2
+                    actor.GetProperty().SetRepresentation(rep)
+                    opacity = actor.GetProperty().SetOpacity(
+                        model_opacities[index])
+                else:
+                    visible = actor.GetVisibility()
+                    actor.SetVisibility(visible)
 
-                rep = actor.GetProperty().GetRepresentation()
-                actor.GetProperty().SetRepresentation(rep)
+                    rep = actor.GetProperty().GetRepresentation()
+                    actor.GetProperty().SetRepresentation(rep)
 
-                opacity = actor.GetProperty().GetOpacity()
-                opacity = actor.GetProperty().SetOpacity(opacity)
+                    opacity = actor.GetProperty().GetOpacity()
+                    opacity = actor.GetProperty().SetOpacity(opacity)
             except AttributeError:
                 raise TypeError("Actor does not implement required methods,",
                                 "check type") from AttributeError
@@ -263,3 +296,24 @@ class BardVisualisation:
         """
         for actor in self._all_actors:
             actor.GetProperty().SetOpacity(opacity)
+
+
+def pad_list(list_in, target_length, if_none_pad_value):
+    """
+    Utility to pad a list to the target length. If list_in is not
+    none then the list is padded with the first value in list_in,
+    otherwise if_none_pad_value is used.
+    :param list_in: the list to pad
+    :param target_length: the list to pad
+    :param if_none_pad_value: pad with this if list is None
+    """
+    if list_in is None:
+        list_in = [if_none_pad_value]
+
+    if len(list_in) not in [1, target_length]:
+        raise ValueError("property list wrong length.")
+
+    while len(list_in) < target_length:
+        list_in.append(list_in[0])
+
+    return list_in

@@ -17,12 +17,21 @@ def test_configure_model_and_ref():
 
     transform_manager = TransformManager()
 
-    ref_spheres, models_path, visible_anatomy, target_vertices = \
+    ref_spheres, models_path, visible_anatomy, target_vertices, \
+            model_visibilities, model_opacities, model_representations = \
                     vis.configure_model_and_ref(config, transform_manager)
 
     assert ref_spheres is None
     assert models_path is None
     assert visible_anatomy == 0
+    assert target_vertices[0] == 0
+    assert len(target_vertices) == 1
+    assert model_visibilities[0] == 1
+    assert len(model_visibilities) == 1
+    assert model_opacities[0] == 1.0
+    assert len(model_opacities) == 1
+    assert model_representations[0] == 's'
+    assert len(model_representations) == 1
 
     config = {
                     "tracker": {
@@ -44,7 +53,8 @@ def test_configure_model_and_ref():
             }
          }
 
-    ref_spheres, models_path, visible_anatomy, target_vertices = \
+    ref_spheres, models_path, visible_anatomy, target_vertices, \
+            model_visibilities, model_opacities, model_representations = \
                     vis.configure_model_and_ref(config, transform_manager)
 
     bounds = np.array(ref_spheres.actor.GetBounds())
@@ -54,6 +64,12 @@ def test_configure_model_and_ref():
     assert visible_anatomy == 0
     assert target_vertices[0] == 0
     assert len(target_vertices) == 1
+    assert model_visibilities[0] == 1
+    assert len(model_visibilities) == 1
+    assert model_opacities[0] == 1.0
+    assert len(model_opacities) == 1
+    assert model_representations[0] == 's'
+    assert len(model_representations) == 1
 
 
 def test_configure_pointer():
@@ -158,6 +174,29 @@ def test_model_list_too_big():
     bard_vis.turn_on_all_targets()
     bard_vis.change_opacity(1.0)
 
+
+def test_model_reps_wrong_length():
+    """
+    If we pass a model representations list that is a different length to
+    model actors, we should get a value error
+    """
+    actors = []
+    for _ in range(3):
+        actor = vtk.vtkActor()
+        actors.append(actor)
+
+    model_list = {
+        'visible anatomy' : 1,
+        'target anatomy' : 2
+        }
+
+    with pytest.raises(ValueError):
+        _bard_vis = vis.BardVisualisation(actors, model_list,
+            model_representations = ['w', 'w', 'w', 'w'])
+
+    #try again with the right length
+    _bard_vis = vis.BardVisualisation(actors, model_list,
+        model_representations = ['w', 'w', 'w'])
 
 def _good_bard_vis():
     """Helper to return a BardVisualisation object for testing"""

@@ -47,9 +47,11 @@ class BARDOverlayApp(OverlayBaseApp):
         self.transform_manager.add("tracker2camera",
                         np.eye(4, dtype = np.float64))
 
-        ref_spheres, models_path, visible_anatomy, target_vertices = \
+        ref_spheres, models_path, visible_anatomy, target_vertices, \
+                model_visibilities, model_opacities, model_representations = \
                         configure_model_and_ref(configuration,
                                         self.transform_manager)
+
         pointer_spheres, pointer_tip_sphere, pointer_tip = \
                         configure_pointer(configuration, self.transform_manager)
 
@@ -119,7 +121,10 @@ class BARDOverlayApp(OverlayBaseApp):
             self._model_list['pointers'] = self._model_list.get('pointers') + 1
 
         bard_visualisation = BardVisualisation(self._get_all_actors(),
-                                               self._model_list)
+                                               self._model_list,
+                                               model_visibilities,
+                                               model_opacities,
+                                               model_representations)
 
         interaction = configuration.get('interaction', {})
         configure_interaction(interaction, self.vtk_overlay_window,
