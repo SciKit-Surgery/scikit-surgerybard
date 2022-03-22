@@ -22,6 +22,10 @@ class PositionModelEvent(Exception):#pylint: disable=missing-class-docstring
     def __init__(self, increment):
         super().__init__()
         self.increment = increment
+class StopTrackingEvent(Exception):#pylint: disable=missing-class-docstring
+    pass
+class StartTrackingEvent(Exception):#pylint: disable=missing-class-docstring
+    pass
 
 
 class _FakePointerWriter:
@@ -83,6 +87,14 @@ class _FakeBardWidget:
         def get(transform_name):# pylint: disable=no-self-argument
             """A fake get function"""
             return transform_name
+    class tracker: #pylint: disable=invalid-name
+        """A fake tracker"""
+        def stop_tracking():# pylint: disable=no-method-argument
+            """A fake stop tracking function"""
+            raise StopTrackingEvent
+        def start_tracking():# pylint: disable=no-method-argument
+            """A fake start tracking function"""
+            raise StartTrackingEvent
 
 def test_keyboard_event():
     """
@@ -113,8 +125,13 @@ def test_keyboard_event():
     with pytest.raises(TurnOnAllEvent):
         kb_event(event, None)
 
-    event = _FakeKBEvent('s')
-    kb_event(event, None)
+    event = _FakeKBEvent('Down')
+    with pytest.raises(StartTrackingEvent):
+        kb_event(event, None)
+
+    event = _FakeKBEvent('Up')
+    with pytest.raises(StopTrackingEvent):
+        kb_event(event, None)
 
 def test_keyboard_translatios():
     """
