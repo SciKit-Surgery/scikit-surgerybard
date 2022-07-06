@@ -172,7 +172,7 @@ class BardMouseEvent:
         mouse_y /= window_y
 
         if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            self._visualisation_control.visibility_toggle(mouse_y)
+            self._visualisation_control.luminance_change(mouse_y)
 
         if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
             self._visualisation_control.change_opacity(mouse_y)

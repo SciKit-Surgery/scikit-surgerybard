@@ -16,6 +16,8 @@ class TurnOnAllEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class VisibilityToggleEvent(Exception):#pylint: disable=missing-class-docstring
     pass
+class LuminanceChangeEvent(Exception):#pylint: disable=missing-class-docstring
+    pass
 class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 class PositionModelEvent(Exception):#pylint: disable=missing-class-docstring
@@ -70,9 +72,9 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
-    def visibility_toggle(self, _): # pylint: disable=no-self-use
+    def luminance_change(self, _): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
-        raise VisibilityToggleEvent
+        raise LuminanceChangeEvent
 
     def change_opacity(self, _): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
@@ -313,7 +315,7 @@ def test_mouse_event():
 
     fake_mouse_event = _FakeMouseEvent([100, 100], [90, 10])
 
-    with pytest.raises(VisibilityToggleEvent):
+    with pytest.raises(LuminanceChangeEvent):
         mouse_event(fake_mouse_event, None)
 
     fake_mouse_event = _FakeMouseEvent([100, 100], [17, 90])

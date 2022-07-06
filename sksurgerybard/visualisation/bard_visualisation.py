@@ -238,6 +238,15 @@ class BardVisualisation:
                 if not actor.GetVisibility():
                     actor.SetVisibility(True)
                     return
+    
+    def luminance_change(self, y_pos):
+        """
+        Changes the luminance of one of the actors 
+        """
+        print("Got signal to change luminance of actor, ", y_pos)
+        for actor in self._target_actors:
+            print("Changing luminance for actor ", actor)
+
 
     def next_target(self):
         """
