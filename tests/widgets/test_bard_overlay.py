@@ -120,7 +120,8 @@ def test_valid_config():
         dtype=np.float32)
 
     assert matrices_equivalent(pointer2camera_regression,
-                    bard_overlay.transform_manager.get("pointerref2camera"))
+                    bard_overlay.transform_manager.get("pointerref2camera"),
+                    tolerance = 12.0)
 
     pointer2model_regression = np.array([
         [3.40810874e-01,  8.93456607e-01,  2.92546132e-01, -5.68496465e+01],
@@ -130,7 +131,8 @@ def test_valid_config():
         dtype=np.float32)
 
     assert matrices_equivalent(pointer2model_regression,
-                bard_overlay.transform_manager.get("pointerref2modelreference"))
+                bard_overlay.transform_manager.get("pointerref2modelreference")
+                ,tolerance = 13.0)
 
 
 def test_with_no_pointer():
