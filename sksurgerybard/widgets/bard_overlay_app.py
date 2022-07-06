@@ -159,7 +159,7 @@ class BARDOverlayApp(OverlayBaseWidget):
                     self._model_list['target anatomy']:
                 actor.SetUserMatrix(matrix)
 
-    def update(self):
+    def update_view(self):
         """
         Update the background render with a new frame
         """
