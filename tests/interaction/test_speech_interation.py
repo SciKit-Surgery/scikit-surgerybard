@@ -43,23 +43,23 @@ class ChangeOpacityEvent(Exception):#pylint: disable=missing-class-docstring
     pass
 
 class _FakeVisualisationControl:
-    def cycle_visible_anatomy_vis(self): # pylint: disable=no-self-use
+    def cycle_visible_anatomy_vis(self):
         """Raises an error so we know when it's run"""
         raise CycleAnatomyEvent
 
-    def next_target(self): # pylint: disable=no-self-use
+    def next_target(self):
         """Raises an error so we know when it's run"""
         raise NextTargetEvent
 
-    def turn_on_all_targets(self): # pylint: disable=no-self-use
+    def turn_on_all_targets(self):
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
-    def visibility_toggle(self, _): # pylint: disable=no-self-use
+    def visibility_toggle(self, _):
         """Raises an error so we know when it's run"""
         raise VisibilityToggleEvent
 
-    def change_opacity(self, _): # pylint: disable=no-self-use
+    def change_opacity(self, _):
         """Raises an error so we know when it's run"""
         raise ChangeOpacityEvent
 
