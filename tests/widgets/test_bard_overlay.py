@@ -131,8 +131,8 @@ def test_valid_config():
         dtype=np.float32)
 
     assert matrices_equivalent(pointer2model_regression,
-                bard_overlay.transform_manager.get("pointerref2modelreference")
-                ,tolerance = 13.0)
+                bard_overlay.transform_manager.get("pointerref2modelreference"),
+                tolerance = 13.0)
 
 
 def test_with_no_pointer():
