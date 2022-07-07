@@ -4,6 +4,7 @@
 
 import numpy as np
 from sksurgeryvtk.models.vtk_sphere_model import VTKSphereModel
+from sksurgerybard.visualisation.colours import get_yellow, get_green
 
 def configure_model_and_ref(configuration, transform_manager):
     """
