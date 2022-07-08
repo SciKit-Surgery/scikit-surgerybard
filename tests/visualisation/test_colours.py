@@ -1,9 +1,5 @@
 #  -*- coding: utf-8 -*-
 """Tests for BARD pointer module"""
-import pytest
-import vtk
-import numpy as np
-from sksurgerycore.transforms.transform_manager import TransformManager
 import sksurgerybard.visualisation.colours as cls
 
 #pylint:disable=no-member
@@ -27,7 +23,7 @@ def test_y_pos_to_luminance():
 
 def test_integer_colour_to_float():
     """Tests that integer to float colour works"""
-    assert cls.integer_colour_to_float([255,128,0]) == [1.0, 0.5, 0.0]
+    assert cls.integer_colour_to_float([255,51,0]) == [1.0, 0.2, 0.0]
 
 def test_get_yellow():
     """Checks that get yellow returns the right value"""

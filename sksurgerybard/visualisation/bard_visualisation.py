@@ -245,6 +245,8 @@ class BardVisualisation:
         Changes the luminance of one of the actors
         """
         print("Got signal to change luminance of actor, ", y_pos)
+        print("Yellow = ", get_yellow(y_pos))
+        print("green = ", get_green(y_pos))
         for actor in self._target_anatomy_actors:
             print("Changing luminance for actor ", actor)
 

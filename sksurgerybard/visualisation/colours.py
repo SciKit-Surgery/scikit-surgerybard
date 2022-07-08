@@ -3,7 +3,7 @@ Preset colours for Athena's luminance study
 """
 
 # from here
-# Grayscale Design palette: https://grayscale.design/app?lums=100.00,88.89,77.78,66.67,55.56,44.44,33.33,22.22,11.11,0.00&palettes=%23ffff00,%2300ff00&filters=0%7C0,0%7C0&names=Yellow,Greeen&labels=,
+# Grayscale Design palette: https://grayscale.design/app
 
 #lets create dictionaries we can use of pre set colours
 grayscale = {
@@ -47,7 +47,7 @@ green =  {
 
 def y_pos_to_luminance(y_pos):
     """
-    y_pos is a float between 0 and 1 representing the position of the 
+    y_pos is a float between 0 and 1 representing the position of the
     mouse on the screen. High y_pos corresponds to high luminance (50)
     low y_pos to low luminance (900)
     """
@@ -70,14 +70,15 @@ def integer_colour_to_float(colour):
     """
     out=[]
     for value in colour:
-        out.append((value)/256.0)
+        out.append((value)/255.0)
 
     return out
 
 
-
 def get_green(y_pos):
-    return green.get(y_pos_to_luminance(y_pos))
+    """Gets a green shade with luminace set by y_pos"""
+    return integer_colour_to_float(green.get(y_pos_to_luminance(y_pos)))
 
 def get_yellow(y_pos):
+    """Gets a yellow shade with luminace set by y_pos"""
     return integer_colour_to_float(yellow.get(y_pos_to_luminance(y_pos)))
