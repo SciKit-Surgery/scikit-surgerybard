@@ -415,5 +415,5 @@ def test_change_luminance():
 
     bard_vis = vis.BardVisualisation(actors, model_list)
 
-    bard_vis.luminance_change_left(0.7)
-    bard_vis.luminance_change_right(0.3)
+    bard_vis.luminance_change_left(0.7, True)
+    bard_vis.luminance_change_right(0.3, False)

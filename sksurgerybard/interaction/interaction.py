@@ -155,14 +155,18 @@ class BardFootSwitchEvent:
 class BardMouseEvent:
     """
     Handles mouse events for BARD.
+    :param: a visualisation control object
+    :param: if green is true we use green colours for luminance,
+        otherwise we use yellow.
     """
-    def __init__(self, visualisation_control):
+    def __init__(self, visualisation_control, green=True):
         self.screen_interaction_layout = {
             'x_right_edge' : 0.80,
             'x_left_edge' : 0.20
             }
 
         self._visualisation_control = visualisation_control
+        self._green = green
 
     def __call__(self, event, _event_type_not_used):
         mouse_x, mouse_y = event.GetEventPosition()
@@ -172,7 +176,9 @@ class BardMouseEvent:
         mouse_y /= window_y
 
         if mouse_x > self.screen_interaction_layout.get('x_right_edge'):
-            self._visualisation_control.luminance_change_right(mouse_y)
+            self._visualisation_control.luminance_change_right(mouse_y,
+                    self._green)
 
         if mouse_x < self.screen_interaction_layout.get('x_left_edge'):
-            self._visualisation_control.luminance_change_left(mouse_y)
+            self._visualisation_control.luminance_change_left(mouse_y,
+                    self._green)

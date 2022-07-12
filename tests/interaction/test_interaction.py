@@ -72,11 +72,11 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
-    def luminance_change_left(self, _): # pylint: disable=no-self-use
+    def luminance_change_left(self, _y_pos, _green): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
         raise LuminanceChangeEvent
 
-    def luminance_change_right(self, _): # pylint: disable=no-self-use
+    def luminance_change_right(self, _y_pos, _green): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
         raise LuminanceChangeEvent
 

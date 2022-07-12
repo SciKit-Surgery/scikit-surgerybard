@@ -21,7 +21,7 @@
 	},
 
     "models": {
-        "models_dir": "data/models",
+        "models_dir": "/home/thompson/data/bard_data/Depth_Perception",
         "reference_to_model": "data/reference_to_model.txt",
         "visible_anatomy": 1
     },
@@ -29,7 +29,8 @@
         "keyboard": true,
         "footswitch": true,
         "maximum delay": 2.0,
-        "mouse": true
+        "mouse": true,
+	"green": true
     },
     "pointer": {
         "pointer_tag_to_tip": "data/pointer_tip.txt"
