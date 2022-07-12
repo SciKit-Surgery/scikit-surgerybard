@@ -250,11 +250,11 @@ class BardVisualisation:
             return
         actor_index = len(self._target_anatomy_actors) - 2
         if actor_index >= 0:
-            target_colour = get_green(y_pos)
+            luminance, target_colour = get_green(y_pos)
             self._target_anatomy_actors[
                     actor_index].GetProperty().SetColor(target_colour)
             print(f"Changing luminance for actor {actor_index} to ",
-                  f"{target_colour}")
+                  f"{luminance}, RGB={target_colour}", flush=True)
 
     def luminance_change_right(self, y_pos):
         """
@@ -265,11 +265,11 @@ class BardVisualisation:
         if len(self._target_anatomy_actors) < 1:
             return
         actor_index = len(self._target_anatomy_actors) - 1
-        target_colour = get_yellow(y_pos)
+        luminance, target_colour = get_yellow(y_pos)
         self._target_anatomy_actors[
                 actor_index].GetProperty().SetColor(target_colour)
         print(f"Changing luminance for actor {actor_index} to ",
-              f"{target_colour}")
+              f"{luminance}, RGB={target_colour}", flush=True)
 
     def next_target(self):
         """

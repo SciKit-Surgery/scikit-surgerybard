@@ -77,8 +77,10 @@ def integer_colour_to_float(colour):
 
 def get_green(y_pos):
     """Gets a green shade with luminace set by y_pos"""
-    return integer_colour_to_float(green.get(y_pos_to_luminance(y_pos)))
+    luminance = y_pos_to_luminance(y_pos)
+    return luminance, integer_colour_to_float(green.get(luminance))
 
 def get_yellow(y_pos):
     """Gets a yellow shade with luminace set by y_pos"""
-    return integer_colour_to_float(yellow.get(y_pos_to_luminance(y_pos)))
+    luminance = y_pos_to_luminance(y_pos)
+    return luminance, integer_colour_to_float(yellow.get(luminance))

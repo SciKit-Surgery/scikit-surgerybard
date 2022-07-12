@@ -27,8 +27,8 @@ def test_integer_colour_to_float():
 
 def test_get_yellow():
     """Checks that get yellow returns the right value"""
-    assert cls.get_yellow(1.0) == [1.0, 1.0, 1.0]
+    assert cls.get_yellow(1.0)[1] == [1.0, 1.0, 1.0]
 
 def test_get_green():
     """Checks that get green returns the right value"""
-    assert cls.get_green(1.0) == [1.0, 1.0, 1.0]
+    assert cls.get_green(1.0)[1] == [1.0, 1.0, 1.0]
