@@ -395,3 +395,25 @@ def test_change_opacity():
     _check_state_transition(actors, None, None, None, None,
                             set_opac_state, expected_opac_state,
                             bard_vis.change_opacity, 0.7)
+
+def test_change_luminance():
+    """
+    Tests luminance changes
+    """
+
+    actors = []
+
+    for _ in range(8):
+        actor = vtk.vtkActor()
+        actors.append(actor)
+
+    model_list = {
+        'visible anatomy' : 3,
+        'target anatomy' : 2,
+        'reference' : 1
+        }
+
+    bard_vis = vis.BardVisualisation(actors, model_list)
+
+    bard_vis.luminance_change_left(0.7)
+    bard_vis.luminance_change_right(0.3)

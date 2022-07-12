@@ -72,7 +72,11 @@ class _FakeVisualisationControl:
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
-    def luminance_change(self, _): # pylint: disable=no-self-use
+    def luminance_change_left(self, _): # pylint: disable=no-self-use
+        """Raises an error so we know when it's run"""
+        raise LuminanceChangeEvent
+
+    def luminance_change_right(self, _): # pylint: disable=no-self-use
         """Raises an error so we know when it's run"""
         raise LuminanceChangeEvent
 
@@ -320,7 +324,7 @@ def test_mouse_event():
 
     fake_mouse_event = _FakeMouseEvent([100, 100], [17, 90])
 
-    with pytest.raises(ChangeOpacityEvent):
+    with pytest.raises(LuminanceChangeEvent):
         mouse_event(fake_mouse_event, None)
 
     fake_mouse_event = _FakeMouseEvent([100, 100], [27, 90])

@@ -240,16 +240,36 @@ class BardVisualisation:
                     actor.SetVisibility(True)
                     return
 
-    def luminance_change(self, y_pos):
+    def luminance_change_left(self, y_pos):
         """
-        Changes the luminance of one of the actors
+        Changes the luminance of either of the last two actors of the actors
+        At the moment it's hard coded to change the second to last last anatomy
+        actor on the green scale
         """
-        print("Got signal to change luminance of actor, ", y_pos)
-        print("Yellow = ", get_yellow(y_pos))
-        print("green = ", get_green(y_pos))
-        for actor in self._target_anatomy_actors:
-            print("Changing luminance for actor ", actor)
+        if len(self._target_anatomy_actors) < 2:
+            return
+        actor_index = len(self._target_anatomy_actors) - 2
+        if actor_index >= 0:
+            target_colour = get_green(y_pos)
+            self._target_anatomy_actors[
+                    actor_index].GetProperty().SetColor(target_colour)
+            print(f"Changing luminance for actor {actor_index} to ",
+                  f"{target_colour}")
 
+    def luminance_change_right(self, y_pos):
+        """
+        Changes the luminance of either of the last two actors of the actors
+        At the moment it's hard coded to change the last last anatomy
+        actor on the yellow scale
+        """
+        if len(self._target_anatomy_actors) < 1:
+            return
+        actor_index = len(self._target_anatomy_actors) - 1
+        target_colour = get_yellow(y_pos)
+        self._target_anatomy_actors[
+                actor_index].GetProperty().SetColor(target_colour)
+        print(f"Changing luminance for actor {actor_index} to ",
+              f"{target_colour}")
 
     def next_target(self):
         """
