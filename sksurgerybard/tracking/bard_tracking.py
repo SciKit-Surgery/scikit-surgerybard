@@ -40,6 +40,15 @@ def setup_tracker(configuration):
     tracker_config = setup_aruco_tracker_camera(configuration)
 
     rigid_bodies = tracker_config.get('rigid bodies', None)
+
+    transform_manager.add("tracker2camera",
+                        np.eye(4, dtype = np.float64))
+    #issue #103 I'm not entirely sure why, but we need to initiatlise
+    #modelreference2camera in order for pointer tracking to work in
+    #the absence of a model.
+    transform_manager.add("modelreference2camera",
+                        np.eye(4, dtype = np.float64))
+
     if rigid_bodies is not None:
         for rigid_body in rigid_bodies:
             name = rigid_body.get('name', None)
