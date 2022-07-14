@@ -240,7 +240,7 @@ class BardVisualisation:
                     actor.SetVisibility(True)
                     return
 
-    def luminance_change_left(self, y_pos, green):
+    def luminance_change_right(self, y_pos, green):
         """
         Changes the luminance of either of the last two actors of the actors
         At the moment it's hard coded to change the second to last last anatomy
@@ -258,7 +258,7 @@ class BardVisualisation:
             print(f"Changing luminance for actor {actor_index} to ",
                   f"{luminance}, RGB={target_colour}", flush=True)
 
-    def luminance_change_right(self, y_pos, green):
+    def luminance_change_left(self, y_pos, green):
         """
         Changes the luminance of either of the last two actors of the actors
         At the moment it's hard coded to change the last last anatomy

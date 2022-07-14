@@ -109,5 +109,4 @@ def configure_interaction(interaction_config, vtk_window, pointer_writer,
     if interaction_config.get('mouse', False):
         green = interaction_config.get('green', True)
         vtk_window.AddObserver("LeftButtonPressEvent",
-                               BardMouseEvent(bard_visualisation),
-                               green)
+                               BardMouseEvent(bard_visualisation, green))
