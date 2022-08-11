@@ -78,7 +78,8 @@ class BARDOverlayApp(OverlayBaseApp):
                             "camera2modelreference")
             self.vtk_overlay_window.set_camera_pose(camera2modelreference)
         except ValueError:
-            pass
+            self.transform_manager.add("camera2modelreference",
+                        np.eye(4, dtype = np.float64))
 
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
