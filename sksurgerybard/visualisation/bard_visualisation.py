@@ -45,6 +45,9 @@ def configure_model_and_ref(configuration, transform_manager):
         model_visibilities = model_config.get('model_visibilities', [1])
         model_opacities = model_config.get('model_opacities', [1.0])
         model_representations = model_config.get('model_representations', ['s'])
+    else:
+        transform_manager.add("modelreference2camera",
+                        np.eye(4, dtype = np.float64))
 
     if models_path is not None:
         try:
