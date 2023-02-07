@@ -63,7 +63,6 @@ setup(
         'scikit-surgeryutils>1.1',
         'scikit-surgeryvtk',
         'scikit-surgeryarucotracker>=0.2.5',
-        'vtk<9.0;sys_platform=="linux"',
     ],
 
     entry_points={
