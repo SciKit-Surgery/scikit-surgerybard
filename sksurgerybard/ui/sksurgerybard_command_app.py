@@ -22,6 +22,12 @@ def run_demo(config_file, calib_dir):
 
     viewer = BARDOverlayApp(configuration, calib_dir)
 
+    viewer.vtk_overlay_window.Initialize()
+    viewer.vtk_overlay_window.Start()
+    viewer.show()
     viewer.start()
 
-    sys.exit(app.exec_())
+    app.exec_()
+ 
+    viewer.vtk_overlay_window.Finalize()
+

@@ -60,7 +60,7 @@ setup(
         'opencv-contrib-python-headless',
         'scikit-surgerycore>=0.6.8',
         'scikit-surgerycalibration>=0.1.9',
-        'scikit-surgeryutils>1.1',
+        'scikit-surgeryutils>=1.2.1',
         'scikit-surgeryvtk',
         'scikit-surgeryarucotracker>=0.2.5',
     ],

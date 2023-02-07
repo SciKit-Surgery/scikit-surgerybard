@@ -7,7 +7,7 @@ glob2
 PySide2<5.15.0
 scikit-surgerycalibration>=0.1.9
 scikit-surgerycore>=0.6.8
-scikit-surgeryutils>1.1
+scikit-surgeryutils>=1.2.1
 scikit-surgeryvtk
 scikit-surgeryarucotracker>=0.2.5
 opencv-contrib-python-headless

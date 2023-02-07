@@ -57,7 +57,7 @@ class BARDOverlayApp(OverlayBaseWidget):
 
         # call the constructor for the base class
         try:
-            super().__init__(video_source, dims)
+            super().__init__(video_source, dims, init_vtk_widget=False)
         except RuntimeError:
             raise RuntimeError("Failed to create overlay window, check you " +
                                "have access to video source: ", video_source) \
