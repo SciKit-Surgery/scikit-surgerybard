@@ -11,6 +11,5 @@ scikit-surgeryutils>1.1
 scikit-surgeryvtk
 scikit-surgeryarucotracker>=0.2.5
 opencv-contrib-python-headless
-vtk<9.0;sys_platform=="linux"
 #scikit-surgeryspeech>=0.2.0 #uncomment this to use speech interface
 #PocketSphinx # uncomment this to use speech with sphinx
