@@ -66,7 +66,7 @@ def test_valid_config():
             bard_overlay.transform_manager.get("pointerref2camera"),
             np.eye(4, dtype = np.float64))
 
-    bard_overlay.update()
+    bard_overlay.update_view()
 
     cam2model_regression = np.array([
        [-0.85007277,  0.51807849, -0.09471516, -8.06235428e+01],
@@ -100,7 +100,7 @@ def test_valid_config():
 
     #skip 5 frames
     for _ in range(5):
-        bard_overlay.update()
+        bard_overlay.update_view()
 
     cam2model_regression = np.array([
         [-8.50551488e-01,  5.17049795e-01, -9.60295592e-02, -8.10664190e+01],
@@ -131,8 +131,8 @@ def test_valid_config():
         dtype=np.float32)
 
     assert matrices_equivalent(pointer2model_regression,
-                bard_overlay.transform_manager.get("pointerref2modelreference")
-                ,tolerance = 13.0)
+                bard_overlay.transform_manager.get("pointerref2modelreference"),
+                tolerance = 13.0)
 
 
 def test_with_no_pointer():
@@ -168,7 +168,7 @@ def test_with_no_pointer():
     with pytest.raises(ValueError):
         bard_overlay.transform_manager.get("pointerref2camera")
 
-    bard_overlay.update()
+    bard_overlay.update_view()
 
     cam2model_regression = np.array([
        [-0.85007277,  0.51807849, -0.09471516, -8.06235428e+01],
@@ -206,7 +206,7 @@ def test_with_camera_only():
     with pytest.raises(ValueError):
         bard_overlay.transform_manager.get("pointerref2camera")
 
-    bard_overlay.update()
+    bard_overlay.update_view()
 
 
 def test_with_model_no_tracking():

@@ -29,7 +29,7 @@ class StartTrackingEvent(Exception):#pylint: disable=missing-class-docstring
 
 
 class _FakePointerWriter:
-    def write_pointer_tip(self): # pylint: disable=no-self-use
+    def write_pointer_tip(self):
         """Raises an exception so we know when it's run"""
         raise WritePointerEvent
 
@@ -58,28 +58,28 @@ class _FakeMouseEvent:
 
 
 class _FakeVisualisationControl:
-    def cycle_visible_anatomy_vis(self): # pylint: disable=no-self-use
+    def cycle_visible_anatomy_vis(self):
         """Raises an error so we know when it's run"""
         raise CycleAnatomyEvent
 
-    def next_target(self): # pylint: disable=no-self-use
+    def next_target(self):
         """Raises an error so we know when it's run"""
         raise NextTargetEvent
 
-    def turn_on_all_targets(self): # pylint: disable=no-self-use
+    def turn_on_all_targets(self):
         """Raises an error so we know when it's run"""
         raise TurnOnAllEvent
 
-    def visibility_toggle(self, _): # pylint: disable=no-self-use
+    def visibility_toggle(self, _):
         """Raises an error so we know when it's run"""
         raise VisibilityToggleEvent
 
-    def change_opacity(self, _): # pylint: disable=no-self-use
+    def change_opacity(self, _):
         """Raises an error so we know when it's run"""
         raise ChangeOpacityEvent
 
 class _FakeBardWidget:
-    def position_model_actors(self, increment): # pylint: disable=no-self-use
+    def position_model_actors(self, increment):
         """Raises and error so we know it's run"""
         raise PositionModelEvent(increment)
     class transform_manager: #pylint: disable=invalid-name

@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 from sksurgeryvtk.utils.matrix_utils import create_vtk_matrix_from_numpy
-from sksurgeryutils.common_overlay_apps import OverlayBaseApp
+from sksurgeryutils.common_overlay_apps import OverlayBaseWidget
 from sksurgeryarucotracker.arucotracker import ArUcoTracker
 from sksurgerybard.algorithms.bard_config_algorithms import \
     configure_interaction, configure_camera, replace_calibration_dir
@@ -19,7 +19,7 @@ from sksurgerybard.algorithms.pointer import BardPointerWriter
 from sksurgerybard.algorithms.decimation import decimate_actor
 from sksurgerybard.tracking.bard_tracking import setup_tracker
 
-class BARDOverlayApp(OverlayBaseApp):
+class BARDOverlayApp(OverlayBaseWidget):
     """
     Inherits from OverlayBaseApp, and adds methods to
     detect aruco tags and move the model to follow.
@@ -57,7 +57,7 @@ class BARDOverlayApp(OverlayBaseApp):
 
         # call the constructor for the base class
         try:
-            super().__init__(video_source, dims)
+            super().__init__(video_source, dims, init_vtk_widget=False)
         except RuntimeError:
             raise RuntimeError("Failed to create overlay window, check you " +
                                "have access to video source: ", video_source) \
@@ -160,7 +160,7 @@ class BARDOverlayApp(OverlayBaseApp):
                     self._model_list['target anatomy']:
                 actor.SetUserMatrix(matrix)
 
-    def update(self):
+    def update_view(self):
         """
         Update the background render with a new frame
         """
