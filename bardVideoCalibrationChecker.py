@@ -2,7 +2,7 @@
 #  -*- coding: utf-8 -*-
 import sys
 
-from sksurgerycalibration.ui.video_calibration_checker_command_line \
+from sksurgeryutils.ui.sksurgeryvideocalibrationchecker_command_line \
     import main
 
 if __name__ == "__main__":
