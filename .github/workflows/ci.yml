@@ -50,8 +50,6 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     timeout-minutes: 10
 
-    runs-on: ${{ matrix.os }}
-
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
