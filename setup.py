@@ -57,11 +57,11 @@ setup(
         'glob2',
         'pyside6>=6.4.2',
         'opencv-contrib-python-headless>=4.2.0.32',
-        'scikit-surgerycore>=0.6.8',
-        'scikit-surgerycalibration>=0.1.9',
+        'scikit-surgerycore>=0.6.10',
+        'scikit-surgerycalibration>=0.2.4',
         'scikit-surgeryutils==2.0rc0',
         'scikit-surgeryvtk==2.0rc0',
-        'scikit-surgeryarucotracker>=0.2.5',
+        'scikit-surgeryarucotracker>=1.0.1',
     ],
 
     entry_points={

@@ -1,4 +1,4 @@
-from PySide2.QtCore import QObject, Signal, Slot, QThread, QTimer
+from PySide6.QtCore import QObject, Signal, Slot, QThread, QTimer
 
 class VoiceRecognitionService(QObject):
     """A fake Voice recognition service, to enable us to do some

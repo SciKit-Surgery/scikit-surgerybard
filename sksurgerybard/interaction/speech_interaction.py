@@ -5,7 +5,7 @@ requirements.txt"""
 
 #pylint:disable=super-with-arguments, raise-missing-from
 
-from PySide2.QtCore import QObject, Slot, QThread
+from PySide6.QtCore import QObject, Slot, QThread # pylint:disable=no-name-in-module
 try:
     from sksurgeryspeech.algorithms.voice_recognition_service import \
         VoiceRecognitionService #pylint: disable=import-error
