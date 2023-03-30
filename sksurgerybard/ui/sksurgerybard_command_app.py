@@ -2,7 +2,7 @@
 
 """ Demo app, to show OpenCV video and PySide2 widgets together."""
 
-from PySide2.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication # pylint:disable=no-name-in-module
 from sksurgerycore.configuration.configuration_manager import \
         ConfigurationManager
 from sksurgerybard.widgets.bard_overlay_app import BARDOverlayApp

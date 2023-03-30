@@ -4,7 +4,7 @@ from time import sleep
 import sys
 import pytest
 
-from PySide2.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication # pylint:disable=no-name-in-module
 
 
 try:

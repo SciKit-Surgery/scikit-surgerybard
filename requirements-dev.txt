@@ -9,11 +9,12 @@ coveralls
 mock
 pyfakefs
 parameterized
-pylint>2.13
+pylint<=2.17.0
 sphinx
 sphinx_rtd_theme
 pyinstaller
 pytest
 tox
-vtk<=9.0.1
+vtk>=9.2.5
 versioneer
+pyyaml

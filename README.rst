@@ -7,6 +7,8 @@ Basic Augmented Reality Demo.
    :target: https://github.com/SciKit-Surgery/scikit-surgerybard
    :alt: Logo
 
+|
+
 .. image:: https://github.com/SciKit-Surgery/scikit-surgerybard/workflows/.github/workflows/ci.yml/badge.svg 
    :target: https://github.com/SciKit-Surgery/scikit-surgerybard/actions
    :alt: Travis CI test status
@@ -32,15 +34,22 @@ Basic Augmented Reality Demo.
    :alt: Follow scikit_surgery on twitter
 
 
-Authors: Matt Clarkson, Mian Ahmad, Tom Dowrick, Stephen Thompson
+Author(s): Stephen Thompson and Matt Clarkson;
+Contributor(s): Miguel Xochicale, Thomas Dowrick, and Mian Ahmad.
 
 Basic Augmented Reality Demo (BARD) is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 
-The BARD is tested on Python 3.6.
+The BARD is tested on Python 3.8. and may support other Python versions.
 
 
 Developing
 ----------
+
+
+Encountering Problems?
+^^^^^^^^^^^^^^^^^^^^^^
+Please get in touch or raise an `issue`_.
+
 
 Contributing
 ^^^^^^^^^^^^
@@ -77,4 +86,4 @@ Supported by `Wellcome`_ and `EPSRC`_.
 .. _`EPSRC`: https://www.epsrc.ac.uk/
 .. _`contributing guidelines`: https://github.com/SciKit-Surgery/scikit-surgerybard/blob/master/CONTRIBUTING.rst
 .. _`license file`: https://github.com/SciKit-Surgery/scikit-surgerybard/blob/master/LICENSE
-
+.. _`issue`: https://github.com/SciKit-Surgery/scikit-surgerybard/issues/new
