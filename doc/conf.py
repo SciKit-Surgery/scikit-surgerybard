@@ -94,9 +94,9 @@ author = u'Mian Asbat Ahmad'
 # built documents.
 #
 # The short X.Y version.
-version = u''
+version = u'2.0.0'
 # The full version, including alpha/beta/rc tags.
-release = u''
+release = u'2.0.0'
 
 # The short X.Y version.
 # version = sksurgerybard.__version__
@@ -108,7 +108,7 @@ release = u''
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+# language = None
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
