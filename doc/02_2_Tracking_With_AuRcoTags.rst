@@ -14,6 +14,7 @@ OpenCV.
 
 1. Try running the following, and check that the USB camera can track the reference marker
 ::
+
    python sksurgerybard.py --config config/example_config.json
 
 
@@ -36,7 +37,8 @@ a registration to be performed once. Here we have glued the marker to the phanto
 so model2reference should not change.
 
 Now try running
-:: 
+::
+
    python sksurgerybard.py --config config/reference_with_model.json
 
 Move the webcam so that the reference markers are visible, and you should see

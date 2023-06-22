@@ -30,6 +30,7 @@ or write a script to make one.
 
 Take 5-20 pictures of chessboard using:
 ::
+
   python bardVideoCalibration.py -c config/video_calib_chessboard.json
 
 Hit the 'c' key to capture an image. Press the 'q' key to quite the application.
@@ -53,6 +54,7 @@ Use the '-s' option to specify a directory to save to, and the
 
 For example:
 ::
+
   python bardVideoCalibration.py -c config/video_calib_chessboard.json -s tests/output -p myresults
 
 Then, each time the program recalibrates, the results will be saved to the 'tests/output' folder, with the filename prefix 'myresults'.

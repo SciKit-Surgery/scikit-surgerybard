@@ -10,12 +10,14 @@ Create a plain text-file containing the coordinates of the prostate phantom fidu
 
 Compute the registration of CT points in CT_Fiduicial_Markers.txt to your world points, run this;
 ::
+
   python bardProcrustes.py -f world.txt -m data/PelvisPhantom/CT_Fiduicial_Markers.txt
 
 So here -f stands for "fixed" points, also called "target" points in the literature, and -m stands for "moving" points, also called "source" points in the literature.
 This will output a rotation, a translation, and Fiducial Registration Error.
 Cut and paste the rotation and translation into a CT_to_world.txt file as 
 ::
+
   R11 R12 R13 T1
   R21 R22 R23 T2
   R31 R31 R33 T3
@@ -25,6 +27,7 @@ and edit config/reference_with_model.json to use this file instead of data/id.tx
 
 Rerun BARD using this configuration file, using:
 ::
+
    python sksurgerybard.py --config config/reference_with_model.json
 
 and see what happens.
