@@ -10,8 +10,6 @@ mock
 pyfakefs
 parameterized
 pylint<=2.17.0
-sphinx
-sphinx_rtd_theme
 pyinstaller
 pytest
 tox
