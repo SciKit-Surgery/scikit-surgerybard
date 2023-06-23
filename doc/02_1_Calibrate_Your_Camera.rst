@@ -49,13 +49,14 @@ in the terminal window.
 Often, in a research setting, it is best to save the data for later
 analysis. The same program can be used to save the data to a given folder.
 
-Use the '-s' option to specify a directory to save to, and the
-'-p' option to specify a filename prefix.
+Use the '-o' option to specify a directory to save to, the
+'-p' option to specify a filename prefix, and '-h' option to show help message and exit.
 
 For example:
 ::
 
   python bardVideoCalibration.py -c config/video_calib_chessboard.json -s tests/output -p myresults
+  #usage: bardVideoCalibration.py [-h] -c CONFIG [-s SOURCE] [-o OUTPUT] [-p PREFIX] [-ni] [-v]
 
 Then, each time the program recalibrates, the results will be saved to the 'tests/output' folder, with the filename prefix 'myresults'.
 
