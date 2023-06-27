@@ -18,13 +18,13 @@ setup(
                 'based on scikit-surgery (SNAPPY)',
     long_description=long_description,
     long_description_content_type='text/x-rst',
-    url='https://github.com/SciKit-Surgery/'
-        'scikit-surgerybard',
+    url='https://github.com/SciKit-Surgery/scikit-surgerybard',
+    # Authors: Miguel Xochicale, Thomas Dowrick, Stephen Thompson, Matt Clarkson
     author='Stephen Thompson',
     author_email='s.thompson@ucl.ac.uk',
     license='BSD-3 license',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
 
         'Intended Audience :: Developers',
         'Intended Audience :: Healthcare Industry',
@@ -36,7 +36,7 @@ setup(
 
 
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
 
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Scientific/Engineering :: Medical Science Apps.',
@@ -55,12 +55,12 @@ setup(
     install_requires=[
         'numpy',
         'glob2',
-        'pyside6>=6.4.2',
+        'pyside6>=6.5.1.1',
         'opencv-contrib-python-headless>=4.2.0.32',
         'scikit-surgerycore>=0.6.10',
         'scikit-surgerycalibration>=0.2.4',
-        'scikit-surgeryutils==2.0rc0',
-        'scikit-surgeryvtk==2.0rc0',
+        'scikit-surgeryutils>=2.0.0',
+        'scikit-surgeryvtk>=2.0.1',
         'scikit-surgeryarucotracker>=1.0.1',
     ],
 

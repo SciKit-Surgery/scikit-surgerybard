@@ -34,8 +34,8 @@ Basic Augmented Reality Demo.
    :alt: Follow scikit_surgery on twitter
 
 
-Author(s): Stephen Thompson and Matt Clarkson;
-Contributor(s): Miguel Xochicale, Thomas Dowrick, and Mian Ahmad.
+Author(s): Miguel Xochicale, Thomas Dowrick, Stephen Thompson and Matt Clarkson;
+Contributor(s): Mian Ahmad.
 
 Basic Augmented Reality Demo (BARD) is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 

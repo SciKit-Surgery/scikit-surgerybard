@@ -18,6 +18,7 @@ can be reliably located in both the model (e.g. CT scan) and patient (i.e. physi
 Within the data directory there are files based on a CT scan of the
 pelvis phantom. 
 ::
+
   ls data/PelvisPhantom
   CT_Fiduicial_Markers.txt  
   FullPelvis.vtk  
@@ -36,6 +37,7 @@ pointer, using the "pointer" markers, a pen, some cardboard and some sort of adh
 
 Now run this:
 ::
+
   python sksurgerybard.py --config config/pointer_markers.json
 
 Move the pointer around in front of the camera. You should be able to see that 
@@ -49,6 +51,7 @@ move either the pointer tip or the tracking system (webcam).
 
 When you have a directory of pointer matrices you can run this;
 ::
+
   python bardPivotCalibration.py --help
   python bardPivotCalibration.py --input pointer_positions/bard_pointer_matrices
 
@@ -63,6 +66,7 @@ less pointer poses.
 
 Now edit config/pointer_markers.json to include the the pointer_tag_to_tip transform, within the pointerData entry:
 ::
+
     "pointerData": {
         "pointer_tag_file": "data/pointer.txt",
         "pointer_tag_to_tip": "data/pointer_tip.txt"
@@ -70,6 +74,7 @@ Now edit config/pointer_markers.json to include the the pointer_tag_to_tip trans
 
 Now run; 
 ::
+
   python sksurgerybard.py --config config/pointer_markers.json
 
 When you place the pointer in front of the camera, you should now see an additional sphere

@@ -17,6 +17,7 @@ Build Your Own Image Guided Surgery System
 
 3. Get B.A.R.D.
 ::
+
   git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
 
 or navigate to https://github.com/SciKit-Surgery/scikit-surgerybard
@@ -24,29 +25,35 @@ and use the download button
 
 navigate to the scikit-surgerybard directory and run
 ::
+
   pip install .
 
 You may need to add
 ::
+
   pip install --user
 
 if you don't have administrative permissions.
 
 **Another method to get BARD and all its dependant packages is the following**
 ::
+
   git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
 
 Change directory to the newly created `scikit-surgerybard` by
 ::
+
   cd scikit-surgerybard
 
 Run the tox commands
 ::
+
   tox
 
 If tox run successfully,
 For Mac and Linux, activate the virtual environment using command
 ::
+
   source .tox/py36/bin/activate
 
 If all goes well the prompt should be preceded by (py36).
@@ -54,6 +61,7 @@ If all goes well the prompt should be preceded by (py36).
 
 For Windows, activate the virtual environment using command
 ::
+
   .tox\py36\Scripts\activate
 
 If all goes well the prompt should be preceded by (py36).

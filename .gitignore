@@ -13,3 +13,6 @@ build/
 dist/
 tests/output/
 pointer_positions/
+
+# Generated bard models with tox
+bard_model2modelref.txt
