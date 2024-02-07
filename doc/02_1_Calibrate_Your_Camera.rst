@@ -55,7 +55,7 @@ Use the '-o' option to specify a directory to save to, the
 For example:
 ::
 
-  python bardVideoCalibration.py -c config/video_calib_chessboard.json -s tests/output -p myresults
+  python bardVideoCalibration.py -c config/video_calib_chessboard.json -s 0 -o tests/output -p myresults
   #usage: bardVideoCalibration.py [-h] -c CONFIG [-s SOURCE] [-o OUTPUT] [-p PREFIX] [-ni] [-v]
 
 Then, each time the program recalibrates, the results will be saved to the 'tests/output' folder, with the filename prefix 'myresults'.
