@@ -25,7 +25,7 @@
     "models": {
         "models_dir": "data/models",
 	"target_model_vertices": [-1],
-	"model_visibilities": [1],
+	"model_visibilities": [0],
 	"model_opacities": [0.5, 1.0, 1.0],
 	"model_representations": ["w", "s", "s"],
         "reference_to_model": "data/reference_to_model.txt",
