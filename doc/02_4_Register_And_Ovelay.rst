@@ -6,12 +6,23 @@
 Register and Overlay Model
 =============================
 
-Create a plain text-file containing the coordinates of the prostate phantom fiducials, in the same order and format as data/PelvisPhantom/CT_Fiduicial_Markers.txt. These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. You should end up with a file, of the same format as CT.txt, containing the corresponding world coordinates, lets call it world.txt.
+Create a plain text-file containing the coordinates of the prostate phantom fiducials, in the same order and format as data/PelvisPhantom/CT_Fiduicial_Markers.txt. 
+
+You can do this by running 
+
+::
+
+  python sksurgerybard.py --config config/pointer_markers.json
+
+These markers have been labeled on the phantom. You must measure the points using the tracked pointer, in the same order. To do this, you can place the pointer tip at each fiducial and press "d" to record the position.
+
+This should output the files into whatever output file you specified. These points can now be copied and pasted into the world.txt file
+You should end up with a file, of the same format as CT_Fiduicial_Markers.txt, containing the corresponding world coordinates, lets call it world.txt.
 
 Compute the registration of CT points in CT_Fiduicial_Markers.txt to your world points, run this;
 ::
 
-  python bardProcrustes.py -f world.txt -m data/PelvisPhantom/CT_Fiduicial_Markers.txt
+  python bardProcrustes.py -f data/PelvisPhantom/world.txt -m data/PelvisPhantom/CT_Fiduicial_Markers.txt
 
 So here -f stands for "fixed" points, also called "target" points in the literature, and -m stands for "moving" points, also called "source" points in the literature.
 This will output a rotation, a translation, and Fiducial Registration Error.
