@@ -35,6 +35,12 @@ You may need to add
 
 if you don't have administrative permissions.
 
+You may also need to install `visioneer` 
+
+::
+
+  pip install versioneer
+
 **Another method to get BARD and all its dependant packages is the following**
 ::
 
