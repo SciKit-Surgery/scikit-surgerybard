@@ -18,7 +18,7 @@ OpenCV.
    python sksurgerybard.py --config config/example_config.json
 
 
-When you place the reference marker (data/reference.pdf) in front of the webcam you should
+When you place the reference marker found in (data/resources.pdf) in front of the webcam you should
 see the tag pattern overlaid with spherical markers. Check that the webcam width and height 
 specified in the configuration file are the same as the images you performed calibration on.
 

@@ -20,9 +20,7 @@ pelvis phantom.
 ::
 
   ls data/PelvisPhantom
-  CT_Fiduicial_Markers.txt  
-  FullPelvis.vtk  
-  PhantomCroppedJuly08.gipl.gz 
+  >> CT_Fiduicial_Markers.txt  FullPelvis.vtk  PhantomCroppedJuly08.gipl.gz 
 
 For now, have a look in the file "CT_Fiduicial_Markers.txt". This is an ordered list 
 of the positions of 4 fiducial markers that we
@@ -45,17 +43,25 @@ BARD is tracking the markers, so we know where they are, however we're going to 
 tip of the pointer to locate the fiducial markers. We find the tip of the pointer 
 using a "pivot calibration". The tip of the pointer is held stationary whilst the 
 markers are pivoted around the tip. Pressing the "d" key whilst BARD is running will write 
-the pointer tracking matrix to the directory pointer_positions/bard_pointer_matrices. Do this around 100
-times whilst pivoting the pointer. Whilst doing this it is important that you do not 
+the pointer tracking matrix to the directory specified in the config file pointer_markers.json, under the parameter "out path" and then inside the directory bard_pointer_matrices, so for example if the full path is specified to be pointer_positions, the pointer positions will go under the folder pointer_positions/bard_pointer_matrices.
+Obtain around 100 pointer positions by pressing the key "d" whilst pivoting the pointer. Whilst doing this, it is important that you do not 
 move either the pointer tip or the tracking system (webcam).
 
 When you have a directory of pointer matrices you can run this;
 ::
 
-  python bardPivotCalibration.py --help
   python bardPivotCalibration.py --input pointer_positions/bard_pointer_matrices
 
-The output of this should be list of 7 numbers. The first three are the x, y and z coordinates of the
+
+The output of this should be list of 7 numbers, something like this:
+
+::
+
+  Pointer Offset =  [[-100.19828771    7.16207486    4.48010691]]
+  Pivot Location =  [[-47.31630508  93.11369119 293.46139526]]
+  Residual Error =  8.382949342574744
+
+The first three are the x, y and z coordinates of the
 pointer tip relative to the tracking markers and should be copied into a file named 
 pointer_tip.txt. The next three numbers are the x,y, and z coordinates of the pointer 
 pivot point relative to the webcam. These can be ignored for now. 
@@ -67,7 +73,7 @@ less pointer poses.
 Now edit config/pointer_markers.json to include the the pointer_tag_to_tip transform, within the pointerData entry:
 ::
 
-    "pointerData": {
+    "pointer": {
         "pointer_tag_file": "data/pointer.txt",
         "pointer_tag_to_tip": "data/pointer_tip.txt"
     },
