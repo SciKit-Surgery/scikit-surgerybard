@@ -16,6 +16,7 @@ Build Your Own Image Guided Surgery System
 2. Find a USB camera, there are a few in the lab, or we can use a tablet with a rear facing camera.
 
 3. Get B.A.R.D.
+
 ::
 
   git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
@@ -23,54 +24,31 @@ Build Your Own Image Guided Surgery System
 or navigate to https://github.com/SciKit-Surgery/scikit-surgerybard
 and use the download button
 
-navigate to the scikit-surgerybard directory and run
-::
+4. Use conda to create a new environment.
 
-  pip install .
-
-You may need to add
-::
-
-  pip install --user
-
-if you don't have administrative permissions.
-
-You may also need to install `visioneer` 
-
-::
-
-  pip install versioneer
-
-**Another method to get BARD and all its dependant packages is the following**
-::
-
-  git clone https://github.com/SciKit-Surgery/scikit-surgerybard.git
-
-Change directory to the newly created `scikit-surgerybard` by
 ::
 
   cd scikit-surgerybard
-
-Run the tox commands
-::
-
+  conda create -n bard python=3.10
+  conda activate bard
+  pip install tox
   tox
 
-If tox run successfully,
+
+5. If any of the commands failed, speak to a lab assistant. Assuming tox ran successfully,
+you can activate a virtual env built by the tox command.
+
 For Mac and Linux, activate the virtual environment using command
+
 ::
 
-  source .tox/py36/bin/activate
-
-If all goes well the prompt should be preceded by (py36).
-
+  source .tox/test/bin/activate
 
 For Windows, activate the virtual environment using command
 ::
 
-  .tox\py36\Scripts\activate
+  .tox\test\Scripts\activate
 
 If all goes well the prompt should be preceded by (py36).
 
-
-You should now have BARD setup with all dependancies in your computer. Continue with the next task.
+You should now have BARD setup with all dependencies in your computer. Continue with the next task.

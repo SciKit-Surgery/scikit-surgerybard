@@ -8,9 +8,11 @@ Camera Calibration
 
 B.A.R.D. requires a calibrated camera. The calibration is necessary for two reasons.
 
-- Augmented reality, which is overlaying virtual models over live video, requires it. Discuss why.
+- Augmented reality, which is overlaying virtual models over live video, needs to know
+  the effective scale of the camera. i.e. how millimetres project onto pixels.
 - BARD uses the video camera to track objects in the real world, converting detected 
-  pixel coordinates to model coordinates in 3D space requires a model of the camera.
+  pixel coordinates to model coordinates in 3D space in order to measure the position
+  of the camera relative to the phantom. i.e. need to meaasure in millimetres.
 
 The following instructions will guide you through calibrating your webcam. 
 
@@ -22,7 +24,7 @@ Camera calibration with BARD can be summarised as:
   features on your physical object and the features detected in the images.
 
 See `Camera calibration with OpenCV`_ for a more complete explanation of 
-camera calibration and the physics of a pin hole camera. 
+camera calibration and the mathematics of a pin hole camera.
 
 Get hold of a suitably sized calibration chessboard. The should be one in the data 
 directory (e.g. data/calibrationGrids/calibrationgrid-6mm.pdf),
@@ -49,14 +51,45 @@ in the terminal window.
 Often, in a research setting, it is best to save the data for later
 analysis. The same program can be used to save the data to a given folder.
 
-Use the '-o' option to specify a directory to save to, the
-'-p' option to specify a filename prefix, and '-h' option to show help message and exit.
+Print out the command line options by using the '-h' option to print the 'help' message.
 
-For example:
 ::
 
-  python bardVideoCalibration.py -c config/video_calib_chessboard.json -s 0 -o tests/output -p myresults
-  #usage: bardVideoCalibration.py [-h] -c CONFIG [-s SOURCE] [-o OUTPUT] [-p PREFIX] [-ni] [-v]
+  python bardVideoCalibration.py -h
+
+
+The resultant 'help' message should look like:
+
+::
+
+    usage: bardVideoCalibration.py [-h] -c CONFIG [-s SOURCE] [-o OUTPUT] [-p PREFIX] [-ni] [-v]
+
+    sksurgeryvideocalibration
+
+    options:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            Configuration file containing the parameters (see config/video_chessboard_conf.json for example).
+      -s SOURCE, --source SOURCE
+                            OpenCV source. (USB camera number, or filename).
+      -o OUTPUT, --output OUTPUT
+                            Optional directory to save to.
+      -p PREFIX, --prefix PREFIX
+                            Optional filename prefix to save to.
+      -ni, --noninteractive
+                            If specified, runs noninteractive mode.
+      -v, --version         show program's version number and exit
+
+This tells us we can use:
+
+- -o to specify an output directory
+- -p to specify a filename prefix.
+
+For example:
+
+::
+
+  python bardVideoCalibration.py -c config/video_calib_chessboard.json -o tests/output -p myresults
 
 Then, each time the program recalibrates, the results will be saved to the 'tests/output' folder, with the filename prefix 'myresults'.
 
@@ -64,9 +97,8 @@ Then, each time the program recalibrates, the results will be saved to the 'test
 Tasks
 =====
 
-Repeat calibration 2,3,4 times.
-
-- which parameters vary the most? 
+- Repeat calibration 2,3,4 times.
+- Which parameters vary the most?
 - Is there a link between the reprojection error returned and the calibration accuracy?
 - Does the number and range of views affect the result?
 - What happens if the chessboard is upside down?

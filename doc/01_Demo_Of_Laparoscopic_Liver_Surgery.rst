@@ -13,9 +13,9 @@ Here, at UCL, we demonstrate the SmartLiver IGS system.
 
         a. Optical Tracker
         b. Endoscopic stack
-        c. NVidia SDI input
-- Perform “manual” registration using NiftySLS Liver Surgery plugin
-- Perform “ICP” registration using NiftySLS Liver Surgery plugin
+        c. Epiphan USB video input
+
+- Perform “manual” registration SmartLiver.
 
 (all steps will probably require live demo/assistance).
 
