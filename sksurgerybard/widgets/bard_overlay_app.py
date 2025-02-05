@@ -244,7 +244,7 @@ class BARDOverlayApp(OverlayBaseWidget):
         return return_actors
 
     def _get_all_actors(self):
-        return self.vtk_overlay_window.foreground_renderer.GetActors()
+        return self.vtk_overlay_window.get_renderer(layer=1).GetActors()
 
     def _decimate_actors(self, target_vertices):
         """
