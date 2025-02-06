@@ -29,6 +29,13 @@ def main(args=None):
                              'nx3'
                         )
 
+    parser.add_argument("-o",
+                        "--output",
+                        required=True,
+                        help='Filename to write the output to'
+                             '4x4'
+                        )
+
     version_string = __version__
     friendly_version_string = version_string if version_string else 'unknown'
     parser.add_argument(
@@ -41,5 +48,6 @@ def main(args=None):
     # Gets the directory containing images.
     fixed = args.fixed
     moving = args.moving
+    output = args.output
 
-    run_procrustes(fixed, moving)
+    run_procrustes(fixed, moving, output)

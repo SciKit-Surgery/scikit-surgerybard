@@ -4,9 +4,10 @@
 
 import numpy as np
 from sksurgerycore.algorithms.procrustes import orthogonal_procrustes
+import sksurgerycore.transforms.matrix as sksm
 
 
-def run_procrustes(fixed_points_file, moving_points_file):
+def run_procrustes(fixed_points_file, moving_points_file, output_file):
     """
     Shows how to use sksurgerycore's orthogonal procrustes
     function. We could get the students to implement this?
@@ -21,3 +22,6 @@ def run_procrustes(fixed_points_file, moving_points_file):
     print("Rotation = ", rotation)
     print("Translation = ", translation)
     print("Fiducial Registration Error = ", fre)
+
+    transform = sksm.construct_rigid_transformation(rotation, translation)
+    np.savetxt(output_file, transform)
