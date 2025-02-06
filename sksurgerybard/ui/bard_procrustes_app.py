@@ -23,5 +23,6 @@ def run_procrustes(fixed_points_file, moving_points_file, output_file):
     print("Translation = ", translation)
     print("Fiducial Registration Error = ", fre)
 
-    transform = sksm.construct_rigid_transformation(rotation, translation)
-    np.savetxt(output_file, transform)
+    if output_file:
+        transform = sksm.construct_rigid_transformation(rotation, translation)
+        np.savetxt(output_file, transform)

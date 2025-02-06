@@ -31,7 +31,7 @@ def main(args=None):
 
     parser.add_argument("-o",
                         "--output",
-                        required=True,
+                        required=False,
                         help='Filename to write the output to'
                              '4x4'
                         )
