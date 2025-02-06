@@ -71,3 +71,4 @@ class BardPointerWriter():
                         pointer_tip_location)
                 print("Pointer tip written to ",
                       path.join(self._tipoutdir, filename))
+                print(f"{pointer_tip_location[0][0]} {pointer_tip_location[1][0]} {pointer_tip_location[2][0]}")
