@@ -49,6 +49,6 @@ For Windows, activate the virtual environment using command
 
   .tox\test\Scripts\activate
 
-If all goes well the prompt should be preceded by (py36).
+If all goes well the prompt should be preceded by (test), which is the name of the virtual environment created by tox.
 
 You should now have BARD setup with all dependencies in your computer. Continue with the next task.
