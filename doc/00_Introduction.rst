@@ -29,7 +29,7 @@ After completing the workshop the student should be able to:
   combined to create a basic augmented reality system.
 - Combine the above to create a augmented reality demonstration using the supplied phantom. 
 
-.. _`Medical Imaging Summer School`: https://medicss.cs.ucl.ac.uk/
+.. _`Medical Imaging Summer School`: https://www.ucl.ac.uk/medical-image-computing/ucl-medical-image-computing-summer-school-medicss
 .. _`OpenCV` : https://opencv.org/
 .. _`VTK` : https://vtk.org/
 .. _`SciKit-Surgery`: https://github.com/SciKit-Surgery/

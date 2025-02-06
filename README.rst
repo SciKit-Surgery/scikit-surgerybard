@@ -39,7 +39,7 @@ Contributor(s): Mian Ahmad.
 
 Basic Augmented Reality Demo (BARD) is part of the `SciKit-Surgery`_ software project, developed at the `Wellcome EPSRC Centre for Interventional and Surgical Sciences`_, part of `University College London (UCL)`_.
 
-The BARD is tested on Python 3.8. and may support other Python versions.
+The BARD is tested on Python 3.9, 3.10 and 3.11 and may support other Python versions.
 
 
 Developing

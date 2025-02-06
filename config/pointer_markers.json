@@ -8,7 +8,6 @@
 	    "type" : "sksaruco",
 	    "source" : 0,
 	    "calibration directory": "data/calibration/matts_mbp_640_x_480",
-
 	    "rigid bodies" : [
 		    {
 			    "name" : "modelreference",
@@ -26,5 +25,5 @@
   "interaction": {
       "keyboard": true
   },
-	"out path" : "pointer_positions",
+  "out path" : "pointer_positions"
 }
