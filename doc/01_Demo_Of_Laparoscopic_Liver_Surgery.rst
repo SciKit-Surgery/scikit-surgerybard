@@ -15,7 +15,7 @@ Here, at UCL, we demonstrate the SmartLiver IGS system.
         b. Endoscopic stack
         c. Epiphan USB video input
 
-- Perform “manual” registration SmartLiver.
+- Perform “manual” registration using SmartLiver.
 
 (all steps will probably require live demo/assistance).
 

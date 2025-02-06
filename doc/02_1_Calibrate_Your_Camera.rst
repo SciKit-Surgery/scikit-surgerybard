@@ -12,7 +12,7 @@ B.A.R.D. requires a calibrated camera. The calibration is necessary for two reas
   the effective scale of the camera. i.e. how millimetres project onto pixels.
 - BARD uses the video camera to track objects in the real world, converting detected 
   pixel coordinates to model coordinates in 3D space in order to measure the position
-  of the camera relative to the phantom. i.e. need to meaasure in millimetres.
+  of the camera relative to the phantom. i.e. need to measure in millimetres.
 
 The following instructions will guide you through calibrating your webcam. 
 
@@ -97,7 +97,7 @@ Then, each time the program recalibrates, the results will be saved to the 'test
 Tasks
 =====
 
-- Repeat calibration 2,3,4 times.
+- Repeat calibration 2 to 4 times.
 - Which parameters vary the most?
 - Is there a link between the reprojection error returned and the calibration accuracy?
 - Does the number and range of views affect the result?
