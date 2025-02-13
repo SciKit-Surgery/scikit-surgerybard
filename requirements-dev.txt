@@ -14,5 +14,4 @@ pyinstaller
 pytest
 tox
 vtk>=9.2.5
-versioneer
 pyyaml
