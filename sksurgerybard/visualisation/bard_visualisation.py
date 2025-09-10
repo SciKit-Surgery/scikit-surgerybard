@@ -155,6 +155,7 @@ class BardVisualisation:
     pointers are tracked pointers
 
     """
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, all_actors, model_list, model_visibilities= None,
             model_opacities = None, model_representations = None):
         """

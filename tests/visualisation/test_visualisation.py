@@ -214,6 +214,7 @@ def _good_bard_vis():
     return vis.BardVisualisation(actors, model_list), actors
 
 
+# pylint:disable=too-many-positional-arguments
 def _check_state_transition(actors,
                             start_vis_state, expected_vis_state,
                             start_rep_state, expected_rep_state,
