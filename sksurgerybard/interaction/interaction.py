@@ -46,7 +46,7 @@ class BardKBEvent:
         :param key: key code defining direction of translation
         :raises: Value error is key not in valid range
         """
-        if key not in ('5t6y7u'):
+        if key not in '5t6y7u':
             raise ValueError("Invalid key value")
 
         distance = 1.0
@@ -68,12 +68,12 @@ class BardKBEvent:
 
     def _rotate_model(self, key):
         """
-        Handles model tranlations.
+        Handles model translations.
 
         :param key: key code defining direction of rotation
         :raises: Value error is key not in valid range
         """
-        if key not in ('8i9o0p'):
+        if key not in '8i9o0p':
             raise ValueError("Invalid key value")
 
         distance = 1.0

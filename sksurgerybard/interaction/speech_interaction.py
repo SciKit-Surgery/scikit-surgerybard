@@ -50,7 +50,7 @@ class BardSpeechInteractor(QObject):
         Entry point to run the demo
         """
         #  this is the main call to start the background thread listening
-        self.listener_thread.started.connect(self.voice_recognition.run)
+        self.listener_thread.started.connect(self.voice_recognition.run) # pylint:disable=no-member
         self.listener_thread.start()
 
         #listener_thread is a QThread, so we can connect signals etc,
